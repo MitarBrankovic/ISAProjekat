@@ -11,7 +11,7 @@ Vue.component("Register", {
             phoneNumber:"",
             role:"",
             verificationCode:null,
-            firstLogin:true
+            verified:false
         }
     },
     template:`  
@@ -94,17 +94,17 @@ Vue.component("Register", {
                 phoneNumber:this.phoneNumber,
                 role:this.role,
 				verificationCode:this.verificationCode,
-                firstLogin:this.firstLogin
+                verified:this.verified
             }
 
             axios
             .post('/registration/registerUser',user)
             .then(response=>{
-
+                localStorage.setItem('email', user.email)
                 this.bool = response.data
                 if(this.bool === true)
                 {
-                    this.$router.push('/')
+                    this.$router.push('/emailVerification')
                 }
                 else
                 {
@@ -113,6 +113,9 @@ Vue.component("Register", {
 
             })
         }
+    },
+    mounted(){
+        localStorage.removeItem('email')
     }
 
 });

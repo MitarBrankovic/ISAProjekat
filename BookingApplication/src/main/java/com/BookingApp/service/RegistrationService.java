@@ -1,8 +1,12 @@
 package com.BookingApp.service;
 
+import java.util.HashMap;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +38,10 @@ public class RegistrationService {
 	private FishingInstructorRepository fishingInstructorRepository;
 	@Autowired
 	private ShipOwnerRepository shipOwnerRepository;
+	@Autowired
+	private JavaMailSender javaMailSender;
+	
+	private static HashMap<String, String> verification = new HashMap<String, String>();
 	
 	
 	@PostMapping(path = "/registerUser")
@@ -42,15 +50,15 @@ public class RegistrationService {
 		Optional<AppUser> oldUser = Optional.ofNullable(userRepository.findByEmail(appUser.email)); // Mail -> Korisnik
 		if(!oldUser.isPresent()) {
 			
-			/*String verificationCode = generateVerificationCode();
-			if(!verification.containsKey(patient.getEmail()))
+			String verificationCode = generateVerificationCode();
+			if(!verification.containsKey(appUser.email))
 			{
-				verification.put(patient.getEmail(), verificationCode);	
+				verification.put(appUser.email, verificationCode);	
 			}
 			
 			String body = "Hello,\nThank you for registering on our website. Below is your verification code.\n" 
 							  + "Your Code is: " + verificationCode + 
-							    "\nIf you have any trouble, write to our support : mrs.tim.sedam@gmail.com";
+							    "\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
 			
 			String title = "Verification Code";
 			
@@ -59,14 +67,13 @@ public class RegistrationService {
 				Thread t = new Thread() {
 					public void run()
 					{
-						sendEmailService.sendEmail(patient.getEmail(),body,title);		
+						sendEmail(appUser.email,body,title);		
 					}
 				};
-				t.start();*/
+				t.start();
 				
-				//Dodajemo mu status neaktivnog i verifikacioni kod
-				//patient.setAuthenticated("0");
-				//patient.setVerificationCode(verificationCode);
+				appUser.verified = false;
+				appUser.verificationCode = verificationCode;
 			
 			
 				if(appUser.role == UserType.client) {
@@ -87,14 +94,60 @@ public class RegistrationService {
 				}
 				
 				return true;
-			/*} 
+			} 
 			catch (Exception e) 
 			{
 				return false;
-			}*/
+			}
 			
 		}
 		System.out.println("Korisnik sa ovim mailom postoji ili je nepostojeci mail.");
 		return false;
+	}
+	
+	
+	@PostMapping(path = "/emailVerification")
+    public boolean verify(@RequestBody String get)
+	{	
+		String[] tokens = get.split("%3B"); // Ascii ;
+		String code = tokens[0];
+		String badEmail = tokens[1];
+		
+		
+		String emailParts[] = badEmail.split("%40"); // Ascii @
+		String email = emailParts[0] + "@" + emailParts[1].substring(0, emailParts[1].length() - 1);
+		
+		AppUser user = userRepository.findByEmail(email);
+		if(user != null)
+		{
+			if(user.verificationCode.equalsIgnoreCase(code))
+			{
+				user.verified = true;
+				userRepository.save(user);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private String generateVerificationCode()
+	{
+		Random rand = new Random();
+		String verificationCode = "";
+		for(int i = 0 ; i < 6 ; i++)
+		{
+			verificationCode += String.valueOf(rand.nextInt(10));
+		}
+		return verificationCode;
+	}
+	
+	public void sendEmail(String to, String body, String topic)
+	{
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo(to);
+		msg.setSubject(topic);
+		msg.setText(body);
+		javaMailSender.send(msg);
+		System.out.println("Email sent...");
 	}
 }

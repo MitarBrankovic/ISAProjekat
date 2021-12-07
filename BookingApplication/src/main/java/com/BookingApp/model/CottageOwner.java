@@ -16,7 +16,7 @@ public class CottageOwner extends AppUser {
 	}
 	
 	public CottageOwner(AppUser appUser, String text) {
-		super(appUser.id, appUser.name, appUser.surname, appUser.email, appUser.password, appUser.address, appUser.city, appUser.country, appUser.phoneNumber, appUser.role, appUser.verificationCode, appUser.firstLogin);
+		super(appUser.id, appUser.name, appUser.surname, appUser.email, appUser.password, appUser.address, appUser.city, appUser.country, appUser.phoneNumber, appUser.role, appUser.verificationCode, appUser.verified);
 		this.cottageText = text;
 	}
 	

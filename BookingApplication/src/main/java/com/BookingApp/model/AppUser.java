@@ -43,7 +43,7 @@ public class AppUser {
 	@Column
 	public String verificationCode;
 	@Column
-	public Boolean firstLogin;
+	public Boolean verified;
 	
 	public AppUser() {
 		super();
@@ -64,7 +64,7 @@ public class AppUser {
 		this.phoneNumber = phoneNumber;
 		this.role = role;
 		this.verificationCode = verificationCode;
-		this.firstLogin = firstLogin;
+		this.verified = firstLogin;
 	}
 	
 }

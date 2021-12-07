@@ -7,6 +7,8 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +25,6 @@ import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
 import com.BookingApp.repository.ShipOwnerRepository;
 import com.BookingApp.repository.UserRepository;
-
 
 @RestController
 @RequestMapping("/registration")
@@ -149,5 +150,25 @@ public class RegistrationService {
 		msg.setText(body);
 		javaMailSender.send(msg);
 		System.out.println("Email sent...");
+	}
+	
+	
+	@PostMapping(path = "/login/{email}/{password}")
+	public AppUser loginUser(@PathVariable("email") String email, @PathVariable("password") String password)
+	{	
+		Optional<AppUser> user = Optional.ofNullable(userRepository.findByEmail(email));
+		AppUser appUser;
+		if(!user.isPresent())
+		{
+			return null;
+		}
+		else
+		{
+			appUser = user.get();
+			if(appUser.password.equals(password) && appUser.verified)
+				return appUser;
+			else
+				return null;
+		}
 	}
 }

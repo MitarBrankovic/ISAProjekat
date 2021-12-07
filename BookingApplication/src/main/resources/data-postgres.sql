@@ -1,2 +1,3 @@
+insert into proba(id, name) values ( nextval('my_user_seq'), 'Mirko');
 
-insert into appuser (id, name, surname, email, password, address, city, country, role, first_login) values ( 1, 'Mirko', 'Mrkva', 'mrki@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', 'a', true);
+insert into app_user (id, name, surname, email, password, address, city, country, role, first_login) values ( nextval('my_user_seq'), 'Mirko', 'Mrkva', 'mrki@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', 0, true);

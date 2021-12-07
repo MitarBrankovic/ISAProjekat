@@ -1,12 +1,14 @@
-package application;
+package com.BookingApp;
 
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@SpringBootApplication(scanBasePackages = {"application"})
+@SpringBootApplication(scanBasePackages = {"com.BookingApp"})
 @RestController
 public class BookingApplicationMain {
 	
@@ -14,5 +16,4 @@ public class BookingApplicationMain {
 		SpringApplication.run(BookingApplicationMain.class, args);
 		
 		}
-		
 }

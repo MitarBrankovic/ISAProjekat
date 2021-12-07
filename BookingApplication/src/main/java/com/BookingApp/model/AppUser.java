@@ -1,4 +1,4 @@
-package model;
+package com.BookingApp.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +34,7 @@ public class AppUser {
 	@Column
 	public String country;
 	@Column
-	public String role;
+	public UserType role;
 	@Column
 	public String verificationCode;
 	@Column
@@ -46,7 +46,7 @@ public class AppUser {
 
 	
 	public AppUser(long id, String name, String surname, String email, String password, String address, String city,
-			String country, String role, String verificationCode, Boolean firstLogin) {
+			String country, UserType role, String verificationCode, Boolean firstLogin) {
 		super();
 		this.id = id;
 		this.name = name;

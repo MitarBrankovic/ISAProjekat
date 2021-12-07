@@ -1,4 +1,4 @@
-package application.util;
+package com.BookingApp.util;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;

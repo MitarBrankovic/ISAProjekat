@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="CSS/toast.css" type="text/css">
+    <title>Booking Application</title>
+</head>
+
+<body>
+    <div class="container-fluid my-container">
+        <div class="row my-row  justify-content-around">
+          <div class="col-sm-4 my-col">
+              <span style="margin-top: 2%;" class="input-group-text">Naziv:</span>
+              <input type="text" id="nameInput" class="form-control"  placeholder="Unesite naziv...">
+              <span class="input-group-text" style="margin-top: 5%;">Adresa:</span>
+              <input type="text" id="lastnameInput" class="form-control" placeholder="Unesite adresu...">
+              <span class="input-group-text" style="margin-top: 5%;">Opis:</span>
+              <textarea class="form-control" id="usernameInput" rows="6" placeholder="Unesite opis..."></textarea>
+              <span class="input-group-text" style="margin-top: 5%;">Pravila ponasanja:</span>
+              <textarea class="form-control" id="usernameInput" rows="4" placeholder="Unesite pravila ponasanja..."></textarea>
+              <span class="input-group-text" style="margin-top: 5%;">Oprema:</span>
+              <textarea class="form-control" id="usernameInput" rows="4" placeholder="Unesite opremu..."></textarea>
+            </div>
+            <div class="col-sm-4 my-col">
+              
+              <span style="margin-top: 2%;" class="input-group-text">Maksimalni broj osoba:</span>
+              <input type="number" min="1" max="30" class="form-control">
+              <span class="input-group-text" style="margin-top: 5%;" id="basic-addon1">Uslovi otkazivanja:</span>
+              <select class="form-select" v-model="newRestaurant.managerId" id="managerComboBox" aria-label="Example select with button addon">
+                <option>Besplatno</option>
+                <option>Procenat uplate</option>
+              </select>
+              <span class="input-group-text" style="margin-top: 5%;">Cenovnik:</span>
+              <textarea class="form-control" id="usernameInput" rows="6" placeholder="Unesite cenovnik..."></textarea>
+              <span class="input-group-text" style="margin-top: 5%;">Biografija instruktora:</span>
+              <textarea class="form-control" id="usernameInput" rows="4" placeholder="Unesite biografiju..."></textarea>
+              <span class="input-group-text" style="margin-top: 5%;">Informacije o dodatnim uslugama:</span>
+              <textarea class="form-control" id="usernameInput" rows="4" placeholder="Unesite info o dodatnim uslugama..."></textarea>
+            </div>
+            <div class="col-sm-4 my-col">
+              <div style="margin-top: 21%; margin-left: 12%;" class="col-sm-6 my-col">
+                <label class="input-group-text" for="inputGroupFile01">Izbor slike:</label>
+                <input id="uploadImage" name="myPhoto" onchange="PreviewImage();" type="file" accept="image/png, image/jpeg" class="form-control">
+                <div style="margin-top: 10%;">
+                  <img  id="uploadPreview" style="width: 400px; height: 280px;" />
+                </div>
+            </div>
+              <button type="button" style="margin-top: 20%; margin-right: 20%; margin-left: 35%;" class="btn btn-secondary btn-lg">Dodaj uslugu</button>
+            </div>
+          </div>
+      </div>
+    
+
+</body>
+
+</html>

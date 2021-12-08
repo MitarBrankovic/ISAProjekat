@@ -1,5 +1,5 @@
 package com.BookingApp.model;
 
 public enum UserType {
-	client, cottageOwner, shipOwner, fishingInstructor, admin
+	client, cottage_owner, ship_owner, fishing_instructor, admin
 }

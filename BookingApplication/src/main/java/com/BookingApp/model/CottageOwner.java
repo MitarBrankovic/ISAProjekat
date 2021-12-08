@@ -8,6 +8,10 @@ public class CottageOwner extends AppUser {
 	@Column
 	public String cottageText;
 
+	public CottageOwner() {
+		super();
+	}
+	
 	public CottageOwner(long id, String name, String surname, String email, String password, String address,
 			String city, String country, String phoneNumber, UserType role, String verificationCode, Boolean firstLogin,
 			String cottageText) {

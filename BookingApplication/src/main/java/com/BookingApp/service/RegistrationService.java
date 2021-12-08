@@ -81,15 +81,15 @@ public class RegistrationService {
 					Client client = new Client(appUser, "");
 					clientRepository.save(client);
 				}
-				else if(appUser.role == UserType.cottageOwner) {
+				else if(appUser.role == UserType.cottage_owner) {
 					CottageOwner cottageOwner = new CottageOwner(appUser, "");
 					cottageOwnerRepository.save(cottageOwner);
 				}
-				else if(appUser.role == UserType.fishingInstructor) {
+				else if(appUser.role == UserType.fishing_instructor) {
 					FishingInstructor fishingInstructor = new FishingInstructor(appUser, "");
 					fishingInstructorRepository.save(fishingInstructor);
 				}
-				else if(appUser.role == UserType.shipOwner) {
+				else if(appUser.role == UserType.ship_owner) {
 					ShipOwner shipOwner = new ShipOwner(appUser, "");
 					shipOwnerRepository.save(shipOwner);
 				}

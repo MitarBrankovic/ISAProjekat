@@ -8,6 +8,10 @@ public class FishingInstructor extends AppUser  {
 	@Column
 	public String text;
 
+	public FishingInstructor() {
+		super();
+	}
+	
 	public FishingInstructor(long id, String name, String surname, String email, String password, String address, String city,
 			String country, String phoneNumber, UserType role, String verificationCode, Boolean firstLogin, String text) {
 		super(id, name, surname, email, password, address, city, country, phoneNumber,role, verificationCode, firstLogin);

@@ -4,6 +4,7 @@ const EmailVerification = { template: '<EmailVerification></EmailVerification>' 
 const Login = { template: '<Login></Login>' }
 const Logout = { template: '<Logout></Logout>' }
 const ProfileClient = { template: '<ProfileClient></ProfileClient>' }
+const Navbar = { template: '<Navbar></Navbar>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -14,6 +15,7 @@ const router = new VueRouter({
         { path: '/login', component: Login },
         { path: '/logout', component: Logout },
         { path: '/profileClient', component: ProfileClient },
+        { path: '/navbar', component: Navbar },
     ]
 
 });

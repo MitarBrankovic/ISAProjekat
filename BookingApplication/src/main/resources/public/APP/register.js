@@ -18,7 +18,7 @@ Vue.component("Register", {
 	<div>    
 		<form id="registrationForm" method ="POST" @submit.prevent = "submitForm">
 		  	<div class="container">
-			    <h1>Registracija</h1>
+			    <h1>Register</h1>
 			    <hr>
 			
 			    <label class="col-sm-2 col-form-label" for="name"><b>Name</b></label>
@@ -61,8 +61,8 @@ Vue.component("Register", {
 				<br>
 
 
-                <label class="col-sm-4 col-form-label" for="role"><b>role</b></label>
-				<select v-model="role" class="form-select">
+                <label class="col-sm-2 col-form-label" for="role"><b>Role</b></label>
+				<select v-model="role" class="col-sm-2 col-form-select">
 					<option value="client">Client</option>
 				    <option value="cottageOwner">Cottage owner</option>
                     <option value="shipOwner">Ship owner</option>

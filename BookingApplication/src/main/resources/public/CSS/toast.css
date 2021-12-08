@@ -21,10 +21,7 @@ html{
       text-align: center;
     vertical-align: middle; 
     }
-  
-    a{
-      color: #eae7dc;
-    }
+
   
     #tabs
     {
@@ -40,20 +37,7 @@ html{
       background: #424242;
       color: white;
     }
-  
-    a:hover 
-    {
-       color: #424242 !important;
-    }
-  
-    button:hover 
-    {
-      color: #424242 !important;
-    }
-  
-    button:focus{
-        color: #424242;
-    }
+
   
     .intro{
       height:100%
@@ -159,4 +143,19 @@ html{
       background-color:#000;
       color : #FFF;
       height:100%
+    }
+
+    .button {
+      background-color: #04AA6D;
+      color: white;
+      transition-duration: 0.3s;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-size: 15px;
+    }
+    
+    .button:hover{
+      background-color: #ddd;
+      color: #04AA6D;
+      cursor: pointer;
     }

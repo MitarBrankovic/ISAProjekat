@@ -10,7 +10,7 @@ Vue.component("Login", {
 		<div>
 			<form method="POST" @submit.prevent = "submitForm">
 			<div class="forma container">
-				<h1>Prijavljivanje</h1>
+				<h1>Login</h1>
 				<hr>
 				<label class="col-sm-2 col-form-label" for="email"><b>Email</b></label>
 				<input class="col-sm-2 col-form-control" type="text" v-model="email" required>

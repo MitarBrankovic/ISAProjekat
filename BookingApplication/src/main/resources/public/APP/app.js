@@ -6,6 +6,7 @@ const Logout = { template: '<Logout></Logout>' }
 const ProfileClient = { template: '<ProfileClient></ProfileClient>' }
 const Navbar = { template: '<Navbar></Navbar>' }
 const SearchCottages = { template: '<SearchCottages></SearchCottages>' }
+const RequestDeleteAcc = { template: '<RequestDeleteAcc></RequestDeleteAcc>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -18,6 +19,7 @@ const router = new VueRouter({
         { path: '/profileClient', component: ProfileClient },
         { path: '/navbar', component: Navbar },
         { path: '/searchCottages', component: SearchCottages },
+        { path: '/requestDeleteAcc', component: RequestDeleteAcc },
     ]
 
 });

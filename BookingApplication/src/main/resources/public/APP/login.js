@@ -36,10 +36,14 @@ Vue.component("Login", {
 			axios
                 .post('/registration/login/' + this.email + "/" + this.password)
 				.then(response => {
-                    localStorage.setItem('activeUser',JSON.stringify(response.data))
-                    localStorage.removeItem('email') 
-					this.$router.push('/')
-					window.location.reload()
+					if(response.data == null){
+						this.$router.push('/')
+					}else{
+						localStorage.setItem('activeUser',JSON.stringify(response.data))
+						localStorage.removeItem('email') 
+						this.$router.push('/')
+						window.location.reload()
+					}
 				})
 				.catch(error=>{
                     console.log("Greska.")	

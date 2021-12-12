@@ -17,7 +17,7 @@ Vue.component("Navbar", {
 	  </button>
 	  <div class="dropdown-content1" >
 		  <div v-if="(activeUser.role==='admin')">
-		  	<a href="#">Something</a>
+		  	<a href="#/requestDeleteAcc">Requsts for account delete</a>
 		  </div>
 		  <div v-if="(activeUser.role==='admin')">
 		  	<a href="#">Something</a>

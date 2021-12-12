@@ -2,7 +2,10 @@ Vue.component("ProfileClient", {
     data: function() {
         return {
             activeUser:"",
-            editClick:false
+            editClick:false,
+            requestDelete:false,
+            sendCheck:false,
+            textAreaDelete:""
         }
     },
     template : ` 
@@ -77,7 +80,7 @@ Vue.component("ProfileClient", {
             
             <label class="col-sm-2 col-form-label" for="password-repeat"><b>Repeat password</b></label>
             <input class="col-sm-2 col-form-control" type="password" v-model="activeUser.password" name="password-repeat" id="password-repeat" readonly>
-            <hr>
+            <br>
             
             <label class="col-sm-2 col-form-label" for="address"><b>Address</b></label>
             <input class="col-sm-2 col-form-control" type="text" v-model="activeUser.address" readonly>
@@ -97,7 +100,21 @@ Vue.component("ProfileClient", {
             
         
             <button type="button" class="button" v-on:click="editClick=true">Edit</button>
+        </div><hr>
+
+        <div style="margin-top: 4%; justify-content: center;">
+            <h4 v-if="sendCheck==false">Request for account deletion</h4>
+            <button type="button" class="button" v-if="requestDelete==false && sendCheck==false" v-on:click="requestDelete=true">Open request</button> 
+            <h4 v-if="sendCheck==true">Successfully sent request</h4>
+            
+            <div  v-if="requestDelete==true && sendCheck==false">
+                <textarea v-model="textAreaDelete" id="deleteArea" placeholder="Reason why you want to delete account" rows="4" cols="50"></textarea><br>
+                <button type="button" class="btn btn-primary" v-on:click="sendRequest()">Send request</button> 
+                <button type="button" class="btn btn-danger" v-on:click="requestDelete=false">Cancel</button> 
+            
+            </div>
         </div>
+
     </div>	  
     	`
     	,
@@ -117,12 +134,43 @@ Vue.component("ProfileClient", {
                 window.location.reload()
 
             })
+        },
+        sendRequest:function(){
+            userId = this.activeUser.id
+            axios
+            .post('/appUser/sendRequest/' + this.textAreaDelete+ "/" + userId)
+            .then(response=>{
+                //window.location.reload()
+                this.editClick = false
+                this.sendCheck = response.data
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+
+            })
+
         }
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
         if(this.activeUser.role != 'client')
             this.$router.push('/')
+
+        userId = this.activeUser.id 
+        axios
+        .get('/appUser/requestExists/' + userId)
+        .then(response=>{
+            //window.location.reload()
+            this.sendCheck = response.data
+        })
+        .catch(error=>{
+            console.log("Greska.")	
+            alert("Podaci su lose uneti.")
+            window.location.reload()
+
+        })
     },
 
 });

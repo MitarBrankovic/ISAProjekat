@@ -1,12 +1,23 @@
 package com.BookingApp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class CottageOwner extends AppUser {
 	@Column
 	public String cottageText;
+	@JsonIgnore
+	@OneToMany
+	(mappedBy = "cottageOwner", fetch = FetchType.EAGER, cascade= CascadeType.ALL)
+	private Set<Cottage> cottages = new HashSet<Cottage>();
 
 	public CottageOwner() {
 		super();

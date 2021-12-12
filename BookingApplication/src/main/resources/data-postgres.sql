@@ -12,3 +12,10 @@ insert into cottage_owner (id, cottage_text) values ( 3, 'neki tekst');
 insert into ship_owner (id, text) values ( 4, 'neki tekst');
 insert into fishing_instructor (id, text) values ( 5, 'neki tekst');
 insert into fishing_instructor (id, text) values ( 6, 'neki tekst');
+
+
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Zuta vikendica', 'Popovica', 'Wow kako je dobro', 3, 6, 'Nema pravila', 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Crvena vikendica', 'Ledinci', 'Wow wow wow', 4, 4, 'Nema pravila', 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Zelene vikendica', 'Ledinci', 'Wow wow wow', 2, 12, 'Nema pravila', 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Plava vikendica', 'Ledinci', 'Opis', 6, 4, 'Nema pravila', 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Bela vikendica', 'Ledinci', 'Najs', 1, 3, 'Nema pravila', 3);

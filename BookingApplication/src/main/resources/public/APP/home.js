@@ -1,46 +1,61 @@
 Vue.component("Home", {
     data: function() {
         return {
-            cottages:true,
-            ships:false,
-            instructors:false,
+            cottagesButton:true,
+            shipsButton:false,
+            instructorsButton:false,
+            cottages:[],
+            ships:[],
+            instructors:[]
         }
     },
 
 template: ` 
-	  <div>
-        <div>
-            <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="cottagesFun()">Cottages</button>
-            <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="shipsFun()">Ships</button>
-            <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="instructorsFun()">Instructors</button>
+	<div>
+        <div class="nav nav-tabs">
+            <button class="button-tab nav-item" type="button" v-on:click="cottagesFun()">Cottages</button>
+            <button class="button-tab nav-item" type="button" v-on:click="shipsFun()">Ships</button>
+            <button class="button-tab nav-item" type="button" v-on:click="instructorsFun()">Instructors</button>
         </div>
 
 
-        <div v-if="cottages">
-        
+        <div v-if="cottagesButton">
+            <SearchCottages id="search" @clicked="onSearchClick"></SearchCottages>
+
+            <div class="container-fluid" style="margin-top: 3%; margin-left: 5mm;">
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+                    <div class="col"  v-for = "c in cottages">
+                        <div class="card" style="width: 93%">
+                            <img src="../images/cottage.jpg" width="300" height="220" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{c.name}}</h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">{{c.description}}</li>
+                                <li class="list-group-item">{{c.address}}</li>
+                                <li class="list-group-item">Num of rooms: {{c.roomsNum}}</li>
+                                <li class="list-group-item">Num of beds: {{c.bedsNum}}</li>
+                            </ul>
+                            <div class="card-body">
+                                <button style="margin-left: 2%;" type="button" class="btn btn-secondary">Informacije</button>
+                                <button style="margin-left: 8%;" type="button" class="btn btn-primary">Izmeni</button>
+                                <button style="margin-left: 8%;" type="button" class="btn btn-danger">Obrisi</button>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+
         </div>
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <div v-if="ships">
+        <div v-else="shipsButton">
             <div style="margin-top: 2%;" class="container-fluid">
                 <div style="margin-left: 5%;" class="row">
                     <div class="col col-sm-3">
@@ -141,34 +156,46 @@ template: `
             </div>
         </div>
 
-        <div v-if="instructors">
+        <div v-else="instructorsButton">
             instructors
         </div>
 
 
-	  </div>
+	</div>
 `
 
 ,
     methods: {
         cottagesFun: function(){
-            this.cottages = true
-            this.ships = false
-            this.instructors = false
+            this.cottagesButton = true
+            this.shipsButton = false
+            this.instructorsButton = false
         },
         shipsFun: function(){
-            this.cottages = false
-            this.ships = true
-            this.instructors = false
+            this.cottagesButton = false
+            this.shipsButton = true
+            this.instructorsButton = false
         },
         instructorsFun: function(){
-            this.cottages = false
-            this.ships = false
-            this.instructors = true
+            this.cottagesButton = false
+            this.shipsButton = false
+            this.instructorsButton = true
+        },
+        onSearchClick:function(search){
+            console.log(search)
+            axios
+            .post('/cottages/searchCottages',search)
+            .then(response=>{
+                this.cottages = response.data
+            })
         }
     },
     
     mounted() {
-
+        axios
+        .get('/cottages/getAllCottages')
+        .then(response=>{
+            this.cottages = response.data;
+        })
     }
 });

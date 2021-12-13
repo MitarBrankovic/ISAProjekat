@@ -36,8 +36,12 @@ Vue.component("Login", {
 			axios
                 .post('/registration/login/' + this.email + "/" + this.password)
 				.then(response => {
-					if(response.data == null){
-						this.$router.push('/')
+					if(response.data == null || response.data == ""){
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: 'Wrong username or password',
+						  })
 					}else{
 						localStorage.setItem('activeUser',JSON.stringify(response.data))
 						localStorage.removeItem('email') 

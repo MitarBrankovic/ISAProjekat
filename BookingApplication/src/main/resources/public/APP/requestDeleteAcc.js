@@ -11,8 +11,8 @@ Vue.component("RequestDeleteAcc", {
             <div v-for="r in requests" class="list-group container">
                 <div class="list-item">
                     <p>
-                        <b>Kupac:</b> {{r.appUserId}}<br>
-                        <b>Ocena:</b> {{r.text}}<br>
+                        <b>User Id:</b> {{r.appUserId}}<br>
+                        <b>Text of request:</b> {{r.text}}<br>
 						<button class="btn btn-success" type="button" v-on:click="acceptRequest(r)">Accept</button>
 						<button class="btn btn-danger" type="button" v-on:click="declineRequest(r)">Decline</button>
                         <hr>

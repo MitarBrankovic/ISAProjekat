@@ -54,14 +54,11 @@ public class RegistrationService {
 			if(!verification.containsKey(appUser.email))
 			{
 				verification.put(appUser.email, verificationCode);	
-			}
-			
+			}			
 			String body = "Hello,\nThank you for registering on our website. Below is your verification code.\n" 
 							  + "Your Code is: " + verificationCode + 
 							    "\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
-			
 			String title = "Verification Code";
-			
 			try 
 			{
 				Thread t = new Thread() {
@@ -70,12 +67,10 @@ public class RegistrationService {
 						sendEmail(appUser.email,body,title);		
 					}
 				};
-				t.start();
-				
+				t.start();	
 				appUser.verified = false;
 				appUser.verificationCode = verificationCode;
-			
-			
+					
 				if(appUser.role == UserType.client) {
 					Client client = new Client(appUser, "");
 					clientRepository.save(client);
@@ -91,15 +86,13 @@ public class RegistrationService {
 				else if(appUser.role == UserType.ship_owner) {
 					ShipOwner shipOwner = new ShipOwner(appUser, "");
 					shipOwnerRepository.save(shipOwner);
-				}
-				
+				}				
 				return true;
 			} 
 			catch (Exception e) 
 			{
 				return false;
 			}
-			
 		}
 		System.out.println("Korisnik sa ovim mailom postoji ili je nepostojeci mail.");
 		return false;
@@ -112,7 +105,6 @@ public class RegistrationService {
 		String[] tokens = get.split("%3B"); // Ascii ;
 		String code = tokens[0];
 		String badEmail = tokens[1];
-		
 		
 		String emailParts[] = badEmail.split("%40"); // Ascii @
 		String email = emailParts[0] + "@" + emailParts[1].substring(0, emailParts[1].length() - 1);

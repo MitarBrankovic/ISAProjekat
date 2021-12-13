@@ -33,7 +33,7 @@ Vue.component("Navbar", {
 	    	<a href="/#/register">Register</a>
   		</div>
 		<div class="topnav-right dropdown1" v-if="(activeUser !== null)">
-		  <button class="dropbtn1">Profil
+		  <button class="dropbtn1">Profile
 			<i class="fa fa-caret-down"></i>
 		  </button>
 		  <div class="dropdown-content1" >

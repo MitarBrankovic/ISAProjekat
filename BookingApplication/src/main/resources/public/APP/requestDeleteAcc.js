@@ -1,7 +1,7 @@
 Vue.component("RequestDeleteAcc", {
     data: function() {
         return {
-            activeUser:null,
+            activeUser:"",
             requests:null
         }
     },

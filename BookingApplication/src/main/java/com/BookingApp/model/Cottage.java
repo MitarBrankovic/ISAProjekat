@@ -14,7 +14,7 @@ public class Cottage {
 	@Id
 	@SequenceGenerator(name = "cottageSeqGen", sequenceName = "cottageSeqGen", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "cottageSeqGen")
-	private long id;
+	public long id;
 	@Column
 	public String name;
 	@Column
@@ -30,7 +30,7 @@ public class Cottage {
 	public String rules;
 	//public String cenovnik;
 	@ManyToOne(fetch = FetchType.EAGER)
-	private CottageOwner cottageOwner;
+	public CottageOwner cottageOwner;
 	
 	public Cottage() {}
 

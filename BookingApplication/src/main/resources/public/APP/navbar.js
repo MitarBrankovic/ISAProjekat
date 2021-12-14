@@ -40,6 +40,9 @@ Vue.component("Navbar", {
 		  	<div v-if="(activeUser.role==='client')">
 			  <a href="/#/profileClient">My profile</a>
   			</div>
+			<div v-if="(activeUser.role==='client')">
+			  <a href="/#/sendComplaint">Write a complaint</a>
+  			</div>
 			<a href="/#/logout">Logout</a>
 		  </div>
 		</div>

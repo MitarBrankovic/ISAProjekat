@@ -40,14 +40,14 @@ Vue.component("RequestDeleteAcc", {
     methods:{
         acceptRequest:function(r){
             axios
-            .post('/appUser/acceptRequest', r)
+            .post('/admin/acceptRequest', r)
             .then(response=>{
                 this.requests = response.data
             })
         },
         declineRequest:function(r){
             axios
-            .post('/appUser/declineRequest', r)
+            .post('/admin/declineRequest', r)
             .then(response=>{
                 this.requests = response.data
             })

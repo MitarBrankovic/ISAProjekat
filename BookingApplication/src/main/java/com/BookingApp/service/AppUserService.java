@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.model.AppUser;
+import com.BookingApp.model.Complaint;
 import com.BookingApp.model.RequestDeleteAcc;
+import com.BookingApp.repository.ComplaintRepository;
 import com.BookingApp.repository.RequestDeleteAccRepository;
 import com.BookingApp.repository.UserRepository;
 
@@ -28,7 +30,7 @@ public class AppUserService {
 	@Autowired
 	private RequestDeleteAccRepository requestDeleteAccRepository;
 	@Autowired
-	private JavaMailSender javaMailSender;
+	private ComplaintRepository complaintRepository;
 	
 	
 	@GetMapping(path="/getUsers")
@@ -67,6 +69,12 @@ public class AppUserService {
 	public ResponseEntity<List<RequestDeleteAcc>> getRequests()
 	{	
 		return new ResponseEntity<List<RequestDeleteAcc>>(requestDeleteAccRepository.findAll(),HttpStatus.OK);
+	}
+	
+	@GetMapping(path="/getComplaints")
+	public ResponseEntity<List<Complaint>> getComplaints()
+	{	
+		return new ResponseEntity<List<Complaint>>(complaintRepository.findAll(),HttpStatus.OK);
 	}
 	
 	

@@ -8,6 +8,7 @@ const Navbar = { template: '<Navbar></Navbar>' }
 const SearchCottages = { template: '<SearchCottages></SearchCottages>' }
 const RequestDeleteAcc = { template: '<RequestDeleteAcc></RequestDeleteAcc>' }
 const SendComplaint = { template: '<SendComplaint></SendComplaint>' }
+const Complaints = { template: '<Complaints></Complaints>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -21,7 +22,8 @@ const router = new VueRouter({
         { path: '/navbar', component: Navbar },
         { path: '/searchCottages', component: SearchCottages },
         { path: '/requestDeleteAcc', component: RequestDeleteAcc },
-        { path: '/sendComplaint', component: SendComplaint }
+        { path: '/sendComplaint', component: SendComplaint },
+        { path: '/complaints', component: Complaints }
     ]
 
 });

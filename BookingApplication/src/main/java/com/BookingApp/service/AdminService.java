@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.AnswerComplaintDto;
 import com.BookingApp.model.AppUser;
+import com.BookingApp.model.Complaint;
 import com.BookingApp.model.RequestDeleteAcc;
+import com.BookingApp.repository.ComplaintRepository;
 import com.BookingApp.repository.RequestDeleteAccRepository;
 import com.BookingApp.repository.UserRepository;
 
@@ -25,6 +28,8 @@ public class AdminService {
 	private UserRepository userRepository;
 	@Autowired
 	private RequestDeleteAccRepository requestDeleteAccRepository;
+	@Autowired
+	private ComplaintRepository complaintRepository;
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
@@ -83,6 +88,48 @@ public class AdminService {
 				t.start();
 			requestDeleteAccRepository.delete(request);
 			return new ResponseEntity<List<RequestDeleteAcc>>(requestDeleteAccRepository.findAll(),HttpStatus.OK);
+			} 
+			catch (Exception e) 
+			{
+				return null;
+			}
+		}			
+		else
+			return null;
+	}
+	
+	
+	@PostMapping(path="/answerComplaint")
+	public ResponseEntity<List<Complaint>> answerComplaint(@RequestBody AnswerComplaintDto answerComplaintDto)
+	{	
+		Complaint complaint  = answerComplaintDto.complaint;
+		String titleUser = "Answer on complaint";
+		String bodyUser = "Hello,\nWe're sorry that you have complaints.\n" 
+					+	"\nWe will try to fix that issue.\n" + answerComplaintDto.text
+				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+		String titleOwner = "Complaint on your product";
+		String bodyOwner = "Hello,\nYou have recived complaint on your product.\n" 
+					+	"\nPlease try to fix that issue.\n"  + answerComplaintDto.text
+				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+		Optional<AppUser> user = userRepository.findById(complaint.appUser.id);
+		Optional<AppUser> owner = userRepository.findById(complaint.cottage.cottageOwner.id);
+		AppUser appUser;
+		AppUser appOwner;
+		if(user.isPresent() && owner.isPresent()) {
+			appUser = user.get();
+			appOwner = owner.get();
+			try 
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmail(appUser.email,bodyUser,titleUser);	
+						sendEmail(appOwner.email,bodyOwner,titleOwner);
+					}
+				};
+				t.start();
+				complaintRepository.delete(complaint);
+			return new ResponseEntity<List<Complaint>>(complaintRepository.findAll(),HttpStatus.OK);
 			} 
 			catch (Exception e) 
 			{

@@ -13,7 +13,7 @@ public class Complaint {
 	@Id
 	@SequenceGenerator(name = "complaintSeqGen", sequenceName = "complaintSeqGen", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "complaintSeqGen")
-	private long id;
+	public long id;
 	@Column
 	public String text;
 	@OneToOne

@@ -11,10 +11,7 @@ public class ComplaintDto {
 	public AppUser appUser;
 	
 	
-	
 	public ComplaintDto() {}
-
-
 
 	public ComplaintDto(String text, Cottage cottage, AppUser appUser) {
 		this.text = text;

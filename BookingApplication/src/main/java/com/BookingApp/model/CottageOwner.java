@@ -17,7 +17,7 @@ public class CottageOwner extends AppUser {
 	@JsonIgnore
 	@OneToMany
 	(mappedBy = "cottageOwner", fetch = FetchType.EAGER, cascade= CascadeType.ALL)
-	private Set<Cottage> cottages = new HashSet<Cottage>();
+	public Set<Cottage> cottages = new HashSet<Cottage>();
 
 	public CottageOwner() {
 		super();

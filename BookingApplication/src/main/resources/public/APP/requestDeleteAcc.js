@@ -24,6 +24,8 @@ Vue.component("RequestDeleteAcc", {
         ,
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
+        if(this.activeUser.role != 'admin')
+        this.$router.push('/')
         axios
         .get('/appUser/getRequests')
         .then(response=>{

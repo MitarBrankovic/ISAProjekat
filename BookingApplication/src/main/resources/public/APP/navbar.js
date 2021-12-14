@@ -20,7 +20,7 @@ Vue.component("Navbar", {
 		  	<a href="#/requestDeleteAcc">Requsts for account delete</a>
 		  </div>
 		  <div v-if="(activeUser.role==='admin')">
-		  	<a href="#">Something</a>
+		  	<a href="#/complaints">Complaints</a>
 		  </div>
 			<div v-if="(activeUser.role==='admin') || (activeUser.role==='client')">
 			  <a href="#">Something</a>

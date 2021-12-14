@@ -2,6 +2,8 @@ package com.BookingApp.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,11 +36,14 @@ public class AppUser {
 	@Column
 	public String country;
 	@Column
+	public String phoneNumber;
+	@Enumerated(value = EnumType.STRING)
+	@Column
 	public UserType role;
 	@Column
 	public String verificationCode;
 	@Column
-	public Boolean firstLogin;
+	public Boolean verified;
 	
 	public AppUser() {
 		super();
@@ -46,7 +51,7 @@ public class AppUser {
 
 	
 	public AppUser(long id, String name, String surname, String email, String password, String address, String city,
-			String country, UserType role, String verificationCode, Boolean firstLogin) {
+			String country, String phoneNumber, UserType role, String verificationCode, Boolean firstLogin) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -56,9 +61,10 @@ public class AppUser {
 		this.address = address;
 		this.city = city;
 		this.country = country;
+		this.phoneNumber = phoneNumber;
 		this.role = role;
 		this.verificationCode = verificationCode;
-		this.firstLogin = firstLogin;
+		this.verified = firstLogin;
 	}
 	
 }

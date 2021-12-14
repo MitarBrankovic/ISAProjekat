@@ -4,13 +4,16 @@
 <head>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
     <meta charset="ISO-8859-1">
-    <link rel="stylesheet" href="CSS/index.css" type="text/css">
+    <link rel="stylesheet" type="text/css">
+    <link href="css/navbar.css" rel="stylesheet"/>
+    <link href="css/toast.css" rel="stylesheet"/>
     <title>Booking Application</title>
 </head>
 
 <body>
 
     <div id="main-div">
+        <Navbar></Navbar>
         <router-view></router-view>
     </div>
     <script src="JS/main.min.js"></script>
@@ -34,13 +37,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
     <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    
     <script src="APP/home.js"></script>
+    <script src="APP/register.js "></script>
+    <script src="APP/login.js "></script>
+    <script src="APP/logout.js "></script>
+    <script src="APP/emailVerification.js "></script>
+    <script src="APP/profileClient.js "></script>
+    <script src="APP/navbar.js "></script>
+    <script src="APP/searchCottages.js "></script>
+    <script src="APP/requestDeleteAcc.js "></script>
+    <script src="APP/sendComplaint.js "></script>
+    <script src="APP/complaints.js "></script>
     <script src="APP/app.js "></script>
-    <style>
-
-        @import 'CSS/home.css';
-    </style>
+    
 </body>
 
 </html>

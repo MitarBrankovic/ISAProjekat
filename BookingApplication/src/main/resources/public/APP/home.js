@@ -100,7 +100,7 @@ template: `
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">{{a.description}}</li>
                                 <li class="list-group-item">{{a.city}} {{a.address}}</li>
-                                <li class="list-group-item">Max num of people: {{a.maxAmountOfPeople}}</li>
+                                <li class="list-group-item">Instructor: {{a.fishingInstructor.name}} {{a.fishingInstructor.surname}}</li>
                                 <li class="list-group-item">{{a.priceAndInfo}}</li>
                             </ul>
                             <div class="card-body">

@@ -8,6 +8,7 @@ Vue.component("SearchAdventures",{
                 addressDesc:false,
                 name:"",
                 address:"",
+                instructor:""
 
             }
         }
@@ -17,6 +18,7 @@ Vue.component("SearchAdventures",{
             <h3 id="search3">Search adventures</h3>
             <input type="text" v-model="search.name" placeholder="name"/>
             <input type="text" v-model="search.address" placeholder="address"/>
+            <input type="text" v-model="search.instructor" placeholder="instructor"/>
             <button type="button" v-on:click="searchFun()" class="btn btn-sm btn-primary bi bi-search">Search</button>
             <button type="button" v-on:click="cancelSearch()" class="btn btn-sm btn-outline-danger bi bi-x">Cancel search</button>
             <br>
@@ -76,6 +78,7 @@ Vue.component("SearchAdventures",{
             this.search.addressDesc = false      
             this.search.name="",
             this.search.address="",
+            this.search.instructor="",
             console.log("Klik!")
             this.$emit('clicked', this.search)
         }

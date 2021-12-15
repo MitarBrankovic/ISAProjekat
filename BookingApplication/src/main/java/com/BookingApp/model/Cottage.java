@@ -28,13 +28,14 @@ public class Cottage {
 	//public String termini;
 	@Column
 	public String rules;
-	//public String cenovnik;
+	public String priceList;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public CottageOwner cottageOwner;
 	
 	public Cottage() {}
 
-	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules) {
+	
+	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -43,6 +44,7 @@ public class Cottage {
 		this.roomsNum = roomsNum;
 		this.bedsNum = bedsNum;
 		this.rules = rules;
+		this.priceList = priceList;
 	}
 	
 	

@@ -37,7 +37,7 @@ template: `
                                 <li class="list-group-item">Num of beds: {{c.bedsNum}}</li>
                             </ul>
                             <div class="card-body">
-                                <button style="margin-left: 2%;" type="button" class="btn btn-secondary">Informacije</button>
+                                <button style="margin-left: 2%;" type="button" v-on:click="showCottageInformation(c.id)" class="btn btn-secondary">Informacije</button>
                                 <button style="margin-left: 8%;" type="button" class="btn btn-primary">Izmeni</button>
                                 <button style="margin-left: 8%;" type="button" class="btn btn-danger">Obrisi</button>
                             </div>
@@ -188,7 +188,10 @@ template: `
             .then(response=>{
                 this.cottages = response.data
             })
-        }
+        },
+		showCottageInformation(id){
+			this.$router.push("/profileCottage?id=" + id)
+		}
     },
     
     mounted() {

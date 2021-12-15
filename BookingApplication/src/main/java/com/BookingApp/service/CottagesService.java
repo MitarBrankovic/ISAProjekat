@@ -2,12 +2,14 @@ package com.BookingApp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -134,5 +136,13 @@ public class CottagesService {
 		
 		
 		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
+	}
+	@GetMapping(path = "/getSelectedCottage/{cottageId}")
+	public ResponseEntity<Cottage> getSelectedCottage(@PathVariable("cottageId") long id)
+	{
+		Optional<Cottage> cottage = cottageRepository.findById(id);
+		Cottage cottageNew = cottage.get();
+		
+		return new ResponseEntity<Cottage>(cottageNew,HttpStatus.OK);
 	}
 }

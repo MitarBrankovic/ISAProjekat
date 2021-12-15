@@ -29,7 +29,7 @@ const router = new VueRouter({
         { path: '/sendComplaint', component: SendComplaint },
         { path: '/complaints', component: Complaints },
 		{ path: '/profileCottage', component: ProfileCottage },
-		{ path: '/profileBoat', component: ProfileBoat }
+		{ path: '/profileBoat', component: ProfileBoat },
         { path: '/profileFishingInstructor', component: ProfileFishingInstructor },
         { path: '/fishingInstructorsAdventures', component: FishingInstructorsAdventures },
     ]

@@ -28,6 +28,7 @@ public class Cottage {
 	//public String termini;
 	@Column
 	public String rules;
+	@Column
 	public String priceList;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public CottageOwner cottageOwner;

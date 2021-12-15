@@ -42,6 +42,10 @@ public class FishingAppointment {
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Client client;
 	
+	public FishingAppointment() {
+		super();
+	}
+	
 	public FishingAppointment(int id, LocalDateTime appointmentStart, String address, String city, long duration,
 			int maxAmountOfPeople, AppointmentType appointmentType, String extraNotes, long price, int clientId) {
 		super();

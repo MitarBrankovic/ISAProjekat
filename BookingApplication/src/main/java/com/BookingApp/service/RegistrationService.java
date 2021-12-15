@@ -1,5 +1,8 @@
 package com.BookingApp.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
@@ -24,6 +27,7 @@ import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
 import com.BookingApp.repository.ShipOwnerRepository;
 import com.BookingApp.repository.UserRepository;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 
 @RestController
 @RequestMapping("/registration")
@@ -80,7 +84,7 @@ public class RegistrationService {
 					cottageOwnerRepository.save(cottageOwner);
 				}
 				else if(appUser.role == UserType.fishing_instructor) {
-					FishingInstructor fishingInstructor = new FishingInstructor(appUser, "");
+					FishingInstructor fishingInstructor = new FishingInstructor(appUser, "", "Biografijica", LocalDateTime.now(), LocalDateTime.now().plusDays(14));
 					fishingInstructorRepository.save(fishingInstructor);
 				}
 				else if(appUser.role == UserType.ship_owner) {

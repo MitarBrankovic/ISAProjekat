@@ -64,9 +64,9 @@ Vue.component("Register", {
                 <label class="col-sm-2 col-form-label" for="role"><b>Role</b></label>
 				<select v-model="role" class="col-sm-2 col-form-select">
 					<option value="client">Client</option>
-				    <option value="cottageOwner">Cottage owner</option>
-                    <option value="shipOwner">Ship owner</option>
-                    <option value="fishingInstructor">Fishing instructor</option>
+				    <option value="cottage_owner">Cottage owner</option>
+                    <option value="ship_owner">Ship owner</option>
+                    <option value="fishing_instructor">Fishing instructor</option>
 				</select>
 				<br>
 				

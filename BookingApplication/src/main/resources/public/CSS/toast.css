@@ -21,7 +21,10 @@ html{
       text-align: center;
     vertical-align: middle; 
     }
-
+  
+    a{
+      color: #eae7dc;
+    }
   
     #tabs
     {
@@ -37,7 +40,20 @@ html{
       background: #424242;
       color: white;
     }
-
+  
+    a:hover 
+    {
+       color: #424242 !important;
+    }
+  
+    button:hover 
+    {
+      color: #424242 !important;
+    }
+  
+    button:focus{
+        color: #424242;
+    }
   
     .intro{
       height:100%

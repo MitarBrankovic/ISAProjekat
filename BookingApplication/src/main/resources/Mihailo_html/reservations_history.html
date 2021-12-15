@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="CSS/toast.css" type="text/css">
+    <title>Booking Application</title>
+</head>
+
+<body>
+
+    <div style="margin-top: 1%;" class="container-fluid">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Korisnik</th>
+              <th scope="col">Datum</th>
+              <th scope="col">Usluga</th>
+              <th scope="col">Adresa</th>
+              <th scope="col">Cena</th>
+              <th scope="col">Profil</th>
+              <th scope="col">Izvestaj</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Misa</td>
+              <td>24.4.2021.</td>
+              <td>Pecanje</td>
+              <td>Nikole Tesle 23, Palic</td>
+              <td>2500</td>
+              <td>
+              	  <button type="button" class="btn btn-primary">Profil korisnika</button>
+              </td>
+              <td>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#logInModal">Popuni izvestaj</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="modal fade" id="logInModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Prijava</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <span class="input-group-text" id="basic-addon1" style="margin-top: 5%;">Korisničko ime:</span>
+                  <input type="text"  class="form-control" placeholder="Unesite korisničko ime...">
+                  <span class="input-group-text" id="basic-addon1" style="margin-top: 5%;">Lozinka:</span>
+                  <input type="password" class="form-control" placeholder="Unesite lozinku...">
+                  <select class="form-select"  style="margin-top: 5%;">
+                    <option value="" selected>Uloga</option>
+                    <option value="customer">Kupac</option>
+                    <option value="deliveryman">Dostavljač</option>
+                    <option value="administrator">Administrator</option>
+                    <option value="manager">Menadžer</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
+</html>

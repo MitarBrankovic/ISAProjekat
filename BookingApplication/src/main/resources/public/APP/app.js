@@ -11,6 +11,8 @@ const SendComplaint = { template: '<SendComplaint></SendComplaint>' }
 const Complaints = { template: '<Complaints></Complaints>' }
 const ProfileCottage = { template: '<ProfileCottage></ProfileCottage>'}
 const ProfileBoat = {template : '<ProfileBoat></ProfileBoat>'}
+const ProfileFishingInstructor = { template: '<ProfileFishingInstructor></ProfileFishingInstructor>' }
+const FishingInstructorsAdventures = { template: '<FishingInstructorsAdventures></FishingInstructorsAdventures>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -28,6 +30,8 @@ const router = new VueRouter({
         { path: '/complaints', component: Complaints },
 		{ path: '/profileCottage', component: ProfileCottage },
 		{ path: '/profileBoat', component: ProfileBoat }
+        { path: '/profileFishingInstructor', component: ProfileFishingInstructor },
+        { path: '/fishingInstructorsAdventures', component: FishingInstructorsAdventures },
     ]
 
 });

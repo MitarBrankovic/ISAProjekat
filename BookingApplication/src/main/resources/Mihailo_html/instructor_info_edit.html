@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="CSS/toast.css" type="text/css">
+    <title>Booking Application</title>
+</head>
+
+<body>
+    <div class="container-fluid my-container">
+        <div class="row my-row  justify-content-around">
+            <div class="col-sm-6 my-col">
+                <span class="input-group-text" id="basic-addon1" style="margin-top: 2%;">Ime:</span>
+                <input type="text" id="nameInput"  class="form-control" placeholder="Unesite ime...">
+                <span class="input-group-text" id="basic-addon1" style="margin-top: 3%;">Prezime:</span>
+                <input type="text" id="lastnameInput"  class="form-control" placeholder="Unesite prezime...">
+                <span class="input-group-text" id="basic-addon1" style="margin-top: 3%;">E-mail adresa:</span>
+                <input type="text" id="usernameInput" class="form-control" placeholder="Unesite korisničko ime...">
+                <span class="input-group-text" id="basic-addon1" style="margin-top: 3%;">Lozinka:</span>
+                <input type="password" id="passwordInput"  class="form-control" placeholder="Unesite lozinku...">
+                <span class="input-group-text" id="basic-addon1" style="margin-top: 3%;">Adresa:</span>
+                <input type="text" id="addressInput"   class="form-control" placeholder="Unesite adresu (ulica, broj)...">
+                <span class="input-group-text" id="basic-addon1" style="margin-top: 3%;">Grad:</span>
+                <input type="text" id="birthDateInput" class="form-control" placeholder="Unesite grad...">
+                <span class="input-group-text" id="basic-addon1" style="margin-top: 3%;">Država:</span>
+                <input type="text" id="birthDateInput" class="form-control" placeholder="Unesite državu...">
+                <span class="input-group-text" id="basic-addon1" style="margin-top: 3%;">Broj telefona:</span>
+                <input type="text" id="birthDateInput"  class="form-control" placeholder="Unesite broj telefona...">
+            </div>
+            <div class="col-sm-6 my-col">
+                <div class="row my-row" style="margin-top: 2%;">
+                    <div class="col col-sm-3">
+                        <input type="date" v-model="orderSearchQuery.dateDown" class="form-control" placeholder="Datum-od">
+                          <span class="input-group-text" id="basic-addon1">Datum-od</span>
+                      </div>
+                      <div class="col col-sm-3">
+                        <input type="time" class="form-control" placeholder="Datum-od">
+                          <span class="input-group-text" id="basic-addon1">Vreme-od</span> 
+                      </div>
+                      <div class="col col-sm-3">
+                        <input type="date" v-model="orderSearchQuery.dateUp" class="form-control" placeholder="Datum-do">
+                          <span class="input-group-text" id="basic-addon1">Datum-do</span>
+                      </div>
+                      <div class="col col-sm-3">
+                        <input type="time" class="form-control" placeholder="Datum-od">
+                          <span class="input-group-text" id="basic-addon1">Vreme-do</span> 
+                      </div>
+                </div>
+                <div class="row my-row" style="margin-top: 2%;">
+                    <div class="col col-sm-4">
+                      </div>
+                    <div class="col col-sm-4">
+                        <button type="button" style="margin-top: 2%; margin-left: 7%;" v-on:click="enableInfoEdit()" class="btn btn-secondary btn-lg">Promeni dostupnost</button>
+                      </div>
+                      <div class="col col-sm-4">
+                        <button type="button" style="margin-top: 2%; margin-left: 7%;" v-on:click="enableInfoEdit()" class="btn btn-primary btn-lg">Sačuvaj dostupnost</button>
+                      </div>
+                </div>
+                <div style="margin-top: 5%; margin-left: 15%;">
+                    <img src="../images/myinfo.png" height="450" width="600">
+                </div>
+                <button type="button" style="margin-top: 7%; margin-left: 7%;" v-on:click="enableInfoEdit()" class="btn btn-secondary btn-lg">Promeni podatke</button>
+                <button type="button" style="margin-top: 7%; margin-left: 7%;"  v-on:click="saveInfoEdit()" class="btn btn-primary btn-lg">Sačuvaj izmene</button>
+                <button type="button" style="margin-top: 7%; margin-left: 7%;"  v-on:click="saveInfoEdit()" class="btn btn-danger btn-lg">Zahtev za brisanje naloga</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!--MODAL ZA DODAVANJE NOVE AKCIJE-->
+    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Akcija</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row my-row" style="margin-top: 2%;">
+                    <div class="col col-sm-6">
+                        <input type="date" v-model="orderSearchQuery.dateDown" class="form-control" placeholder="Datum-od">
+                          <span class="input-group-text" id="basic-addon1">Datum-od</span>
+                      </div>
+                      <div class="col col-sm-6">
+                        <input type="time" class="form-control" placeholder="Datum-od">
+                          <span class="input-group-text" id="basic-addon1">Vreme-od</span> 
+                      </div>
+                </div>
+                <div class="row my-row" style="margin-top: 2%;">
+                      <div class="col col-sm-6">
+                        <input type="date" v-model="orderSearchQuery.dateUp" class="form-control" placeholder="Datum-do">
+                          <span class="input-group-text" id="basic-addon1">Datum-do</span>
+                      </div>
+                      <div class="col col-sm-6">
+                        <input type="time" class="form-control" placeholder="Datum-od">
+                          <span class="input-group-text" id="basic-addon1">Vreme-do</span> 
+                      </div>
+                </div>
+              <span class="input-group-text" id="basic-addon1" style="margin-top: 2%;">Adresa:</span>
+              <input type="text" class="form-control" placeholder="Unesite adresu...">
+              <span class="input-group-text" id="basic-addon1" style="margin-top: 2%;">Grad:</span>
+              <input type="text" class="form-control" placeholder="Unesite grad...">
+              <span style="margin-top: 2%;" class="input-group-text">Maksimalni broj osoba:</span>
+              <input type="number" min="1" max="30" class="form-control">
+              <span class="input-group-text" style="margin-top: 2%;">Dodatne usluge:</span>
+              <textarea class="form-control" id="usernameInput" rows="3" placeholder="Unesite dodatne usluge..."></textarea>
+              <span class="input-group-text" id="basic-addon1" style="margin-top: 2%;">Cena:</span>
+              <input type="number" min="100" max="100000" step="100" class="form-control" placeholder="Unesite korisničko ime...">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Otkaži</button>
+              <button type="button" class="btn btn-danger">Dodaj akciju</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</body>
+
+</html>

@@ -12,8 +12,8 @@ insert into client (id, text) values ( 1, 'neki tekst');
 insert into client (id, text) values ( 2, 'neki tekst');
 insert into cottage_owner (id, cottage_text) values ( 3, 'neki tekst');
 insert into ship_owner (id, text) values ( 4, 'neki tekst');
-insert into fishing_instructor (id, text) values ( 5, 'neki tekst');
-insert into fishing_instructor (id, text) values ( 6, 'neki tekst');
+insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 5, 'neki tekst', 'biografija', '2021-12-12 12:00:00', '2021-12-27 12:00:00');
+insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 6, 'neki tekst', 'biografija coveka','2021-12-12 12:00:00', '2021-12-27 12:00:00');
 insert into admin (id, text) values ( 7, 'neki tekst');
 
 
@@ -22,7 +22,6 @@ insert into cottage (id, name, address, description, rooms_num, beds_num, rules,
 insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Zelena vikendica', 'Ledinci', 'Wow wow wow', 2, 12, 'Nema pravila','Wifi dan - 100 din', 3);
 insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Plava vikendica', 'Ledinci', 'Opis', 6, 4, 'Nema pravila','Dorucak - 30 din', 3);
 insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Bela vikendica', 'Ledinci', 'Najs', 1, 3, 'Nema pravila','Rucak - 70 din', 3);
-
 
 insert into request_delete_acc (id, app_user_id, is_finished, text) values ( nextval('request_seq_gen'), 2, false, 'Tekst zahteva');
 
@@ -34,8 +33,10 @@ insert into boat (id, name, boat_type, length, engine_number, engine_power,max_s
 insert into boat (id, name, boat_type, length, engine_number, engine_power,max_speed, navigation_equipment, address, description, capacity, rules, fishing_equipment, price_list, cancellation_terms, ship_owner_id ) values ( nextval('boat_seq_gen'), 'Brodic', 'Gliser',70.0, '23121SDC', 30, 60.0, 'Sonar', 'Bore Tirica 92', 'NAjjaci brod',50, 'Da se gliserise', 'Stap za pecanje', 'votkica - 200 din', 'free_cancellation',4);
 insert into boat (id, name, boat_type, length, engine_number, engine_power,max_speed, navigation_equipment, address, description, capacity, rules, fishing_equipment, price_list, cancellation_terms, ship_owner_id ) values ( nextval('boat_seq_gen'), 'AC4 brod', 'Gusarski brod',200.0, '2132dSD', 0, 30.0, '', 'Karibi 3', 'NAjjaci brod',50, 'Iz igrice Edward kapetan broda', 'Stap za pecanje', 'votkica - 200 din', 'free_cancellation',4);
 
-
-
-
-
-
+insert into fishing_adventure (id, name, address, city, description, photo, max_amount_of_people, behaviour_rules, equipment, price_and_info, cancelling_precentage, fishing_instructor_id) values ( nextval('fishing_adventure_seq_gen'), 'Pecanje - camac Romeo', 'Palicka 43', 'Subotica', 'Ne propustite divan dan na ovom skromnom camcu', 'Nesto', 5, 'Nema pravila', 'Stap za pecanje, udica, mamci', 'Cena: 3000, 6 sati', 0, 5);
+insert into fishing_adventure (id, name, address, city, description, photo, max_amount_of_people, behaviour_rules, equipment, price_and_info, cancelling_precentage, fishing_instructor_id) values ( nextval('fishing_adventure_seq_gen'), 'Pecanje - camac Gandalf', 'Strand 2', 'Novi Sad', 'Ne propustite divan dan na ovom carobnom camcu', 'Nesto', 7, 'You shall not pass', 'Stap za pecanje, udica, mamci, pice', 'Cena: 4000, 4 sata', 0, 5);
+insert into fishing_adventure (id, name, address, city, description, photo, max_amount_of_people, behaviour_rules, equipment, price_and_info, cancelling_precentage, fishing_instructor_id) values ( nextval('fishing_adventure_seq_gen'), 'Pecanje - camac Romeo', 'Kneza Lazara 22', 'Beograd', 'Ne propustite divan dan na ovom divnom camcu', 'Nesto', 5, 'Nema pravila', 'Stap za pecanje, udica, mamci', 'Cena: 2500, 5 sati', 10, 6);
+insert into fishing_appointment (id, appointment_start, address, city, duration, max_amount_of_people, appointment_type,  extra_notes, price, fishing_adventure_id, client_id) values ( nextval('fishing_appointment_seq_gen'), '2021-12-20 12:00:00', 'Palicka, 43', 'Subotica', 4, 8, 'regular', 'Nema dodatnih informacija', 2500, 1, 1);
+insert into fishing_appointment (id, appointment_start, address, city, duration, max_amount_of_people, appointment_type,  extra_notes, price, fishing_adventure_id, client_id) values ( nextval('fishing_appointment_seq_gen'), '2021-12-21 12:00:00', 'Palicka, 43', 'Subotica', 4, 7, 'quick', 'Nema dodatnih informacija', 2500, 1, 1);
+insert into fishing_appointment (id, appointment_start, address, city, duration, max_amount_of_people, appointment_type,  extra_notes, price, fishing_adventure_id, client_id) values ( nextval('fishing_appointment_seq_gen'), '2021-12-22 12:00:00', 'Palicka, 43', 'Subotica', 4, 6, 'quick', 'Nema dodatnih informacija', 2500, 1, 2);
+insert into fishing_appointment (id, appointment_start, address, city, duration, max_amount_of_people, appointment_type,  extra_notes, price, fishing_adventure_id, client_id) values ( nextval('fishing_appointment_seq_gen'), '2021-12-23 12:00:00', 'Palicka, 43', 'Subotica', 4, 5, 'regular', 'Nema dodatnih informacija', 2500, 1, 2);

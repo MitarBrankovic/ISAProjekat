@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-public class CottageAppointment {
+public class BoatAppointment {
 	@Id
 	@SequenceGenerator(name = "cottageAppointmentSeqGen", sequenceName = "cottageAppointmentSeqGen", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "cottageAppointmentSeqGen")
@@ -33,15 +33,15 @@ public class CottageAppointment {
 	@Column
 	public long price;
 	@ManyToOne(fetch = FetchType.EAGER)
-	public Cottage cottage;
+	public Boat boat;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Client client;
 	
-	public CottageAppointment() {
+	public BoatAppointment() {
 		super();
 	}
-	public CottageAppointment(long id, LocalDateTime appointmentStart, long duration, int maxAmountOfPeople,
-			AppointmentType appointmentType, String extraNotes, long price, Cottage cottage, Client client) {
+	public BoatAppointment(long id, LocalDateTime appointmentStart, long duration, int maxAmountOfPeople,
+			AppointmentType appointmentType, String extraNotes, long price, Boat boat, Client client) {
 		super();
 		this.id = id;
 		this.appointmentStart = appointmentStart;
@@ -50,7 +50,7 @@ public class CottageAppointment {
 		this.appointmentType = appointmentType;
 		this.extraNotes = extraNotes;
 		this.price = price;
-		this.cottage = cottage;
+		this.boat = boat;
 		this.client = client;
 	}
 }

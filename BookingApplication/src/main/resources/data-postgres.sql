@@ -17,11 +17,11 @@ insert into fishing_instructor (id, text) values ( 6, 'neki tekst');
 insert into admin (id, text) values ( 7, 'neki tekst');
 
 
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Zuta vikendica', 'Popovica', 'Wow kako je dobro', 3, 6, 'Nema pravila', 3);
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Crvena vikendica', 'Ledinci', 'Wow wow wow', 4, 4, 'Nema pravila', 3);
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Zelena vikendica', 'Ledinci', 'Wow wow wow', 2, 12, 'Nema pravila', 3);
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Plava vikendica', 'Ledinci', 'Opis', 6, 4, 'Nema pravila', 3);
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Bela vikendica', 'Ledinci', 'Najs', 1, 3, 'Nema pravila', 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list ,cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Zuta vikendica', 'Popovica', 'Wow kako je dobro', 3, 6, 'Nema pravila','10 dinala', 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Crvena vikendica', 'Ledinci', 'Wow wow wow', 4, 4, 'Nema pravila','Parking 100 din', 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Zelena vikendica', 'Ledinci', 'Wow wow wow', 2, 12, 'Nema pravila','Wifi dan - 100 din', 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Plava vikendica', 'Ledinci', 'Opis', 6, 4, 'Nema pravila','Dorucak - 30 din', 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id) values ( nextval('cottage_seq_gen'), 'Bela vikendica', 'Ledinci', 'Najs', 1, 3, 'Nema pravila','Rucak - 70 din', 3);
 
 
 insert into request_delete_acc (id, app_user_id, is_finished, text) values ( nextval('request_seq_gen'), 2, false, 'Tekst zahteva');

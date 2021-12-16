@@ -2,8 +2,11 @@ Vue.component("FishingInstructorsAdventures", {
     data: function() {
         return {
             activeUser:"",
+            instructorsId:"",
+            adventureId:"",
             newAdventure : {name: "", addres: "", description: "", instructorBiography: "", photo: "", maxAmountOfPeople: 1, 
             behaviourRules: "", equipment: "", priceAndInfo: "", cancellingPrecentage: 0},
+            adventures: ""
         }
     },
     template :`
@@ -82,91 +85,59 @@ Vue.component("FishingInstructorsAdventures", {
 
         <div class="container-fluid" style="margin-top: 2%; margin-left: 4mm;">
             <div class="row row-cols-1 row-cols-md-4 g-4">
-              <div class="col">
+              <div class="col" v-for="adventure in adventures">
                 <div class="card" style="width: 93%">
                   <img src="../images/fishing.jpg" width="300" height="220" class="card-img-top" alt="...">
                   <div class="card-body">
-                    <h5 class="card-title">Ime usluge</h5>
+                    <h5 class="card-title">{{ adventure.name }}</h5>
                   </div>
                   <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Opis ce biti malo veci pa da vidimo kako to izgleda na kartici</li>
-                    <li class="list-group-item">Adresa</li>
-                    <li class="list-group-item">Max osoba</li>
-                    <li class="list-group-item">4.5/5</li>
+                    <li class="list-group-item">{{ adventure.description }}</li>
+                    <li class="list-group-item">{{ adventure.address }}, {{ adventure.city }}</li>
+                    <li class="list-group-item">{{ adventure.maxAmountOfPeople }}</li>
+                    <li class="list-group-item">{{ adventure.rating }} /5</li>
                   </ul>
                   <div class="card-body">
-                    <button style="margin-left: 2%;" type="button" id="showArticles" class="btn btn-secondary">Informacije</button>
+                    <button style="margin-left: 2%;" type="button" v-on:click="getAdventureInfo(adventure.id)" id="showArticles" class="btn btn-secondary">Informacije</button>
                     <button style="margin-left: 8%;" type="button" id="showArticles" class="btn btn-primary">Izmeni</button>
                     <button style="margin-left: 8%;" type="button" id="showArticles" class="btn btn-danger">Obrisi</button>
                   </div>
                 </div>
-              </div>
-              <div class="col">
-                <div class="card" style="width: 93%">
-                  <img src="../images/fishing.jpg" width="300" height="220" class="card-img-top" alt="...">
-                  <div class="card-body">
-                    <h5 class="card-title">Ime usluge</h5>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Opis ce biti malo veci pa da vidimo kako to izgleda na kartici</li>
-                    <li class="list-group-item">Adresa</li>
-                    <li class="list-group-item">Max osoba</li>
-                    <li class="list-group-item">Rejting recimo</li>
-                  </ul>
-                  <div class="card-body">
-                    <button style="margin-left: 2%;" type="button" id="showArticles" class="btn btn-secondary">Informacije</button>
-                    <button style="margin-left: 8%;" type="button" id="showArticles" class="btn btn-primary">Izmeni</button>
-                    <button style="margin-left: 8%;" type="button" id="showArticles" class="btn btn-danger">Obrisi</button>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="card" style="width: 93%">
-                  <img src="../images/fishing.jpg" width="300" height="220" class="card-img-top" alt="...">
-                  <div class="card-body">
-                    <h5 class="card-title">Ime usluge</h5>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Opis ce biti malo veci pa da vidimo kako to izgleda na kartici</li>
-                    <li class="list-group-item">Adresa</li>
-                    <li class="list-group-item">Max osoba</li>
-                    <li class="list-group-item">Rejting recimo</li>
-                  </ul>
-                  <div class="card-body">
-                    <button style="margin-left: 2%;" type="button" id="showArticles" class="btn btn-secondary">Informacije</button>
-                    <button style="margin-left: 8%;" type="button" id="showArticles" class="btn btn-primary">Izmeni</button>
-                    <button style="margin-left: 8%;" type="button" id="showArticles" class="btn btn-danger">Obrisi</button>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="card" style="width: 93%">
-                  <img src="../images/fishing.jpg" width="300" height="220" class="card-img-top" alt="...">
-                  <div class="card-body">
-                    <h5 class="card-title">Ime usluge</h5>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Opis ce biti malo veci pa da vidimo kako to izgleda na kartici</li>
-                    <li class="list-group-item">Adresa</li>
-                    <li class="list-group-item">Max osoba</li>
-                    <li class="list-group-item">Rejting recimo</li>
-                  </ul>
-                  <div class="card-body">
-                    <button style="margin-left: 2%;" type="button" id="showArticles" class="btn btn-secondary">Informacije</button>
-                    <button style="margin-left: 8%;" type="button" id="showArticles" class="btn btn-primary">Izmeni</button>
-                    <button style="margin-left: 8%;" type="button" id="showArticles" class="btn btn-danger">Obrisi</button>
-                  </div>
-                </div>
-              </div>
               </div>
             </div>
           </div>
     </div>	  
+    </div>
     	`
     	,
     methods: {
+    getAdventureInfo(id){
+            this.adventureId = id;
+            this.$router.push({ path: '/selectedFishingAdventure', query: { id: this.adventureId }});
+        },
     },
     mounted(){
+      this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
+        if(this.activeUser.role != 'fishing_instructor')
+            this.$router.push('/')
+
+        instructorsId = this.activeUser.id 
+        axios
+        .get('/appUser/requestExists/' + instructorsId)
+        .then(response=>{
+            //window.location.reload()
+            this.sendCheck = response.data
+        })
+        .catch(error=>{
+            console.log("Greska.")	
+            alert("Podaci su lose uneti.")
+            window.location.reload()
+
+        })
+        axios
+        	.get('/fishingAdventures/getFishingInstructorsAdventures/' + instructorsId)
+	        .then(response => (this.adventures = response.data));
+	        console.log(this.adventures)
     },
 
 });

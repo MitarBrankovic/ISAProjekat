@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.BookingApp.dto.SearchCottageDto;
+import com.BookingApp.dto.SearchDto;
 import com.BookingApp.model.Cottage;
 import com.BookingApp.repository.CottageRepository;
 
@@ -40,7 +40,7 @@ public class CottagesService {
 	
 	
 	@PostMapping(path = "/searchCottages")
-	public ResponseEntity<List<Cottage>> searchCottages(@RequestBody SearchCottageDto dto)
+	public ResponseEntity<List<Cottage>> searchCottages(@RequestBody SearchDto dto)
 	{
 		String name = dto.name;
 		String address = dto.address;

@@ -1,6 +1,6 @@
 package com.BookingApp.dto;
 
-public class SearchCottageDto {
+public class SearchDto {
 
     public boolean nameAsc;
     public boolean nameDesc;
@@ -9,9 +9,9 @@ public class SearchCottageDto {
     public String name;
     public String address;
     
-    public SearchCottageDto() {}
+    public SearchDto() {}
 
-	public SearchCottageDto(boolean nameAsc, boolean nameDesc, boolean addressAsc, boolean addressDesc, String name,
+	public SearchDto(boolean nameAsc, boolean nameDesc, boolean addressAsc, boolean addressDesc, String name,
 			String address) {
 		super();
 		this.nameAsc = nameAsc;

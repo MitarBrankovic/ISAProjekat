@@ -2,6 +2,7 @@ Vue.component("ProfileCottage", {
     data: function() {
         return {
             cottage : "",
+			appointments : [],
         }
     },
     template : ` 
@@ -25,12 +26,12 @@ Vue.component("ProfileCottage", {
             <td></td>
         </thead>
         <tbody>
-            <tr>
-            <td>12.12.2020.</td>
-            <td>5 dana</td>
-            <td>4 osobe</td>
-            <td>Wifi</td>
-            <td>500 e</td>
+            <tr v-for="a in appointments">
+            <td>{{a.appointmentStart}}</td>
+            <td>{{a.duration}} dana</td>
+            <td>{{a.maxAmountOfPeople}}</td>
+            <td>{{a.extraNotes}}</td>
+            <td>{{a.price}}</td>
             <td><button type="button" class="btn btn-success">Zakazi</button> </td>
             </tr>
         </tbody>
@@ -46,6 +47,9 @@ Vue.component("ProfileCottage", {
         axios
             	.get("cottages/getSelectedCottage/" + this.$route.query.id)
 	            .then(response => (this.cottage = response.data));
+		axios
+            	.get("cottageAppointments/getAllQuickAppointments/" + this.$route.query.id)
+	            .then(response => (this.appointments = response.data));
     },
 
 });

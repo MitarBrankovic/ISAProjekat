@@ -51,7 +51,9 @@ public class FishingAdventure {
 	(mappedBy = "fishingAdventure", fetch = FetchType.EAGER, cascade= CascadeType.ALL)
 	public Set<FishingAppointment> fishingAppointments = new HashSet<FishingAppointment>();
 	
-	public FishingAdventure() {}
+	public FishingAdventure() {
+		super();
+	}
 	
 	public FishingAdventure(long id, String name, String address, String city, String description,
 			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, long rating,

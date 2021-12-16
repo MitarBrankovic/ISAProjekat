@@ -6,6 +6,8 @@ const Logout = { template: '<Logout></Logout>' }
 const ProfileClient = { template: '<ProfileClient></ProfileClient>' }
 const Navbar = { template: '<Navbar></Navbar>' }
 const SearchCottages = { template: '<SearchCottages></SearchCottages>' }
+const SearchBoats = { template: '<SearchBoats></SearchBoats>' }
+const SearchAdventures = { template: '<SearchAdventures></SearchAdventures>' }
 const RequestDeleteAcc = { template: '<RequestDeleteAcc></RequestDeleteAcc>' }
 const SendComplaint = { template: '<SendComplaint></SendComplaint>' }
 const Complaints = { template: '<Complaints></Complaints>' }
@@ -26,6 +28,8 @@ const router = new VueRouter({
         { path: '/profileClient', component: ProfileClient },
         { path: '/navbar', component: Navbar },
         { path: '/searchCottages', component: SearchCottages },
+        { path: '/searchBoats', component: SearchBoats },
+        { path: '/searchAdventures', component: SearchAdventures },
         { path: '/requestDeleteAcc', component: RequestDeleteAcc },
         { path: '/sendComplaint', component: SendComplaint },
         { path: '/complaints', component: Complaints },

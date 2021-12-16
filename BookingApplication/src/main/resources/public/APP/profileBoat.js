@@ -1,6 +1,7 @@
 Vue.component("ProfileBoat", {
     data: function() {
         return {
+            activeUser: "",
             boat : "",
 			appointments : [],
         }
@@ -39,7 +40,8 @@ Vue.component("ProfileBoat", {
             <td>{{a.maxAmountOfPeople}}</td>
             <td>{{a.extraNotes}}</td>
             <td>{{a.price}}</td>
-            <td><button type="button" class="btn btn-success">Zakazi</button> </td>
+            <td v-if="a.client==null"><button v-if="activeUser.role == 'client'" type="button" class="btn btn-success" v-on:click="scheduleAppointment(a)">Zakazi</button> </td>
+            <td v-else><p style="color:red;">Zakazano</p> </td>
             </tr>
         </tbody>
     </table>
@@ -48,15 +50,28 @@ Vue.component("ProfileBoat", {
     	`
     	,
     methods: {
-        
+        scheduleAppointment:function(appointment){
+            axios
+            .put('/boatAppointments/scheduleBoatAppointment/' + appointment.id + "/" + this.activeUser.id)
+            .then(response=>{
+                window.location.reload()
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+
+            })
+        }
     },
     mounted(){
+        this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
         axios
-            	.get("boats/getSelectedBoat/" + this.$route.query.id)
-	            .then(response => (this.boat = response.data));
+            .get("boats/getSelectedBoat/" + this.$route.query.id)
+            .then(response => (this.boat = response.data));
 		axios
-            	.get("boatAppointments/getAllQuickAppointments/" + this.$route.query.id)
-	            .then(response => (this.appointments = response.data));
+            .get("boatAppointments/getAllQuickAppointments/" + this.$route.query.id)
+            .then(response => (this.appointments = response.data));
     },
 
 });

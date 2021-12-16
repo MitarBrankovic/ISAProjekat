@@ -73,7 +73,7 @@ template: `
                                 <li class="list-group-item">{{b.address}}</li>
                             </ul>
                             <div class="card-body">
-                                <button style="margin-left: 2%;" type="button" class="btn btn-secondary">Info</button>
+                                <button style="margin-left: 2%;" type="button" v-on:click="showBoatInformation(b.id)" class="btn btn-secondary">Info</button>
                                 <button style="margin-left: 8%;" type="button" class="btn btn-primary">Izmeni</button>
                                 <button style="margin-left: 8%;" type="button" class="btn btn-danger">Obrisi</button>
                             </div>
@@ -157,19 +157,23 @@ template: `
         searchAdventures:function(search){
             console.log(search)
             axios
-            .post('/adventure/searchAdventures',search)
+            .post('/fishingAdventures/searchAdventures',search)
             .then(response=>{
                 this.adventures = response.data
             })
         },
 		showCottageInformation(id){
 			this.$router.push("/profileCottage?id=" + id)
+		},
+        showBoatInformation(id){
+			this.$router.push("/profileBoat?id=" + id)
 		}
+
     },
     
     mounted() {
         axios.all([axios.get('/cottages/getAllCottages'), axios.get('/boats/getAllBoats'),
-        axios.get('/adventure/getAllAdventures')]).then(axios.spread((...responses) => {
+        axios.get('/fishingAdventures/getAllAdventures')]).then(axios.spread((...responses) => {
            this.cottages = responses[0].data
            this.boats = responses[1].data
            this.adventures = responses[2].data

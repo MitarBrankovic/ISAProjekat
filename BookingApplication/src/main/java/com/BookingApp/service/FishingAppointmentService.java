@@ -9,16 +9,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.dto.FishingAppointmentDto;
+import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
+import com.BookingApp.model.Client;
+import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
+import com.BookingApp.model.FishingInstructor;
+import com.BookingApp.model.RequestDeleteAcc;
+import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.FishingAdventureRepository;
 import com.BookingApp.repository.FishingAppointmentRepository;
+import com.BookingApp.repository.FishingInstructorRepository;
+import com.BookingApp.repository.UserRepository;
+
 import java.util.Optional;
 
 @RestController
@@ -29,6 +39,8 @@ public class FishingAppointmentService {
 	private FishingAppointmentRepository fishingAppointmentRepository;
 	@Autowired
 	private FishingAdventureRepository fishingAdventureRepository;
+	@Autowired
+	private ClientRepository clientRepository;
 
 	public ResponseEntity<List<FishingAppointment>> getAdventureQuickAppointments(long id)
 	{
@@ -73,5 +85,40 @@ public class FishingAppointmentService {
 		}
 		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
 	}
+	
+	@PutMapping(path = "/scheduleAdventureAppointment/{adventureId}/{userId}")
+	public boolean scheduleAdventureAppointment(@PathVariable("adventureId") long id, @PathVariable("userId") long userId)
+	{
+		Optional<FishingAppointment> oldAppointment = fishingAppointmentRepository.findById(id);
+		Client client = new Client();
+		for(Client oldClient : clientRepository.findAll()) {
+			if(oldClient.id == userId) {
+				client = oldClient;
+			}
+		}
+		
+		if(oldAppointment.isPresent()) {
+			FishingAppointment appointment = oldAppointment.get();
+			appointment.client = client;
+			fishingAppointmentRepository.save(appointment);
+			return true;
+		}
+		return false;
+	}
+	
+	@PutMapping(path = "/cancelAdventureAppointment/{adventureId}")
+	public boolean cancelAdventureAppointment(@PathVariable("adventureId") long id)
+	{
+		Optional<FishingAppointment> oldAppointment = fishingAppointmentRepository.findById(id);
+
+		if(oldAppointment.isPresent()) {
+			FishingAppointment appointment = oldAppointment.get();
+			appointment.client = null;
+			fishingAppointmentRepository.save(appointment);
+			return true;
+		}
+		return false;
+	}
+	
 
 }

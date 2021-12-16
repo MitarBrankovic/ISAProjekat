@@ -1,8 +1,9 @@
 Vue.component("ProfileCottage", {
     data: function() {
         return {
+            activeUser: "",
             cottage : "",
-			appointments : [],
+			appointments : []
         }
     },
     template : ` 
@@ -23,7 +24,7 @@ Vue.component("ProfileCottage", {
             <td>Maksimalan broj osoba</td>
             <td>Dodatne usluge</td>
             <td>Cena</td>
-            <td></td>
+            <td>Stanje</td>
         </thead>
         <tbody>
             <tr v-for="a in appointments">
@@ -32,7 +33,8 @@ Vue.component("ProfileCottage", {
             <td>{{a.maxAmountOfPeople}}</td>
             <td>{{a.extraNotes}}</td>
             <td>{{a.price}}</td>
-            <td><button type="button" class="btn btn-success">Zakazi</button> </td>
+            <td v-if="a.client==null"><button v-if="activeUser.role == 'client'" type="button" class="btn btn-success" v-on:click="scheduleAppointment(a)">Zakazi</button> </td>
+            <td v-else><p style="color:red;">Zakazano</p> </td>
             </tr>
         </tbody>
     </table>
@@ -41,9 +43,22 @@ Vue.component("ProfileCottage", {
     	`
     	,
     methods: {
-        
+        scheduleAppointment:function(appointment){
+            axios
+            .put('/cottageAppointments/scheduleCottageAppointment/' + appointment.id + "/" + this.activeUser.id)
+            .then(response=>{
+                window.location.reload()
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+
+            })
+        }
     },
     mounted(){
+        this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
         axios
             	.get("cottages/getSelectedCottage/" + this.$route.query.id)
 	            .then(response => (this.cottage = response.data));

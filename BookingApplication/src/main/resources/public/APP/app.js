@@ -13,6 +13,7 @@ const ProfileCottage = { template: '<ProfileCottage></ProfileCottage>'}
 const ProfileBoat = {template : '<ProfileBoat></ProfileBoat>'}
 const ProfileFishingInstructor = { template: '<ProfileFishingInstructor></ProfileFishingInstructor>' }
 const FishingInstructorsAdventures = { template: '<FishingInstructorsAdventures></FishingInstructorsAdventures>' }
+const SelectedFishingAdventure = {  template: '<SelectedFishingAdventure></SelectedFishingAdventure>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -32,6 +33,8 @@ const router = new VueRouter({
 		{ path: '/profileBoat', component: ProfileBoat },
         { path: '/profileFishingInstructor', component: ProfileFishingInstructor },
         { path: '/fishingInstructorsAdventures', component: FishingInstructorsAdventures },
+        { path: '/selectedFishingAdventure', component: SelectedFishingAdventure },
+
     ]
 
 });

@@ -19,7 +19,7 @@ public class FishingAppointment {
 	@Id
 	@SequenceGenerator(name = "fishingAppointmentSeqGen", sequenceName = "fishingAppointmentSeqGen", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "fishingAppointmentSeqGen")
-	public int id;
+	public long id;
 	@Column
 	public LocalDateTime appointmentStart;
 	@Column
@@ -34,6 +34,8 @@ public class FishingAppointment {
 	@Column
 	public AppointmentType appointmentType;
 	@Column
+	public boolean available;
+	@Column
 	public String extraNotes;
 	@Column
 	public long price;
@@ -42,8 +44,10 @@ public class FishingAppointment {
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Client client;
 	
-	public FishingAppointment(int id, LocalDateTime appointmentStart, String address, String city, long duration,
-			int maxAmountOfPeople, AppointmentType appointmentType, String extraNotes, long price, int clientId) {
+	public FishingAppointment() {}
+	
+	public FishingAppointment(long id, LocalDateTime appointmentStart, String address, String city, long duration,
+			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, String extraNotes, long price) {
 		super();
 		this.id = id;
 		this.appointmentStart = appointmentStart;
@@ -52,6 +56,21 @@ public class FishingAppointment {
 		this.duration = duration;
 		this.maxAmountOfPeople = maxAmountOfPeople;
 		this.appointmentType =  appointmentType;
+		this.available = available;
+		this.extraNotes = extraNotes;
+		this.price = price;
+	}
+	
+	public FishingAppointment(LocalDateTime appointmentStart, String address, String city, long duration,
+			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, String extraNotes, long price) {
+		super();
+		this.appointmentStart = appointmentStart;
+		this.address = address;
+		this.city = city;
+		this.duration = duration;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+		this.appointmentType =  appointmentType;
+		this.available = available;
 		this.extraNotes = extraNotes;
 		this.price = price;
 	}

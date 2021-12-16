@@ -41,19 +41,20 @@ public class FishingAdventure {
 	@Column
 	public String priceAndInfo;
 	@Column
+	public long rating;
+	@Column
 	public long cancellingPrecentage;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public FishingInstructor fishingInstructor;
-	
 	@JsonIgnore
 	@OneToMany
 	(mappedBy = "fishingAdventure", fetch = FetchType.EAGER, cascade= CascadeType.ALL)
-	public Set<FishingAppointment> quickFishingAppointments = new HashSet<FishingAppointment>();
+	public Set<FishingAppointment> fishingAppointments = new HashSet<FishingAppointment>();
 	
 	public FishingAdventure() {}
 	
 	public FishingAdventure(long id, String name, String address, String city, String description,
-			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo,
+			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, long rating,
 			long cancellingPrecentage) {
 		super();
 		this.id = id;
@@ -66,6 +67,24 @@ public class FishingAdventure {
 		this.behaviourRules = behaviourRules;
 		this.equipment = equipment;
 		this.priceAndInfo = priceAndInfo;
+		this.rating = rating;
+		this.cancellingPrecentage = cancellingPrecentage;
+	}
+	
+	public FishingAdventure(String name, String address, String city, String description,
+			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, long rating,
+			long cancellingPrecentage) {
+		super();
+		this.name = name;
+		this.address = address;
+		this.city = city;
+		this.description = description;
+		this.photo = photo;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+		this.behaviourRules = behaviourRules;
+		this.equipment = equipment;
+		this.priceAndInfo = priceAndInfo;
+		this.rating = rating;
 		this.cancellingPrecentage = cancellingPrecentage;
 	}
 	

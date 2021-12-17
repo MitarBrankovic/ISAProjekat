@@ -104,7 +104,7 @@ template: `
                                 <li class="list-group-item">{{a.priceAndInfo}}</li>
                             </ul>
                             <div class="card-body">
-                                <button style="margin-left: 2%;" type="button" class="btn btn-secondary">Info</button>
+                                <button style="margin-left: 2%;" type="button" v-on:click="showAdventureInformation(a.id)" class="btn btn-secondary">Info</button>
                                 <button style="margin-left: 8%;" type="button" class="btn btn-primary">Izmeni</button>
                                 <button style="margin-left: 8%;" type="button" class="btn btn-danger">Obrisi</button>
                             </div>
@@ -167,6 +167,9 @@ template: `
 		},
         showBoatInformation(id){
 			this.$router.push("/profileBoat?id=" + id)
+		},
+        showAdventureInformation(id){
+			this.$router.push("/selectedFishingAdventure?id=" + id)
 		}
 
     },

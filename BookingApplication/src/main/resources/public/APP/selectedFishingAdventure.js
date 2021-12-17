@@ -32,7 +32,7 @@ Vue.component("SelectedFishingAdventure", {
             <td>Maksimalan broj osoba</td>
             <td>Dodatne usluge</td>
             <td>Cena</td>
-            <td></td>
+            <td>Stanje</td>
         </thead>
         <tbody>
             <tr v-for="appointment in appointments">
@@ -41,7 +41,8 @@ Vue.component("SelectedFishingAdventure", {
             <td>{{appointment.maxAmountOfPeople}}</td>
             <td>{{appointment.extraNotes}}</td>
             <td>{{appointment.price}} din.</td>
-            <td><button type="button" class="btn btn-danger">Obriši</button> </td>
+            <td v-if="appointment.client==null"><button v-if="activeUser.role == 'client'" type="button" class="btn btn-success" v-on:click="scheduleAppointment(appointment)">Zakazi</button> </td>
+            <td v-else><p style="color:red;">Zakazano</p> </td>
             </tr>
         </tbody>
     </table>
@@ -110,12 +111,23 @@ Vue.component("SelectedFishingAdventure", {
                    alert("Podaci su lose uneti.")
                    window.location.reload()
                })
-        }
+        },
+        scheduleAppointment:function(appointment){
+          axios
+          .put('/fishingAppointments/scheduleAdventureAppointment/' + appointment.id + "/" + this.activeUser.id)
+          .then(response=>{
+              window.location.reload()
+          })
+          .catch(error=>{
+              console.log("Greska.")	
+              alert("Podaci su lose uneti.")
+              window.location.reload()
+
+          })
+      }
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
-        if(this.activeUser.role != 'fishing_instructor')
-            this.$router.push('/')
 
         axios
             .get("fishingAdventures/getSelectedAdventure/" + this.$route.query.id)

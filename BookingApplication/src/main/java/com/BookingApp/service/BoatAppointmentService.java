@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.BoatReservedAppointmentDto;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Client;
+import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.repository.BoatAppointmentRepository;
 import com.BookingApp.repository.BoatRepository;
@@ -79,5 +81,26 @@ public class BoatAppointmentService {
 			return true;
 		}
 		return false;
+	}
+	
+	
+	@GetMapping(path = "/getReservedBoatAppointmentsByClient/{clientId}")
+	public ResponseEntity<List<BoatReservedAppointmentDto>> getReservedBoatAppointmentsByClient(@PathVariable("clientId") long id)
+	{	
+		List<BoatReservedAppointmentDto> dtos = new ArrayList<BoatReservedAppointmentDto>();
+		for(BoatAppointment boatAppointment : boatAppointmentRepository.findAll())
+		{
+			if(boatAppointment.client != null && boatAppointment.client.id == id && boatAppointment.appointmentStart.isAfter(LocalDateTime.now())) {
+				BoatReservedAppointmentDto dto = new BoatReservedAppointmentDto();
+				dto.appointment = boatAppointment;
+				if(LocalDateTime.now().isBefore(boatAppointment.appointmentStart.minusDays(3)))
+					dto.dateIsCorrect = true;
+				else
+					dto.dateIsCorrect = false;
+					
+				dtos.add(dto);
+			}
+		}
+		return new ResponseEntity<List<BoatReservedAppointmentDto>>(dtos,HttpStatus.OK);
 	}
 }

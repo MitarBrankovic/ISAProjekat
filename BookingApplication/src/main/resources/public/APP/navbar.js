@@ -11,22 +11,25 @@ Vue.component("Navbar", {
 		<div v-if="(activeUser===null)">
 			<a href="#">Something</a>
 		</div>
-	  <div class="topnav-right dropdown1" v-if="(activeUser !== null)">
+	<div class="topnav-right dropdown1" v-if="(activeUser !== null)">
 	  <button class="dropbtn1">Something
 		<i class="fa fa-caret-down"></i>
 	  </button>
-	  <div class="dropdown-content1" >
-		  <div v-if="(activeUser.role==='admin')">
-		  	<a href="#/requestDeleteAcc">Requsts for account delete</a>
-		  </div>
-		  <div v-if="(activeUser.role==='admin')">
-		  	<a href="#/complaints">Complaints</a>
-		  </div>
+	  	<div class="dropdown-content1" >
+			<div v-if="(activeUser.role==='admin')">
+				<a href="#/requestDeleteAcc">Requsts for account delete</a>
+			</div>
+			<div v-if="(activeUser.role==='admin')">
+				<a href="#/complaints">Complaints</a>
+			</div>
 			<div v-if="(activeUser.role==='admin') || (activeUser.role==='client')">
 			  <a href="#">Something</a>
 			</div>
-	  </div>
-		</div>
+			<div v-if="(activeUser.role==='client')">
+				<a href="#/scheduledAppointments">Zakazani termini</a>
+			</div>
+	 	</div>
+	</div>
 	  <a href="#contact">Contact</a>
 		<div class="topnav-right" v-if="(activeUser===null)">
 	    	<a href="/#/login">Login</a>

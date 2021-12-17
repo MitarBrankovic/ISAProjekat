@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.CottageReservedAppointmentDto;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.Client;
@@ -84,5 +85,25 @@ public class CottageAppointmentService {
 			return true;
 		}
 		return false;
+	}
+	
+	@GetMapping(path = "/getReservedCottAppointmentsByClient/{clientId}")
+	public ResponseEntity<List<CottageReservedAppointmentDto>> getReservedCottAppointmentsByClient(@PathVariable("clientId") long id)
+	{	
+		List<CottageReservedAppointmentDto> dtos = new ArrayList<CottageReservedAppointmentDto>();
+		for(CottageAppointment cottageAppointment : cottageAppointmentRepository.findAll())
+		{
+			if(cottageAppointment.client != null && cottageAppointment.client.id == id && cottageAppointment.appointmentStart.isAfter(LocalDateTime.now())) {
+				CottageReservedAppointmentDto dto = new CottageReservedAppointmentDto();
+				dto.appointment = cottageAppointment;
+				if(LocalDateTime.now().isBefore(cottageAppointment.appointmentStart.minusDays(3)))
+					dto.dateIsCorrect = true;
+				else
+					dto.dateIsCorrect = false;
+					
+				dtos.add(dto);
+			}
+		}
+		return new ResponseEntity<List<CottageReservedAppointmentDto>>(dtos,HttpStatus.OK);
 	}
 }

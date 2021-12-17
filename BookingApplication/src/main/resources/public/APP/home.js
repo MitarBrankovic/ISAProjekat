@@ -12,7 +12,7 @@ Vue.component("Home", {
 
 template: ` 
 	<div>
-        <div class="nav nav-tabs">
+        <div style="margin-top: 30px;" class="nav nav-tabs centerIt">
             <button class="button-tab nav-item" type="button" v-on:click="cottagesFun()">Cottages</button>
             <button class="button-tab nav-item" type="button" v-on:click="boatsFun()">Boats</button>
             <button class="button-tab nav-item" type="button" v-on:click="adventuresFun()">Adventures</button>

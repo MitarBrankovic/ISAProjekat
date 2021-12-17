@@ -49,6 +49,7 @@ public class FishingAdventureService {
 		}
 		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
 	}
+	
 	@GetMapping(path = "/getSelectedAdventure/{adventureId}")
 	public ResponseEntity<FishingAdventure> getSelectedCottage(@PathVariable("adventureId") long id)
 	{

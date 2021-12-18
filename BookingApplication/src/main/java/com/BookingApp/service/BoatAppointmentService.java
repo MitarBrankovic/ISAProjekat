@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.BookingApp.dto.BoatReservedAppointmentDto;
+import com.BookingApp.dto.ReservedBoatAppointmentDto;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Client;
@@ -85,13 +85,13 @@ public class BoatAppointmentService {
 	
 	
 	@GetMapping(path = "/getReservedBoatAppointmentsByClient/{clientId}")
-	public ResponseEntity<List<BoatReservedAppointmentDto>> getReservedBoatAppointmentsByClient(@PathVariable("clientId") long id)
+	public ResponseEntity<List<ReservedBoatAppointmentDto>> getReservedBoatAppointmentsByClient(@PathVariable("clientId") long id)
 	{	
-		List<BoatReservedAppointmentDto> dtos = new ArrayList<BoatReservedAppointmentDto>();
+		List<ReservedBoatAppointmentDto> dtos = new ArrayList<ReservedBoatAppointmentDto>();
 		for(BoatAppointment boatAppointment : boatAppointmentRepository.findAll())
 		{
 			if(boatAppointment.client != null && boatAppointment.client.id == id && boatAppointment.appointmentStart.isAfter(LocalDateTime.now())) {
-				BoatReservedAppointmentDto dto = new BoatReservedAppointmentDto();
+				ReservedBoatAppointmentDto dto = new ReservedBoatAppointmentDto();
 				dto.appointment = boatAppointment;
 				if(LocalDateTime.now().isBefore(boatAppointment.appointmentStart.minusDays(3)))
 					dto.dateIsCorrect = true;
@@ -101,6 +101,14 @@ public class BoatAppointmentService {
 				dtos.add(dto);
 			}
 		}
-		return new ResponseEntity<List<BoatReservedAppointmentDto>>(dtos,HttpStatus.OK);
+		return new ResponseEntity<List<ReservedBoatAppointmentDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getAllBoatAppointmentsByClient/{clientId}")
+	public ResponseEntity<List<BoatAppointment>> getAllBoatAppointmentsByClient(@PathVariable("clientId") long id)
+	{	
+		List<BoatAppointment> boats = boatAppointmentRepository.findAllAppointmentsByClient(id);
+		
+		return new ResponseEntity<List<BoatAppointment>>(boats,HttpStatus.OK);
 	}
 }

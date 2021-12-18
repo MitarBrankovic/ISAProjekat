@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.BookingApp.dto.FishingAppointmentReservedDto;
+import com.BookingApp.dto.ReservedFishingAppointmentDto;
 import com.BookingApp.dto.FishingAppointmentDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
@@ -123,13 +123,13 @@ public class FishingAppointmentService {
 	}
 	
 	@GetMapping(path = "/getReservedAdvAppointmentsByClient/{clientId}")
-	public ResponseEntity<List<FishingAppointmentReservedDto>> getReservedAdvAppointmentsByClient(@PathVariable("clientId") long id)
+	public ResponseEntity<List<ReservedFishingAppointmentDto>> getReservedAdvAppointmentsByClient(@PathVariable("clientId") long id)
 	{	
-		List<FishingAppointmentReservedDto> dtos = new ArrayList<FishingAppointmentReservedDto>();
+		List<ReservedFishingAppointmentDto> dtos = new ArrayList<ReservedFishingAppointmentDto>();
 		for(FishingAppointment fishingAppointment : fishingAppointmentRepository.findAll())
 		{
 			if(fishingAppointment.client != null && fishingAppointment.client.id == id && fishingAppointment.appointmentStart.isAfter(LocalDateTime.now())) {
-				FishingAppointmentReservedDto dto = new FishingAppointmentReservedDto();
+				ReservedFishingAppointmentDto dto = new ReservedFishingAppointmentDto();
 				dto.appointment = fishingAppointment;
 				if(LocalDateTime.now().isBefore(fishingAppointment.appointmentStart.minusDays(3)))
 					dto.dateIsCorrect = true;
@@ -139,7 +139,15 @@ public class FishingAppointmentService {
 				dtos.add(dto);
 			}
 		}
-		return new ResponseEntity<List<FishingAppointmentReservedDto>>(dtos,HttpStatus.OK);
+		return new ResponseEntity<List<ReservedFishingAppointmentDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getAllAdvAppointmentsByClient/{clientId}")
+	public ResponseEntity<List<FishingAppointment>> getAllAdvAppointmentsByClient(@PathVariable("clientId") long id)
+	{	
+		List<FishingAppointment> adventures = fishingAppointmentRepository.findAllAppointmentsByClient(id);
+		
+		return new ResponseEntity<List<FishingAppointment>>(adventures,HttpStatus.OK);
 	}
 	
 

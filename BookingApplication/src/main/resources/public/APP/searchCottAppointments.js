@@ -28,14 +28,14 @@ Vue.component("SearchCottAppointments",{
             <br>
         
             <div>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="dateAscFun()">Date ascending</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="dateDescFun()">Date descending</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="priceAscFun()">Price ascending</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="priceDescFun()">Price descending</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="durationAscFun()">Duration ascending</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="durationDescFun()">Duration descending</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="nameAscFun()">Name ascending</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="nameDescFun()">Name descending</button>
+                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="dateAscFun()">Date</button>
+                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="dateDescFun()">Date</button>
+                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="priceAscFun()">Price</button>
+                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="priceDescFun()">Price</button>
+                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="durationAscFun()">Duration</button>
+                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="durationDescFun()">Duration</button>
+                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="nameAscFun()">Name</button>
+                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="nameDescFun()">Name</button>
             </div>
         
         

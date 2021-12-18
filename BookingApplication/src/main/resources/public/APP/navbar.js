@@ -17,7 +17,7 @@ Vue.component("Navbar", {
 			</button>
 			<div class="dropdown-content1" >
 				<div v-if="(activeUser.role==='admin')">
-					<a href="#/requestDeleteAcc">Requsts for account delete</a>
+					<a href="#/requestDeleteAcc">Zahtev za brisanje naloga</a>
 				</div>
 				<div v-if="(activeUser.role==='admin')">
 					<a href="#/complaints">Complaints</a>
@@ -26,7 +26,7 @@ Vue.component("Navbar", {
 		</div>
 
 		<div class="topnav-right dropdown1" v-if="(activeUser !== null) && (activeUser.role==='client')">
-			<button class="dropbtn1">Something
+			<button class="dropbtn1">Termini
 				<i class="fa fa-caret-down"></i>
 			</button>
 			<div class="dropdown-content1" >
@@ -42,23 +42,23 @@ Vue.component("Navbar", {
 	  	<a href="#contact">Contact</a>
 		<div class="topnav-right" v-if="(activeUser===null)">
 	    	<a href="/#/login">Login</a>
-	    	<a href="/#/register">Register</a>
+	    	<a href="/#/register">Registruj se</a>
   		</div>
 
 		<div class="topnav-right dropdown1" v-if="(activeUser !== null)">
-			<button class="dropbtn1">Profile
+			<button class="dropbtn1">Profil
 				<i class="fa fa-caret-down"></i>
 			</button>
 			<div class="dropdown-content1" >
 				<div v-if="(activeUser.role==='client')">
-					<a href="/#/profileClient">My profile</a>
+					<a href="/#/profileClient">Moj profil</a>
 				</div>
 				<div v-if="(activeUser.role==='fishing_instructor')">
 					<a href="/#/fishingInstructorsAdventures">My adventures</a>
-					<a href="/#/profileFishingInstructor">My profile</a>
+					<a href="/#/profileFishingInstructor">Moj profil</a>
 				</div>
 				<div v-if="(activeUser.role==='client')">
-					<a href="/#/sendComplaint">Write a complaint</a>
+					<a href="/#/sendComplaint">Napisi zalbu</a>
 				</div>
 				<a href="/#/logout">Logout</a>
 			</div>

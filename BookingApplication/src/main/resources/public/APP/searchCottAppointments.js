@@ -20,7 +20,7 @@ Vue.component("SearchCottAppointments",{
     },
     template:`
         <div>
-            <h3 id="search3">Search cottages</h3>
+            <h3 id="search3">Pretraga termina vikendica</h3>
             <input type="text" v-model="search.name" placeholder="name"/>
             <input type="text" v-model="search.owner" placeholder="address"/>
             <button type="button" v-on:click="searchFun()" class="btn btn-sm btn-primary bi bi-search">Search</button>
@@ -28,14 +28,14 @@ Vue.component("SearchCottAppointments",{
             <br>
         
             <div>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="nameAscFun()">Name ascending</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="nameDescFun()">Name descending</button>
                 <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="dateAscFun()">Date ascending</button>
                 <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="dateDescFun()">Date descending</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="durationAscFun()">Duration ascending</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="durationDescFun()">Duration descending</button>
                 <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="priceAscFun()">Price ascending</button>
                 <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="priceDescFun()">Price descending</button>
+                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="durationAscFun()">Duration ascending</button>
+                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="durationDescFun()">Duration descending</button>
+                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="nameAscFun()">Name ascending</button>
+                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="nameDescFun()">Name descending</button>
             </div>
         
         
@@ -45,6 +45,7 @@ Vue.component("SearchCottAppointments",{
     `,
     methods:{
         searchFun:function(){
+            this.search.activeUserId = this.activeUser.id
             this.$emit('clicked',this.search)
         },
         nameAscFun: function(){

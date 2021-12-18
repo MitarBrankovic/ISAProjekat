@@ -19,7 +19,7 @@ Vue.component("HistoryReservations", {
             </div>
             <div v-if="cottagesButton">
                 <h2 class="flex title-div bigtitle">Istorija rezervacija vikendica</h2>
-                <SearchCottAppointments id="search" @clicked="searchCottAppointments"></SearchCottAppointments>
+                <SearchCottAppointments style="margin-top: 30px;" id="search" @clicked="searchCottAppointments"></SearchCottAppointments>
 
                 <div class="container-fluid">
                 <table class="table">
@@ -48,6 +48,8 @@ Vue.component("HistoryReservations", {
 
             <div v-else-if="boatsButton">
                 <h2 class="flex title-div bigtitle">Istorija rezervacija brodova</h2>
+                <SearchBoatAppointments style="margin-top: 30px;" id="search" @clicked="searchBoatAppointments"></SearchBoatAppointments>
+
                 <div class="container-fluid">
                 <table class="table">
                     <thead>
@@ -75,6 +77,8 @@ Vue.component("HistoryReservations", {
 
             <div v-else-if="adventuresButton">
                 <h2 class="flex title-div bigtitle">Istorija rezervacija avantura</h2>
+                <SearchAdvAppointments style="margin-top: 30px;" id="search" @clicked="searchAdvAppointments"></SearchAdvAppointments>
+
                 <div class="container-fluid">
                 <table class="table">
                     <thead>
@@ -149,18 +153,18 @@ Vue.component("HistoryReservations", {
                 this.cottages = response.data
             })
         },
-        searchBoats:function(search){
+        searchBoatAppointments:function(search){
             console.log(search)
             axios
-            .post('/boats/searchBoatAppointments',search)
+            .post('/boatAppointments/searchBoatAppointments',search)
             .then(response=>{
                 this.boats = response.data
             })
         },
-        searchAdventures:function(search){
+        searchAdvAppointments:function(search){
             console.log(search)
             axios
-            .post('/fishingAdventures/searchAdvAppointments',search)
+            .post('/fishingAppointments/searchAdvAppointments',search)
             .then(response=>{
                 this.adventures = response.data
             })

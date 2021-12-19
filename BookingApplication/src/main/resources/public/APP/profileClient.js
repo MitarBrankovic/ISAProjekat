@@ -25,15 +25,15 @@ Vue.component("ProfileClient", {
                 
                 
 				<label class="col-sm-2 col-form-label" for="email"><b>Email</b></label>
-			    <input class="col-sm-2 col-form-control" type="text" v-model="activeUser.email" readonly>
+			    <input class="col-sm-2 col-form-control" type="email" v-model="activeUser.email" readonly>
 				<br>
                 
                 <label class="col-sm-2 col-form-label" for="password"><b>Password</b></label>
-			    <input class="col-sm-2 col-form-control" type="password" v-model="activeUser.password" required>
+			    <input id="password" class="col-sm-2 col-form-control" type="password" v-model="activeUser.password" @change='check_pass()' required>
 				<br>
                 
 			    <label class="col-sm-2 col-form-label" for="password-repeat"><b>Repeat password</b></label>
-			    <input class="col-sm-2 col-form-control" type="password" v-model="activeUser.password" name="password-repeat" id="password-repeat" required>
+			    <input id="confirmPassword" class="col-sm-2 col-form-control" type="password" @change='check_pass()' required>
 			    <hr>
                 
 				<label class="col-sm-2 col-form-label" for="address"><b>Address</b></label>
@@ -53,7 +53,7 @@ Vue.component("ProfileClient", {
 
                 
                 <hr>
-                <button type="submit" class="button">Save</button>
+                <button id="submit" type="submit" class="button" disabled>Save</button>
                 <button type="button" class="button" v-on:click="editClick=false">Cancel</button>
             </form>
         </div>
@@ -71,7 +71,7 @@ Vue.component("ProfileClient", {
             
             
             <label class="col-sm-2 col-form-label" for="email"><b>Email</b></label>
-            <input class="col-sm-2 col-form-control" type="text" v-model="activeUser.email" readonly>
+            <input class="col-sm-2 col-form-control" type="email" v-model="activeUser.email" readonly>
             <br>
             
             <label class="col-sm-2 col-form-label" for="password"><b>Password</b></label>
@@ -151,6 +151,14 @@ Vue.component("ProfileClient", {
 
             })
 
+        },
+        check_pass(){
+            if (document.getElementById('password').value ==
+                    document.getElementById('confirmPassword').value) {
+                document.getElementById('submit').disabled = false;
+            } else {
+                document.getElementById('submit').disabled = true;
+            }
         }
     },
     mounted(){

@@ -77,6 +77,9 @@ public class RegistrationService {
 				t.start();	
 				appUser.verified = false;
 				appUser.verificationCode = verificationCode;
+				
+				if(!isNumber(appUser.phoneNumber))
+					return false;
 					
 				if(appUser.role == UserType.client) {
 					Client client = new Client(appUser, "");
@@ -163,6 +166,15 @@ public class RegistrationService {
 				return appUser;
 			else
 				return null;
+		}
+	}
+	
+	public boolean isNumber(String st) {
+		try {
+			Integer.parseInt(st);
+			return true;
+		}catch(NumberFormatException ex){
+			return false;
 		}
 	}
 }

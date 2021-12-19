@@ -111,7 +111,7 @@ public class SubscribeService {
 		SubscribeAdventure exist = subscribeAdvRepository.findByAdventure(sub.fishingAdventure.id);
 		
 		if(exist != null && exist.client.id == sub.client.id)
-			subscribeBoatRepository.deleteById(exist.id);
+			subscribeAdvRepository.deleteById(exist.id);
 			return true;
 	}
 	

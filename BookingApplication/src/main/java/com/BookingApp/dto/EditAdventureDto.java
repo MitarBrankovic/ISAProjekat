@@ -1,0 +1,37 @@
+package com.BookingApp.dto;
+
+public class EditAdventureDto {
+
+	public String name;
+	public String address;
+	public String city;
+	public String description;
+	public String photo;
+	public long maxAmountOfPeople;
+	public String behaviourRules;
+	public String equipment;
+	public double pricePerHour;
+	public long cancellingPrecentage;
+	public long adventureId;
+	
+	public EditAdventureDto() {}
+	
+	public EditAdventureDto(String name, String address, String city, String description, String photo,
+			long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour,
+			long cancellingPrecentage, long adventureId) {
+		super();
+		this.name = name;
+		this.address = address;
+		this.city = city;
+		this.description = description;
+		this.photo = photo;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+		this.behaviourRules = behaviourRules;
+		this.equipment = equipment;
+		this.pricePerHour = pricePerHour;
+		this.cancellingPrecentage = cancellingPrecentage;
+		this.adventureId = adventureId;
+	}
+	
+	
+}

@@ -17,7 +17,7 @@ public class PricelistItem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "pricelistSeqGen")
 	public long id;
 	@Column
-	public long price;
+	public double price;
 	@Column
 	public String description;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -25,21 +25,21 @@ public class PricelistItem {
 	
 	public PricelistItem() {}
 	
-	public PricelistItem(long id, long price, String description) {
+	public PricelistItem(long id, double price, String description) {
 		super();
 		this.id = id;
 		this.price = price;
 		this.description = description;
 	}
 
-	public PricelistItem(long price, String description, AppUser appUser) {
+	public PricelistItem(double price, String description, AppUser appUser) {
 		super();
 		this.price = price;
 		this.description = description;
 		this.appUser = appUser;
 	}
 
-	public PricelistItem(long price, String description) {
+	public PricelistItem(double price, String description) {
 		super();
 		this.price = price;
 		this.description = description;

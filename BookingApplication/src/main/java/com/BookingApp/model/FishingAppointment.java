@@ -38,7 +38,7 @@ public class FishingAppointment {
 	@Column
 	public String extraNotes;
 	@Column
-	public long price;
+	public double price;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public FishingAdventure fishingAdventure;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -47,7 +47,7 @@ public class FishingAppointment {
 	public FishingAppointment() {}
 	
 	public FishingAppointment(long id, LocalDateTime appointmentStart, String address, String city, long duration,
-			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, String extraNotes, long price) {
+			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, String extraNotes, double price) {
 		super();
 		this.id = id;
 		this.appointmentStart = appointmentStart;
@@ -62,7 +62,7 @@ public class FishingAppointment {
 	}
 	
 	public FishingAppointment(LocalDateTime appointmentStart, String address, String city, long duration,
-			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, String extraNotes, long price) {
+			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, String extraNotes, double price) {
 		super();
 		this.appointmentStart = appointmentStart;
 		this.address = address;

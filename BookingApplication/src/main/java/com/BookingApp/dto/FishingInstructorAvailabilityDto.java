@@ -1,38 +1,30 @@
 package com.BookingApp.dto;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
-public class FishingAppointmentDto {
-	
+public class FishingInstructorAvailabilityDto {
+
 	public String dateFrom;
 	public String timeFrom;
 	public String dateUntil;
 	public String timeUntil;
-	public String address;
-	public String city;
-	public int maxAmountOfPeople;
-	public String extraNotes;
-	public double price;
-	public long adventureId;
+	public long instructorsId;
 	
-	public FishingAppointmentDto() {}
-	
-	public FishingAppointmentDto(String dateFrom, String timeFrom, String dateUntil, String timeUntil, String address,
-			String city, int maxAmountOfPeople, String extraNotes, double price, long adventureId) {
+	public FishingInstructorAvailabilityDto() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public FishingInstructorAvailabilityDto(String dateFrom, String timeFrom, String dateUntil, String timeUntil,
+			long instructorsId) {
 		super();
 		this.dateFrom = dateFrom;
 		this.timeFrom = timeFrom;
 		this.dateUntil = dateUntil;
 		this.timeUntil = timeUntil;
-		this.address = address;
-		this.city = city;
-		this.maxAmountOfPeople = maxAmountOfPeople;
-		this.extraNotes = extraNotes;
-		this.price = price;
-		this.adventureId = adventureId;
+		this.instructorsId = instructorsId;
 	}
-	
+
 	public LocalDateTime formatDateFrom() {
 		String[] Date = this.dateFrom.split("-");
 		String[] Time = this.timeFrom.split(":");
@@ -55,8 +47,5 @@ public class FishingAppointmentDto {
 		return LocalDateTime.of(year, month, day, hour, minute);
 	}
 	
-	public long durationInHours() {
-		return ChronoUnit.HOURS.between(formatDateFrom(), formatDateUntil());
-	}
 	
 }

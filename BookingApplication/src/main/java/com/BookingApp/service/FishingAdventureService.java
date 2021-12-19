@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.EditAdventureDto;
+import com.BookingApp.dto.FishingAppointmentDto;
+import com.BookingApp.dto.NewAdventureDto;
+import com.BookingApp.dto.PricelistItemRemoveDto;
 import com.BookingApp.dto.SearchAdventureDto;
+import com.BookingApp.dto.SearchInstructorsAdventuresDto;
+import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.FishingAdventure;
+import com.BookingApp.model.FishingAppointment;
+import com.BookingApp.model.PricelistItem;
+import com.BookingApp.model.RequestDeleteAcc;
 import com.BookingApp.repository.FishingAdventureRepository;
+import com.BookingApp.repository.FishingAppointmentRepository;
+import com.BookingApp.repository.FishingInstructorRepository;
 
 @RestController
 @RequestMapping("/fishingAdventures")
@@ -25,6 +37,10 @@ public class FishingAdventureService {
 	
 	@Autowired
 	private FishingAdventureRepository fishingAdventureRepository;
+	@Autowired
+	private FishingInstructorRepository fishingInstructorRepository;
+	@Autowired
+	private FishingAppointmentRepository fishingAppointmentRepository;
 	
 	@GetMapping(path = "/getAllAdventures")
 	public ResponseEntity<List<FishingAdventure>> getAllAdventures()
@@ -39,24 +55,88 @@ public class FishingAdventureService {
 	}
 
 	@GetMapping(path = "/getFishingInstructorsAdventures/{instructorsId}")
-	public ResponseEntity<List<FishingAdventure>> getInstructorsAdventures(@PathVariable("instructorsId") long id)
+	public Set<FishingAdventure> getInstructorsAdventures(@PathVariable("instructorsId") long id)
 	{
-		List<FishingAdventure> adventures = new ArrayList<FishingAdventure>();
-		for(FishingAdventure adventure : fishingAdventureRepository.findAll())
-		{
-			if (adventure.fishingInstructor.id == id)
-				adventures.add(adventure);
-		}
-		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
+		return fishingAdventureRepository.findInstructorsAdventures(id);
 	}
 	
 	@GetMapping(path = "/getSelectedAdventure/{adventureId}")
-	public ResponseEntity<FishingAdventure> getSelectedCottage(@PathVariable("adventureId") long id)
+	public ResponseEntity<FishingAdventure> getSelectedAdventure(@PathVariable("adventureId") long id)
 	{
 		Optional<FishingAdventure> adventure = fishingAdventureRepository.findById(id);
 		FishingAdventure adventureNew = adventure.get();
 		
 		return new ResponseEntity<FishingAdventure>(adventureNew ,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/addNewAdventure")
+    public Set<FishingAdventure> addAdventure(@RequestBody NewAdventureDto adventureDTO)
+	{	
+		if(adventureDTO != null) {
+			FishingAdventure adventure = new FishingAdventure(adventureDTO.name, adventureDTO.address, adventureDTO.city, adventureDTO.description, 
+					adventureDTO.photo, adventureDTO.maxAmountOfPeople, adventureDTO.behaviourRules, adventureDTO.equipment, 
+					adventureDTO.pricePerHour, 0, adventureDTO.cancellingPrecentage);
+			adventure.fishingInstructor = fishingInstructorRepository.findById(adventureDTO.instructorsId).get();
+			fishingAdventureRepository.save(adventure);
+			return fishingAdventureRepository.findInstructorsAdventures(adventureDTO.instructorsId);
+		}
+		return null;
+	}
+	
+	@PostMapping(path = "/editAdventure")
+    public Set<FishingAdventure> editAdventure(@RequestBody EditAdventureDto adventureDTO)
+	{	
+		
+		if(adventureDTO != null) {
+			long instructorsId = fishingAdventureRepository.findById(adventureDTO.adventureId).get().fishingInstructor.id;
+			List<FishingAdventure> allAdventures = fishingAdventureRepository.findAll();
+			for (FishingAdventure adventure : allAdventures)
+				if (adventure.id == adventureDTO.adventureId) {
+					adventure.name = adventureDTO.name;
+					adventure.address = adventureDTO.address;
+					adventure.city = adventureDTO.city;
+					adventure.description = adventureDTO.description;
+					adventure.photo = adventureDTO.photo;
+					adventure.maxAmountOfPeople = adventureDTO.maxAmountOfPeople;
+					adventure.behaviourRules = adventureDTO.behaviourRules;
+					adventure.equipment = adventureDTO.equipment;
+					adventure.pricePerHour = adventureDTO.pricePerHour;
+					adventure.cancellingPrecentage = adventureDTO.cancellingPrecentage;
+				}
+			fishingAdventureRepository.saveAll(allAdventures);
+			return fishingAdventureRepository.findInstructorsAdventures(instructorsId);
+		}
+		return null;
+	}
+	
+	@PostMapping(path = "/checkAdventureRemoval/{adventureId}")
+    public boolean sendRequest(@PathVariable("adventureId") long id)
+	{	
+		Set<FishingAppointment> appointments = fishingAppointmentRepository.findAdventuresAppointments(id);
+		for (FishingAppointment fa : appointments) 
+			if (fa.client != null)
+				return false;
+		return true;
+	}
+	
+	@PostMapping(path = "/removeAdventure/{adventureId}")
+    public Set<FishingAdventure> removeAdventure(@PathVariable("adventureId") long id)
+	{	
+		long instructorsId = fishingAdventureRepository.findById(id).get().fishingInstructor.id;
+		System.out.println(instructorsId + " " + id);
+		List<FishingAdventure> list = fishingAdventureRepository.findAll();
+		List<FishingAdventure> list2 = new ArrayList<FishingAdventure>();
+		for (FishingAdventure a : list) {
+			list2.add(a);
+		}
+		for(FishingAdventure a : list) {
+			if(a.id == id)
+				list2.remove(a);
+		}
+		System.out.println(list2);
+		System.out.println(list);
+		fishingAdventureRepository.saveAll(list2);
+		return fishingAdventureRepository.findInstructorsAdventures(instructorsId);
 	}
 	
 	@PostMapping(path = "/searchAdventures")
@@ -88,6 +168,117 @@ public class FishingAdventureService {
 			adventures =  adventures.stream().filter(m -> (m.fishingInstructor.name + " " + m.fishingInstructor.surname).toLowerCase().contains(instructor.toLowerCase()))
 					.collect(Collectors.toList()); }
 			
+		if (nameAsc) {
+			int n = adventures.size();
+			FishingAdventure temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (adventures.get(j - 1).name
+							.compareTo(adventures.get(j).name) > 0) {
+						// swap elements
+						temp = adventures.get(j - 1);
+						adventures.set(j - 1, adventures.get(j));
+						adventures.set(j, temp);
+					}
+
+				}
+			}
+		}
+		
+		
+		if (nameDesc) {
+			int n = adventures.size();
+			FishingAdventure temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (adventures.get(j - 1).name
+							.compareTo(adventures.get(j).name) < 0) {
+						// swap elements
+						temp = adventures.get(j - 1);
+						adventures.set(j - 1, adventures.get(j));
+						adventures.set(j, temp);
+					}
+
+				}
+			}
+		}
+		
+		
+		if (addressAsc) {
+			int n = adventures.size();
+			FishingAdventure temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (adventures.get(j - 1).address
+							.compareTo(adventures.get(j).address) > 0) {
+						// swap elements
+						temp = adventures.get(j - 1);
+						adventures.set(j - 1, adventures.get(j));
+						adventures.set(j, temp);
+					}
+
+				}
+			}
+		}
+		
+		
+		if (addressDesc) {
+			int n = adventures.size();
+			FishingAdventure temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (adventures.get(j - 1).address
+							.compareTo(adventures.get(j).address) < 0) {
+						// swap elements
+						temp = adventures.get(j - 1);
+						adventures.set(j - 1, adventures.get(j));
+						adventures.set(j, temp);
+					}
+
+				}
+			}
+		}
+		
+		
+		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
+	}
+	
+	public List<FishingAdventure> getInstructorsSearchedAdventures(long id)
+	{
+		List<FishingAdventure> adventures = new ArrayList<FishingAdventure>();
+		for(FishingAdventure adventure : fishingAdventureRepository.findAll())
+		{
+			if (adventure.fishingInstructor.id == id)
+				adventures.add(adventure);
+		}
+		return adventures;
+	}
+	
+
+	@PostMapping(path = "/searchInstructorsAdventures")
+	public ResponseEntity<List<FishingAdventure>> searchInstructorsAdventures(@RequestBody SearchInstructorsAdventuresDto dto)
+	{
+		String name = dto.name;
+		String address = dto.address;
+		boolean nameAsc = dto.nameAsc;
+		boolean nameDesc = dto.nameDesc;
+		boolean addressAsc = dto.addressAsc;
+		boolean addressDesc = dto.addressDesc;
+		
+
+		List<FishingAdventure> adventures = getInstructorsSearchedAdventures(dto.instructorsId);
+
+		if (name.equals("") && address.equals(""))
+			adventures = getInstructorsSearchedAdventures(dto.instructorsId);
+		
+		if (!name.equals("")) {
+			adventures =  adventures.stream().filter(m -> m.name.toLowerCase().contains(name.toLowerCase()))
+					.collect(Collectors.toList()); }
+		
+		if (!address.equals("")) {
+			adventures =  adventures.stream().filter(m -> m.address.toLowerCase().contains(address.toLowerCase()))
+					.collect(Collectors.toList()); }
+		
 		if (nameAsc) {
 			int n = adventures.size();
 			FishingAdventure temp = null;

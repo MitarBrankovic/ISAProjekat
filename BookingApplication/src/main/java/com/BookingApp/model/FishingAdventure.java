@@ -10,9 +10,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+
+import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -30,33 +33,30 @@ public class FishingAdventure {
 	public String city;
 	@Column
 	public String description;
+	@Lob
 	@Column
 	public String photo;
 	@Column
-	public int maxAmountOfPeople;
+	public long maxAmountOfPeople;
 	@Column
 	public String behaviourRules;
 	@Column
 	public String equipment;
 	@Column
-	public String priceAndInfo;
+	public double pricePerHour;
 	@Column
 	public long rating;
 	@Column
 	public long cancellingPrecentage;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public FishingInstructor fishingInstructor;
-	@JsonIgnore
-	@OneToMany
-	(mappedBy = "fishingAdventure", fetch = FetchType.EAGER, cascade= CascadeType.ALL)
-	public Set<FishingAppointment> fishingAppointments = new HashSet<FishingAppointment>();
 	
 	public FishingAdventure() {
 		super();
 	}
 	
 	public FishingAdventure(long id, String name, String address, String city, String description,
-			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, long rating,
+			String photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, long rating,
 			long cancellingPrecentage) {
 		super();
 		this.id = id;
@@ -68,13 +68,13 @@ public class FishingAdventure {
 		this.maxAmountOfPeople = maxAmountOfPeople;
 		this.behaviourRules = behaviourRules;
 		this.equipment = equipment;
-		this.priceAndInfo = priceAndInfo;
+		this.pricePerHour = pricePerHour;
 		this.rating = rating;
 		this.cancellingPrecentage = cancellingPrecentage;
 	}
 	
 	public FishingAdventure(String name, String address, String city, String description,
-			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, long rating,
+			String photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, long rating,
 			long cancellingPrecentage) {
 		super();
 		this.name = name;
@@ -85,7 +85,7 @@ public class FishingAdventure {
 		this.maxAmountOfPeople = maxAmountOfPeople;
 		this.behaviourRules = behaviourRules;
 		this.equipment = equipment;
-		this.priceAndInfo = priceAndInfo;
+		this.pricePerHour = pricePerHour;
 		this.rating = rating;
 		this.cancellingPrecentage = cancellingPrecentage;
 	}

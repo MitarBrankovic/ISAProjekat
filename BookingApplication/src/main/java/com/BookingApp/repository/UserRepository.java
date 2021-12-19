@@ -10,4 +10,5 @@ import com.BookingApp.model.AppUser;
 public interface UserRepository  extends JpaRepository<AppUser, Long> {
 
 	public AppUser findByEmail(String email);
+	public AppUser findByVerificationCode(String verificationCode);
 }

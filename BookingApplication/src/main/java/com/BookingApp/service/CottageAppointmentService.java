@@ -121,6 +121,22 @@ public class CottageAppointmentService {
 	}
 	
 	
+	@GetMapping(path = "/getFinishedCottagesByClient/{clientId}")
+	public ResponseEntity<List<Cottage>> getFinishedCottAppointmentsByClient(@PathVariable("clientId") long id)
+	{	
+		List<CottageAppointment> appointments = new ArrayList<CottageAppointment>();
+		List<Cottage> cottages = new ArrayList<Cottage>();
+		for(CottageAppointment cottageAppointment : cottageAppointmentRepository.findAll())
+		{
+			if(cottageAppointment.client != null && cottageAppointment.client.id == id && cottageAppointment.appointmentStart.isBefore(LocalDateTime.now())) {
+				appointments.add(cottageAppointment);
+				cottages.add(cottageAppointment.cottage);
+			}
+		}
+		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
+	}
+	
+	
 	@PostMapping(path = "/searchCottAppointments")
 	public ResponseEntity<List<CottageAppointment>> searchCottAppointments(@RequestBody SearchAppointmentDto dto)
 	{

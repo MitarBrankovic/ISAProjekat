@@ -108,11 +108,11 @@ public class AdminService {
 					+	"\nWe will try to fix that issue.\n" + answerComplaintDto.text
 				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
 		String titleOwner = "Complaint on your product";
-		String bodyOwner = "Hello,\nYou have recived complaint on your product.\n" 
+		String bodyOwner = "Hello,\nYou have recived complaint on your product.\n" +  "Complaint: " + answerComplaintDto.complaint.text
 					+	"\nPlease try to fix that issue.\n"  + answerComplaintDto.text
 				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
-		Optional<AppUser> user = userRepository.findById(complaint.appUser.id);
-		Optional<AppUser> owner = userRepository.findById(complaint.cottage.cottageOwner.id);
+		Optional<AppUser> owner = userRepository.findById(complaint.owner);
+		Optional<AppUser> user = userRepository.findById(complaint.client.id);
 		AppUser appUser;
 		AppUser appOwner;
 		if(user.isPresent() && owner.isPresent()) {

@@ -2,21 +2,22 @@ package com.BookingApp.dto;
 
 
 import com.BookingApp.model.AppUser;
-import com.BookingApp.model.Cottage;
 
 public class ComplaintDto {
 
 	public String text;
-	public Cottage cottage;
-	public AppUser appUser;
+	public long entityId;
+	public long owner;
+	public AppUser client;
 	
 	
 	public ComplaintDto() {}
 
-	public ComplaintDto(String text, Cottage cottage, AppUser appUser) {
+	public ComplaintDto(String text, long entityId, long owner, AppUser client) {
 		this.text = text;
-		this.cottage = cottage;
-		this.appUser = appUser;
+		this.entityId = entityId;
+		this.owner = owner;
+		this.client = client;
 	}
 	
 	

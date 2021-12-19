@@ -48,8 +48,8 @@ public class ClientService {
 	@PostMapping(path = "/sendComplaint")
     public boolean sendComplaint(@RequestBody ComplaintDto complaintDto)
 	{	
-		if(complaintDto.cottage != null) {
-			Complaint complaint = new Complaint(complaintDto.text, complaintDto.cottage, complaintDto.appUser);
+		if(complaintDto.entityId != 0) {
+			Complaint complaint = new Complaint(complaintDto.text, complaintDto.entityId, complaintDto.owner, complaintDto.client);
 			complaintRepository.save(complaint);
 			return true;
 		}

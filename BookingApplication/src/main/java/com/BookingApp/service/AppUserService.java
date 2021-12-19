@@ -76,6 +76,6 @@ public class AppUserService {
 	{	
 		return new ResponseEntity<List<Complaint>>(complaintRepository.findAll(),HttpStatus.OK);
 	}
-	
+
 	
 }

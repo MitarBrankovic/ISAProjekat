@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.BookingApp.dto.ReservedBoatAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
 import com.BookingApp.model.AppointmentType;
+import com.BookingApp.model.Boat;
 import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Client;
 import com.BookingApp.model.CottageAppointment;
@@ -114,6 +115,21 @@ public class BoatAppointmentService {
 		List<BoatAppointment> boats = boatAppointmentRepository.findAllAppointmentsByClient(id);
 		
 		return new ResponseEntity<List<BoatAppointment>>(boats,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getFinishedBoatsByClient/{clientId}")
+	public ResponseEntity<List<Boat>> getFinishedBoatAppointmentsByClient(@PathVariable("clientId") long id)
+	{	
+		List<BoatAppointment> appointments = new ArrayList<BoatAppointment>();
+		List<Boat> boats = new ArrayList<Boat>();
+		for(BoatAppointment boatAppointment : boatAppointmentRepository.findAll())
+		{
+			if(boatAppointment.client != null && boatAppointment.client.id == id && boatAppointment.appointmentStart.isBefore(LocalDateTime.now())) {
+				appointments.add(boatAppointment);	
+				boats.add(boatAppointment.boat);
+			}
+		}
+		return new ResponseEntity<List<Boat>>(boats,HttpStatus.OK);
 	}
 	
 	@PostMapping(path = "/searchBoatAppointments")

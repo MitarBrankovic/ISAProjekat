@@ -5,7 +5,8 @@ Vue.component("Complaints", {
             complaints:null,
             answerClick:false,
             textAreaComplaint:"",
-            clickedComplaints:[]
+            clickedComplaints:[],
+
         }
     },
     template:`  
@@ -14,15 +15,15 @@ Vue.component("Complaints", {
             <div v-for="c in complaints" class="list-group container">
                 <div class="list-item">
                     <p>
-                        <b>User:</b> {{c.appUser.name}} {{c.appUser.surname}}<br>
+                        <b>Klijent:</b> {{c.client.name}} {{c.client.surname}}<br>
                         <b>Text of complaint:</b> {{c.text}}<br>
-                        <b>Owner:</b> {{c.cottage.cottageOwner.name}} {{c.cottage.cottageOwner.surname}}<br>
+                        <b>Id vlasnika:</b> {{c.owner}}<br>
                         <button class="btn btn-success" type="button" v-if="answerClick==false" v-on:click="addToClicked(c)">Open</button>
                         <br>
                     </p>
 
                     <div v-if="isClicked(c)">
-                    <textarea v-model="textAreaComplaint" id="deleteArea" placeholder="Write a response to the complaint here..." rows="4" cols="50"></textarea><br>
+                    <textarea v-model="textAreaComplaint" id="deleteArea" placeholder="Write a response to the complaint here..." rows="4" cols="50" required></textarea><br>
 
                         <button class="btn btn-success" type="button" v-on:click="answerComplaint(c)">Answer</button>
                         <button class="btn btn-danger" type="button" v-on:click="removeFromClicked(c)">Cancel</button>

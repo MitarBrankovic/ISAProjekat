@@ -25,7 +25,7 @@ insert into cottage (id, name, address, description, rooms_num, beds_num, rules,
 
 insert into request_delete_acc (id, app_user_id, is_finished, text) values ( nextval('request_seq_gen'), 2, false, 'Tekst zahteva');
 
-insert into complaint (id, text, app_user_id, cottage_id) values ( nextval('complaint_seq_gen'), 'Tekst zalbe', 2, 1);
+insert into complaint (id, text, entity_id, owner, client_id) values ( nextval('complaint_seq_gen'), 'Tekst zalbe', 1, 4, 1);
 
 insert into boat (id, name, boat_type, length, engine_number, engine_power,max_speed, navigation_equipment, address, description, capacity, rules, fishing_equipment, price_list, cancellation_terms, ship_owner_id ) values ( nextval('boat_seq_gen'), 'Titanik', 'Krstarica',120.0, '123DSAWE32', 75, 30.0, 'Gps', 'Bore Tirica 89', 'NAjjaci brod',50, 'Ne skaci sa broda', 'Stap za pecanje', 'votkica - 200 din', 'free_cancellation',4);
 insert into boat (id, name, boat_type, length, engine_number, engine_power,max_speed, navigation_equipment, address, description, capacity, rules, fishing_equipment, price_list, cancellation_terms, ship_owner_id ) values ( nextval('boat_seq_gen'), 'Brod 2', 'Camac',50.0, '213dasdda', 10, 50.0, 'Radio', 'Bore Tirica 90', 'Camac za bleju',50, 'Ne skaci sa broda', 'Stap za pecanje', 'votkica - 200 din', 'free_cancellation',4);

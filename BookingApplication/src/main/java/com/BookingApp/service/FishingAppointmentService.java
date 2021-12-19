@@ -145,6 +145,21 @@ public class FishingAppointmentService {
 		return new ResponseEntity<List<ReservedFishingAppointmentDto>>(dtos,HttpStatus.OK);
 	}
 	
+	@GetMapping(path = "/getFinishedAdventuresByClient/{clientId}")
+	public ResponseEntity<List<FishingAdventure>> getFinishedBoatAppointmentsByClient(@PathVariable("clientId") long id)
+	{	
+		List<FishingAppointment> appointments = new ArrayList<FishingAppointment>();
+		List<FishingAdventure> adventures = new ArrayList<FishingAdventure>();
+		for(FishingAppointment fishingAppointment : fishingAppointmentRepository.findAll())
+		{
+			if(fishingAppointment.client != null && fishingAppointment.client.id == id && fishingAppointment.appointmentStart.isBefore(LocalDateTime.now())) {
+				appointments.add(fishingAppointment);	
+				adventures.add(fishingAppointment.fishingAdventure);
+			}
+		}
+		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
+	}
+	
 	@GetMapping(path = "/getAllAdvAppointmentsByClient/{clientId}")
 	public ResponseEntity<List<FishingAppointment>> getAllAdvAppointmentsByClient(@PathVariable("clientId") long id)
 	{	

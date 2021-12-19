@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.BookingApp.dto.ComplaintDto;
+
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.Complaint;
 import com.BookingApp.repository.ClientRepository;
@@ -46,7 +46,7 @@ public class ClientService {
 	}
 	
 	@PostMapping(path = "/sendComplaint")
-    public boolean sendComplaint(@RequestBody ComplaintDto complaintDto)
+    public boolean sendComplaint(@RequestBody Complaint complaintDto)
 	{	
 		if(complaintDto.entityId != 0) {
 			Complaint complaint = new Complaint(complaintDto.text, complaintDto.entityId, complaintDto.owner, complaintDto.client);

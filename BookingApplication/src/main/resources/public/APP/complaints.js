@@ -17,7 +17,8 @@ Vue.component("Complaints", {
                     <p>
                         <b>Klijent:</b> {{c.client.name}} {{c.client.surname}}<br>
                         <b>Text of complaint:</b> {{c.text}}<br>
-                        <b>Id vlasnika:</b> {{c.owner}}<br>
+                        <b>Naziv vlasnika:</b> {{c.nameSurnameOwner}}<br>
+                        <b>Naziv usluge:</b> {{c.entity}}<br>
                         <button class="btn btn-success" type="button" v-if="answerClick==false" v-on:click="addToClicked(c)">Open</button>
                         <br>
                     </p>

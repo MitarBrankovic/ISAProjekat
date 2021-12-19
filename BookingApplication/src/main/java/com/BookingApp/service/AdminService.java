@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.dto.AnswerComplaintDto;
+import com.BookingApp.dto.ComplaintDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.Complaint;
 import com.BookingApp.model.RequestDeleteAcc;
@@ -102,7 +103,7 @@ public class AdminService {
 	@PostMapping(path="/answerComplaint")
 	public ResponseEntity<List<Complaint>> answerComplaint(@RequestBody AnswerComplaintDto answerComplaintDto)
 	{	
-		Complaint complaint  = answerComplaintDto.complaint;
+		ComplaintDto complaint  = answerComplaintDto.complaint;
 		String titleUser = "Answer on complaint";
 		String bodyUser = "Hello,\nWe're sorry that you have complaints.\n" 
 					+	"\nWe will try to fix that issue.\n" + answerComplaintDto.text
@@ -111,7 +112,7 @@ public class AdminService {
 		String bodyOwner = "Hello,\nYou have recived complaint on your product.\n" +  "Complaint: " + answerComplaintDto.complaint.text
 					+	"\nPlease try to fix that issue.\n"  + answerComplaintDto.text
 				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
-		Optional<AppUser> owner = userRepository.findById(complaint.owner);
+		Optional<AppUser> owner = userRepository.findById(complaint.ownerId);
 		Optional<AppUser> user = userRepository.findById(complaint.client.id);
 		AppUser appUser;
 		AppUser appOwner;
@@ -128,7 +129,7 @@ public class AdminService {
 					}
 				};
 				t.start();
-				complaintRepository.delete(complaint);
+				complaintRepository.deleteById(complaint.id);
 			return new ResponseEntity<List<Complaint>>(complaintRepository.findAll(),HttpStatus.OK);
 			} 
 			catch (Exception e) 

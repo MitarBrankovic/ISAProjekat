@@ -4,12 +4,12 @@ import com.BookingApp.model.Complaint;
 
 public class AnswerComplaintDto {
 
-	public Complaint complaint;
+	public ComplaintDto complaint;
 	public String text;
 	
 	public AnswerComplaintDto() {}
 
-	public AnswerComplaintDto(Complaint complaint, String text) {
+	public AnswerComplaintDto(ComplaintDto complaint, String text) {
 		super();
 		this.complaint = complaint;
 		this.text = text;

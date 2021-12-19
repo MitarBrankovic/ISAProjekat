@@ -16,26 +16,23 @@ public class Complaint {
 	public long id;
 	@Column
 	public String text;
-	@OneToOne
-	public Cottage cottage;
-	@OneToOne
-	public AppUser appUser;
-	/*@Column
-	public long cottage_id;
 	@Column
-	public long app_user_id;
-	*/
+	public long entityId;
+	@Column
+	public long owner;
+	@OneToOne
+	public AppUser client;
 	
 	public Complaint() {
 		super();
 	}
 
-	public Complaint(String text ,Cottage cottage, AppUser appUser) {
+	public Complaint(String text ,long entityId, long owner, AppUser client) {
 		super();
 		this.text = text;
-		this.cottage = cottage;
-		this.appUser = appUser;
-		//this.cottage_id = cottage.
+		this.entityId = entityId;
+		this.owner = owner;
+		this.client = client;
 	}
 
 	public Complaint(long id, String text) {

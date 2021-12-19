@@ -21,7 +21,7 @@ Vue.component("EmailVerification", {
     methods: {
         submitForm: function() {
             axios
-                .post("/registration/emailVerification", this.code + ";" + this.email)
+                .post("/registration/emailVerification", this.code)
                 .then(response => {
                 	this.isAuthenticated = response.data;
                 	if(this.isAuthenticated)
@@ -42,6 +42,21 @@ Vue.component("EmailVerification", {
     },
     mounted(){
         this.email = localStorage.getItem('email') 
+
+        axios
+        .post("/registration/emailVerification", this.$route.query.userCode)
+        .then(response => {
+            this.isAuthenticated = response.data;
+            if(this.isAuthenticated)
+            {
+                Swal.fire('Good job!','You clicked the button!','success')
+                this.$router.push("/")
+            }
+            else
+            {
+                Swal.fire('Any fool can use a computer')
+            }
+        })
     },
 
 });

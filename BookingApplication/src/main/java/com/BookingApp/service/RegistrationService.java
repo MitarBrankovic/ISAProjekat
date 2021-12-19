@@ -1,15 +1,15 @@
 package com.BookingApp.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +27,7 @@ import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
 import com.BookingApp.repository.ShipOwnerRepository;
 import com.BookingApp.repository.UserRepository;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+
 
 @RestController
 @RequestMapping("/registration")
@@ -58,9 +58,12 @@ public class RegistrationService {
 			if(!verification.containsKey(appUser.email))
 			{
 				verification.put(appUser.email, verificationCode);	
-			}			
+			}
+			String link = "http://localhost:8090/#/emailVerification?userCode=" + verificationCode;
+			
 			String body = "Hello,\nThank you for registering on our website. Below is your verification code.\n" 
-							  + "Your Code is: " + verificationCode + 
+							  + "Your Code is: " + verificationCode + "\n Or you can verify your account when you click on this link:"
+							  + "<a href=" + link + ">ACTIVATE ACCOUNT</a>" +
 							    "\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
 			String title = "Verification Code";
 			try 
@@ -74,6 +77,9 @@ public class RegistrationService {
 				t.start();	
 				appUser.verified = false;
 				appUser.verificationCode = verificationCode;
+				
+				if(!isNumber(appUser.phoneNumber))
+					return false;
 					
 				if(appUser.role == UserType.client) {
 					Client client = new Client(appUser, "");
@@ -102,23 +108,19 @@ public class RegistrationService {
 		return false;
 	}
 	
-	
+
 	@PostMapping(path = "/emailVerification")
-    public boolean verify(@RequestBody String get)
+    public boolean verify(@RequestBody String userCode)
 	{	
-		String[] tokens = get.split("%3B"); // Ascii ;
-		String code = tokens[0];
-		String badEmail = tokens[1];
-		
-		String emailParts[] = badEmail.split("%40"); // Ascii @
-		String email = emailParts[0] + "@" + emailParts[1].substring(0, emailParts[1].length() - 1);
-		
-		AppUser user = userRepository.findByEmail(email);
+		String codeTokens = userCode;
+		String code = codeTokens.split("=")[0];
+		AppUser user = userRepository.findByVerificationCode(code);
 		if(user != null)
 		{
 			if(user.verificationCode.equalsIgnoreCase(code))
 			{
 				user.verified = true;
+				user.verificationCode = null;
 				userRepository.save(user);
 				return true;
 			}
@@ -164,6 +166,15 @@ public class RegistrationService {
 				return appUser;
 			else
 				return null;
+		}
+	}
+	
+	public boolean isNumber(String st) {
+		try {
+			Integer.parseInt(st);
+			return true;
+		}catch(NumberFormatException ex){
+			return false;
 		}
 	}
 }

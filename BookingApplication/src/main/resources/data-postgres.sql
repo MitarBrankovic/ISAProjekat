@@ -25,7 +25,7 @@ insert into cottage (id, name, address, description, rooms_num, beds_num, rules,
 
 insert into request_delete_acc (id, app_user_id, is_finished, text) values ( nextval('request_seq_gen'), 2, false, 'Tekst zahteva');
 
-insert into complaint (id, text, app_user_id, cottage_id) values ( nextval('complaint_seq_gen'), 'Tekst zalbe', 2, 1);
+insert into complaint (id, text, entity_id, owner, client_id) values ( nextval('complaint_seq_gen'), 'Tekst zalbe', 1, 4, 1);
 
 insert into boat (id, name, boat_type, length, engine_number, engine_power,max_speed, navigation_equipment, address, description, capacity, rules, fishing_equipment, price_list, cancellation_terms, ship_owner_id ) values ( nextval('boat_seq_gen'), 'Titanik', 'Krstarica',120.0, '123DSAWE32', 75, 30.0, 'Gps', 'Bore Tirica 89', 'NAjjaci brod',50, 'Ne skaci sa broda', 'Stap za pecanje', 'votkica - 200 din', 'free_cancellation',4);
 insert into boat (id, name, boat_type, length, engine_number, engine_power,max_speed, navigation_equipment, address, description, capacity, rules, fishing_equipment, price_list, cancellation_terms, ship_owner_id ) values ( nextval('boat_seq_gen'), 'Brod 2', 'Camac',50.0, '213dasdda', 10, 50.0, 'Radio', 'Bore Tirica 90', 'Camac za bleju',50, 'Ne skaci sa broda', 'Stap za pecanje', 'votkica - 200 din', 'free_cancellation',4);
@@ -37,11 +37,13 @@ insert into cottage_appointment (id, appointment_start, duration, max_amount_of_
 insert into cottage_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, cottage_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2021-12-25 12:00:00', 2, 5, 'quick', 'Nema dodatnih informacija', 2500, 2, 1);
 insert into cottage_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, cottage_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2021-12-26 12:00:00', 3, 5, 'quick', 'Nema dodatnih informacija', 2500, 2, null);
 insert into cottage_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, cottage_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2021-12-28 12:00:00', 4, 5, 'regular', 'Nema dodatnih informacija', 2500, 1, 2);
+insert into cottage_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, cottage_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2019-12-28 12:00:00', 4, 5, 'regular', 'Nema dodatnih informacija', 3200, 1, 1);
 
 insert into boat_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, boat_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2021-12-20 12:00:00', 4, 5, 'quick', 'Nema dodatnih informacija', 3000, 5, 1);
 insert into boat_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, boat_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2022-12-28 12:00:00', 4, 5, 'quick', 'Nema dodatnih informacija', 2500, 5, 1);
 insert into boat_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, boat_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2021-12-28 12:00:00', 4, 5, 'quick', 'Nema dodatnih informacija', 2500, 5, null);
 insert into boat_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, boat_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2021-12-28 12:00:00', 4, 5, 'regular', 'Nema dodatnih informacija', 2500, 1, 1);
+insert into boat_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, boat_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2019-12-28 12:00:00', 4, 5, 'regular', 'Nema dodatnih informacija', 3200, 1, 1);
 
 insert into fishing_adventure (id, name, address, city, description, photo, max_amount_of_people, behaviour_rules, equipment, price_per_hour, rating, cancelling_precentage, fishing_instructor_id) values ( nextval('fishing_adventure_seq_gen'), 'Pecanje - camac Romeo', 'Palicka 43', 'Subotica', 'Ne propustite divan dan na ovom skromnom camcu', null, 5, 'Nema pravila', 'Stap za pecanje, udica, mamci', 500, 0, 0, 5);
 insert into fishing_adventure (id, name, address, city, description, photo, max_amount_of_people, behaviour_rules, equipment, price_per_hour, rating, cancelling_precentage, fishing_instructor_id) values ( nextval('fishing_adventure_seq_gen'), 'Pecanje - camac Gandalf', 'Strand 2', 'Novi Sad', 'Ne propustite divan dan na ovom carobnom camcu', null, 7, 'You shall not pass', 'Stap za pecanje, udica, mamci, pice', 500, 0, 0, 5);
@@ -50,6 +52,7 @@ insert into fishing_appointment (id, appointment_start, address, city, duration,
 insert into fishing_appointment (id, appointment_start, address, city, duration, max_amount_of_people, appointment_type, available, extra_notes, price, fishing_adventure_id, client_id) values ( nextval('fishing_appointment_seq_gen'), '2022-12-25 12:00:00', 'Palicka, 43', 'Subotica', 4, 7, 'quick', true, 'Nema dodatnih informacija', 2500, 1, 1);
 insert into fishing_appointment (id, appointment_start, address, city, duration, max_amount_of_people, appointment_type, available, extra_notes, price, fishing_adventure_id, client_id) values ( nextval('fishing_appointment_seq_gen'), '2021-12-22 12:00:00', 'Palicka, 43', 'Subotica', 4, 6, 'quick', true, 'Nema dodatnih informacija', 2500, 1, null);
 insert into fishing_appointment (id, appointment_start, address, city, duration, max_amount_of_people, appointment_type, available, extra_notes, price, fishing_adventure_id, client_id) values ( nextval('fishing_appointment_seq_gen'), '2021-12-23 12:00:00', 'Palicka, 43', 'Subotica', 4, 5, 'regular', true, 'Nema dodatnih informacija', 2500, 1, 2);
+insert into fishing_appointment (id, appointment_start, address, city, duration, max_amount_of_people, appointment_type, available, extra_notes, price, fishing_adventure_id, client_id) values ( nextval('fishing_appointment_seq_gen'), '2019-12-23 12:00:00', 'Palicka, 43', 'Subotica', 4, 5, 'regular', true, 'Nema dodatnih informacija', 3200, 1, 1);
 
 insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 400, 'Ručak', 5);
 insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 200, 'Dodatni mamci', 5);
@@ -58,4 +61,8 @@ insert into pricelist_item (id, price, description, app_user_id) values ( nextva
 insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 250, 'Dodatni mamci', 6);
 insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 1400, 'Profesionalni štap', 6);
 
+
+insert into subscribe_cottage (id, cottage_id, client) values (nextval('subs_cott_seq_gen'), 1, 1);
+insert into subscribe_boat (id, boat_id, client) values (nextval('subs_boat_seq_gen'), 1, 1);
+insert into subscribe_adventure (id, fishing_adventure_id, client) values (nextval('subs_adv_seq_gen'), 1, 1);
 

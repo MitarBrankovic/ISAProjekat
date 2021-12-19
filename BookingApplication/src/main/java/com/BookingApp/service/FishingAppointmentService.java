@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.BookingApp.dto.FishingAppointmentReservedDto;
+import com.BookingApp.dto.ReservedFishingAppointmentDto;
+import com.BookingApp.dto.SearchAppointmentDto;
 import com.BookingApp.dto.FishingAppointmentDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
+import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Client;
 import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.FishingAdventure;
@@ -32,6 +34,7 @@ import com.BookingApp.repository.FishingInstructorRepository;
 import com.BookingApp.repository.UserRepository;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/fishingAppointments")
@@ -123,13 +126,13 @@ public class FishingAppointmentService {
 	}
 	
 	@GetMapping(path = "/getReservedAdvAppointmentsByClient/{clientId}")
-	public ResponseEntity<List<FishingAppointmentReservedDto>> getReservedAdvAppointmentsByClient(@PathVariable("clientId") long id)
+	public ResponseEntity<List<ReservedFishingAppointmentDto>> getReservedAdvAppointmentsByClient(@PathVariable("clientId") long id)
 	{	
-		List<FishingAppointmentReservedDto> dtos = new ArrayList<FishingAppointmentReservedDto>();
+		List<ReservedFishingAppointmentDto> dtos = new ArrayList<ReservedFishingAppointmentDto>();
 		for(FishingAppointment fishingAppointment : fishingAppointmentRepository.findAll())
 		{
 			if(fishingAppointment.client != null && fishingAppointment.client.id == id && fishingAppointment.appointmentStart.isAfter(LocalDateTime.now())) {
-				FishingAppointmentReservedDto dto = new FishingAppointmentReservedDto();
+				ReservedFishingAppointmentDto dto = new ReservedFishingAppointmentDto();
 				dto.appointment = fishingAppointment;
 				if(LocalDateTime.now().isBefore(fishingAppointment.appointmentStart.minusDays(3)))
 					dto.dateIsCorrect = true;
@@ -139,8 +142,192 @@ public class FishingAppointmentService {
 				dtos.add(dto);
 			}
 		}
-		return new ResponseEntity<List<FishingAppointmentReservedDto>>(dtos,HttpStatus.OK);
+		return new ResponseEntity<List<ReservedFishingAppointmentDto>>(dtos,HttpStatus.OK);
 	}
 	
+	@GetMapping(path = "/getFinishedAdventuresByClient/{clientId}")
+	public ResponseEntity<List<FishingAdventure>> getFinishedBoatAppointmentsByClient(@PathVariable("clientId") long id)
+	{	
+		List<FishingAppointment> appointments = new ArrayList<FishingAppointment>();
+		List<FishingAdventure> adventures = new ArrayList<FishingAdventure>();
+		for(FishingAppointment fishingAppointment : fishingAppointmentRepository.findAll())
+		{
+			if(fishingAppointment.client != null && fishingAppointment.client.id == id && fishingAppointment.appointmentStart.isBefore(LocalDateTime.now())) {
+				appointments.add(fishingAppointment);	
+				adventures.add(fishingAppointment.fishingAdventure);
+			}
+		}
+		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getAllAdvAppointmentsByClient/{clientId}")
+	public ResponseEntity<List<FishingAppointment>> getAllAdvAppointmentsByClient(@PathVariable("clientId") long id)
+	{	
+		List<FishingAppointment> adventures = fishingAppointmentRepository.findAllAppointmentsByClient(id);
+		
+		return new ResponseEntity<List<FishingAppointment>>(adventures,HttpStatus.OK);
+	}
+	
+	
+	@PostMapping(path = "/searchAdvAppointments")
+	public ResponseEntity<List<FishingAppointment>> searchAdvAppointments(@RequestBody SearchAppointmentDto dto)
+	{
+		String name = dto.name;
+		String owner = dto.owner;
+	    boolean nameAsc = dto.nameAsc;
+	    boolean nameDesc = dto.nameAsc;
+	    boolean dateAsc = dto.dateAsc;
+	    boolean dateDesc = dto.dateDesc;
+	    boolean durationAsc = dto.durationAsc;
+	    boolean durationDesc = dto.durationDesc;
+	    boolean priceAsc = dto.priceAsc;
+	    boolean priceDesc = dto.priceDesc;
+	    long userId = dto.activeUserId;
+		
+
+		List<FishingAppointment> appointments = fishingAppointmentRepository.findAllAppointmentsByClient(userId);
+
+		if (name.equals("") && owner.equals(""))
+			appointments = fishingAppointmentRepository.findAllAppointmentsByClient(userId);
+		
+		if (!name.equals("")) {
+			appointments =  appointments.stream().filter(m -> m.fishingAdventure.name.toLowerCase().contains(name.toLowerCase()))
+					.collect(Collectors.toList()); }
+		
+		if (!owner.equals("")) {
+			appointments =  appointments.stream().filter(m -> (m.fishingAdventure.fishingInstructor.name + " " + m.fishingAdventure.fishingInstructor.surname).toLowerCase().contains(owner.toLowerCase()))
+					.collect(Collectors.toList()); }
+			
+		if (nameAsc) {
+			int n = appointments.size();
+			FishingAppointment temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (appointments.get(j - 1).fishingAdventure.name
+							.compareTo(appointments.get(j).fishingAdventure.name) > 0) {
+						// swap elements
+						temp = appointments.get(j - 1);
+						appointments.set(j - 1, appointments.get(j));
+						appointments.set(j, temp);
+					}
+
+				}
+			}
+		}
+		
+		
+		if (nameDesc) {
+			int n = appointments.size();
+			FishingAppointment temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (appointments.get(j - 1).fishingAdventure.name
+							.compareTo(appointments.get(j).fishingAdventure.name) < 0) {
+						// swap elements
+						temp = appointments.get(j - 1);
+						appointments.set(j - 1, appointments.get(j));
+						appointments.set(j, temp);
+					}
+
+				}
+			}
+		}
+
+		if (dateAsc) {
+			int n = appointments.size();
+			FishingAppointment temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (appointments.get(j - 1).appointmentStart.isAfter(appointments.get(j).appointmentStart)) {
+						// swap elements
+						temp = appointments.get(j - 1);
+						appointments.set(j - 1, appointments.get(j));
+						appointments.set(j, temp);
+					}
+
+				}
+			}
+		}
+		if (dateDesc) {
+			int n = appointments.size();
+			FishingAppointment temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (appointments.get(j - 1).appointmentStart.isBefore(appointments.get(j).appointmentStart)) {
+						// swap elements
+						temp = appointments.get(j - 1);
+						appointments.set(j - 1, appointments.get(j));
+						appointments.set(j, temp);
+					}
+
+				}
+			}
+		}
+		
+		if (durationAsc) {
+			int n = appointments.size();
+			FishingAppointment temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (appointments.get(j - 1).duration > appointments.get(j).duration) {
+						// swap elements
+						temp = appointments.get(j - 1);
+						appointments.set(j - 1, appointments.get(j));
+						appointments.set(j, temp);
+					}
+
+				}
+			}
+		}			
+		if (durationDesc) {
+			int n = appointments.size();
+			FishingAppointment temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (appointments.get(j - 1).duration < appointments.get(j).duration) {
+						// swap elements
+						temp = appointments.get(j - 1);
+						appointments.set(j - 1, appointments.get(j));
+						appointments.set(j, temp);
+					}
+
+				}
+			}
+		}
+		
+		
+		if (priceAsc) {
+			int n = appointments.size();
+			FishingAppointment temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (appointments.get(j - 1).price > appointments.get(j).price) {
+						// swap elements
+						temp = appointments.get(j - 1);
+						appointments.set(j - 1, appointments.get(j));
+						appointments.set(j, temp);
+					}
+
+				}
+			}
+		}			
+		if (priceDesc) {
+			int n = appointments.size();
+			FishingAppointment temp = null;
+			for (int i = 0; i < n; i++) {
+				for (int j = 1; j < (n - i); j++) {
+					if (appointments.get(j - 1).price < appointments.get(j).price) {
+						// swap elements
+						temp = appointments.get(j - 1);
+						appointments.set(j - 1, appointments.get(j));
+						appointments.set(j, temp);
+					}
+
+				}
+			}
+		}
+		
+		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
+	}
 
 }

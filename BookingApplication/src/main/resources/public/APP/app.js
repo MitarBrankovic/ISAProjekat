@@ -18,6 +18,10 @@ const FishingInstructorsAdventures = { template: '<FishingInstructorsAdventures>
 const SelectedFishingAdventure = {  template: '<SelectedFishingAdventure></SelectedFishingAdventure>' }
 const ScheduledAppointments = {  template: '<ScheduledAppointments></ScheduledAppointments>' }
 const SearchInstructorsAdventures = { template: '<SearchInstructorsAdventures></SearchInstructorsAdventures>' }
+const HistoryReservations = {  template: '<HistoryReservations></HistoryReservations>' }
+const SearchCottAppointments = {  template: '<SearchCottAppointments></SearchCottAppointments>' }
+const SearchBoatAppointments = {  template: '<SearchBoatAppointments></SearchBoatAppointments>' }
+const SearchAdvAppointments = {  template: '<SearchAdvAppointments></SearchAdvAppointments>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -42,6 +46,10 @@ const router = new VueRouter({
         { path: '/selectedFishingAdventure', component: SelectedFishingAdventure },
         { path: '/scheduledAppointments', component: ScheduledAppointments },
         { path: '/searchInstructorsAdventures', component: SearchInstructorsAdventures },
+        { path: '/historyReservations', component: HistoryReservations },
+        { path: '/searchCottAppointments', component: SearchCottAppointments },
+        { path: '/searchBoatAppointments', component: SearchBoatAppointments },
+        { path: '/searchAdvAppointments', component: SearchAdvAppointments },
 
     ]
 

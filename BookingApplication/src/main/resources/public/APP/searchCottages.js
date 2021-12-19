@@ -22,10 +22,10 @@ Vue.component("SearchCottages",{
             <br>
         
             <div>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="nameAscFun()">Name ascending</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="nameDescFun()">Name descending</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="addressAscFun()">Address ascending</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="addressDescFun()">Address descending</button>
+                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="nameAscFun()">Name</button>
+                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="nameDescFun()">Name</button>
+                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="addressAscFun()">Address</button>
+                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="addressDescFun()">Address</button>
             </div>
         
         

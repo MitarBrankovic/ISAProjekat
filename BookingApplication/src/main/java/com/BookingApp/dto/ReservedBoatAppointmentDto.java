@@ -2,15 +2,15 @@ package com.BookingApp.dto;
 
 import com.BookingApp.model.BoatAppointment;
 
-public class BoatReservedAppointmentDto {
+public class ReservedBoatAppointmentDto {
 	public BoatAppointment appointment;
 	public boolean dateIsCorrect;
 	
-	public BoatReservedAppointmentDto() {
+	public ReservedBoatAppointmentDto() {
 		super();
 	}
 
-	public BoatReservedAppointmentDto(BoatAppointment appointment, boolean dateIsCorrect) {
+	public ReservedBoatAppointmentDto(BoatAppointment appointment, boolean dateIsCorrect) {
 		super();
 		this.appointment = appointment;
 		this.dateIsCorrect = dateIsCorrect;

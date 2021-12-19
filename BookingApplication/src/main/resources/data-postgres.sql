@@ -64,5 +64,5 @@ insert into pricelist_item (id, price, description, app_user_id) values ( nextva
 
 insert into subscribe_cottage (id, cottage_id, client_id) values (nextval('subs_cott_seq_gen'), 1, 1);
 insert into subscribe_boat (id, boat_id, client_id) values (nextval('subs_boat_seq_gen'), 1, 1);
-insert into subscribe_adventure (id, fishing_adventure_id, client) values (nextval('subs_adv_seq_gen'), 1, 1);
+insert into subscribe_adventure (id, fishing_adventure_id, client_id) values (nextval('subs_adv_seq_gen'), 1, 1);
 

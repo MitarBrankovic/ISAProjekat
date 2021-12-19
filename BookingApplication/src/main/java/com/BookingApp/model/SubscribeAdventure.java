@@ -1,6 +1,5 @@
 package com.BookingApp.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,19 +15,19 @@ public class SubscribeAdventure {
 	public long id;
 	@OneToOne
 	public FishingAdventure fishingAdventure;
-	@Column
-	public long client;
+	@OneToOne
+	public Client client;
 	
 	
 	public SubscribeAdventure() {}
 
-	public SubscribeAdventure(long id, FishingAdventure fishingAdventure, long client) {
+	public SubscribeAdventure(long id, FishingAdventure fishingAdventure, Client client) {
 		this.id = id;
 		this.fishingAdventure = fishingAdventure;
 		this.client = client;
 	}
 	
-	public SubscribeAdventure(FishingAdventure fishingAdventure, long client) {
+	public SubscribeAdventure(FishingAdventure fishingAdventure, Client client) {
 		this.fishingAdventure = fishingAdventure;
 		this.client = client;
 	}

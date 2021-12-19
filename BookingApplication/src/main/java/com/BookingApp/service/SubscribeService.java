@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.model.SubscribeAdventure;
 import com.BookingApp.model.SubscribeBoat;
 import com.BookingApp.model.SubscribeCottage;
 import com.BookingApp.repository.SubscribeAdvRepository;
@@ -91,7 +92,34 @@ public class SubscribeService {
 	}
 	
 	
+	@PostMapping(path = "/subscribeAdventure")
+	public boolean subscribeAdventure(@RequestBody SubscribeAdventure sub)
+	{
+		SubscribeAdventure subscribeBoat = new SubscribeAdventure(sub.fishingAdventure, sub.client);
+		SubscribeAdventure exist = subscribeAdvRepository.findByAdventure(sub.fishingAdventure.id);
+		
+		if(exist != null && exist.client.id == sub.client.id)
+			return false;
+		
+		subscribeAdvRepository.save(subscribeBoat);
+		return true;
+	}
 	
+	@PostMapping(path = "/unsubscribeAdventure")
+	public boolean unsubscribeAdventure(@RequestBody SubscribeAdventure sub)
+	{
+		SubscribeAdventure exist = subscribeAdvRepository.findByAdventure(sub.fishingAdventure.id);
+		
+		if(exist != null && exist.client.id == sub.client.id)
+			subscribeBoatRepository.deleteById(exist.id);
+			return true;
+	}
 	
+	@GetMapping(path="/getAllSubscibedAdventures")
+	public ResponseEntity<List<SubscribeAdventure>> getAllSubscibedAdventures()
+	{	
+		return new ResponseEntity<List<SubscribeAdventure>>(subscribeAdvRepository.findAll(),HttpStatus.OK);
+	}
+
 	
 }

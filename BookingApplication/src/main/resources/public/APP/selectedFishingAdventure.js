@@ -1,6 +1,7 @@
 Vue.component("SelectedFishingAdventure", {
     data: function() {
         return {
+            activeUser:"",
             adventure: "",
             userId:"",
             quickAppointment: {dateFrom: "", timeFrom: "", dateUntil: "", timeUntil: "", address: "", 
@@ -9,6 +10,7 @@ Vue.component("SelectedFishingAdventure", {
             pricelist: "",
             newPricelistItem: {instructorsId: "", description: "", price: 100},
             removeItemObject: {itemId: "", instructorId: ""},
+            subscibedAdventures:[]
         }
     },
     template :`
@@ -23,7 +25,11 @@ Vue.component("SelectedFishingAdventure", {
     <br> Price list : {{adventure.priceAndInfo}}
     <br> Cancelation : {{adventure.cancellingPrecentage}} %
     <br> Rating : {{adventure.rating}} /5
-    </p>
+    </p><br>
+    <button v-if="activeUser.role == 'client' && !exist()" type="submit" class="button" v-on:click="subscribe()">Pretplati se</button>
+    <button v-if="activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
+
+    <br><br><hr>
     <div class="container-fluid">
     <table class="table">
         <thead>
@@ -178,11 +184,55 @@ Vue.component("SelectedFishingAdventure", {
                })
                
         },
+        subscribe:function(){
+            const subscribeAdventure = {
+                id: 0,
+                fishingAdventure: this.adventure,
+                client: this.activeUser
+            }
+            axios
+            .post('/subscribe/subscribeAdventure', subscribeAdventure)
+            .then(response=>{
+                window.location.reload()
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+            })
+        },
+        unsubscribe:function(){
+            const subscribeAdventure = {
+                id: 0,
+                fishingAdventure: this.adventure,
+                client: this.activeUser
+            }
+            axios
+            .post('/subscribe/unsubscribeAdventure', subscribeAdventure)
+            .then(response=>{
+                window.location.reload()
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+            })
+        },
+        exist:function(){
+            var postoji = false
+            for(var i = 0; i < this.subscibedAdventures.length; i++){
+                if(this.activeUser.id == this.subscibedAdventures[i].client.id && this.adventure.id == this.subscibedAdventures[i].fishingAdventure.id){
+                    postoji = true
+                    break
+                }
+            }
+            return postoji
+        }
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
 
-        axios
+        /*axios
             .get("fishingAdventures/getSelectedAdventure/" + this.$route.query.id)
 	        .then(response => (this.adventure = response.data))
             .catch(error=>{
@@ -205,7 +255,18 @@ Vue.component("SelectedFishingAdventure", {
                 console.log("Greska.")	
                 alert("Greska.")
                 window.location.reload()
-            })
+            })*/
+
+        axios.all([
+                axios.get("fishingAdventures/getSelectedAdventure/" + this.$route.query.id), 
+                axios.get("fishingAppointments/getQuickFishingAppointments/" + this.$route.query.id),
+                axios.get("pricelist/getInstructorsPricelist/" + this.activeUser.id),
+                axios.get('/subscribe/getAllSubscibedAdventures')]).then(axios.spread((...responses) => {
+            this.adventure = responses[0].data
+            this.appointments = responses[1].data
+            this.pricelist = responses[2].data
+            this.subscibedAdventures = responses[3].data
+        }))
     },
 
 });

@@ -72,7 +72,7 @@ Vue.component("ProfileBoat", {
             const subscibedBoat = {
                 id: 0,
                 boat: this.boat,
-                client: this.activeUser.id
+                client: this.activeUser
             }
             axios
             .post('/subscribe/subscribeBoat', subscibedBoat)
@@ -89,7 +89,7 @@ Vue.component("ProfileBoat", {
             const subscibedBoat = {
                 id: 0,
                 boat: this.boat,
-                client: this.activeUser.id
+                client: this.activeUser
             }
             axios
             .post('/subscribe/unsubscribeBoat', subscibedBoat)
@@ -105,7 +105,7 @@ Vue.component("ProfileBoat", {
         exist:function(){
             var postoji = false
             for(var i = 0; i < this.subscibedBoats.length; i++){
-                if(this.activeUser.id == this.subscibedBoats[i].client && this.boat.id == this.subscibedBoats[i].boat.id){
+                if(this.activeUser.id == this.subscibedBoats[i].client.id && this.boat.id == this.subscibedBoats[i].boat.id){
                     postoji = true
                     break
                 }

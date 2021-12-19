@@ -65,7 +65,7 @@ Vue.component("ProfileCottage", {
             const subscribeCottage = {
                 id: 0,
                 cottage: this.cottage,
-                client: this.activeUser.id
+                client: this.activeUser
             }
             axios
             .post('/subscribe/subscribeCottage', subscribeCottage)
@@ -82,7 +82,7 @@ Vue.component("ProfileCottage", {
             const subscribeCottage = {
                 id: 0,
                 cottage: this.cottage,
-                client: this.activeUser.id
+                client: this.activeUser
             }
             axios
             .post('/subscribe/unsubscribeCottage', subscribeCottage)
@@ -98,7 +98,7 @@ Vue.component("ProfileCottage", {
         exist:function(){
             var postoji = false
             for(var i = 0; i < this.subscibedCottages.length; i++){
-                if(this.activeUser.id == this.subscibedCottages[i].client && this.cottage.id == this.subscibedCottages[i].cottage.id){
+                if(this.activeUser.id == this.subscibedCottages[i].client.id && this.cottage.id == this.subscibedCottages[i].cottage.id){
                     postoji = true
                     break
                 }

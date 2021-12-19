@@ -37,7 +37,7 @@ public class SubscribeService {
 		SubscribeCottage subscribeCottage = new SubscribeCottage(sub.cottage, sub.client);
 		SubscribeCottage exist = subscribeCottageRepository.findByCottage(sub.cottage.id);
 		
-		if(exist != null && exist.client == sub.client)
+		if(exist != null && exist.client.id == sub.client.id)
 			return false;
 		
 		subscribeCottageRepository.save(subscribeCottage);
@@ -49,7 +49,7 @@ public class SubscribeService {
 	{
 		SubscribeCottage exist = subscribeCottageRepository.findByCottage(sub.cottage.id);
 		
-		if(exist != null && exist.client == sub.client)
+		if(exist != null && exist.client.id == sub.client.id)
 			subscribeCottageRepository.deleteById(exist.id);
 			return true;
 	}
@@ -67,7 +67,7 @@ public class SubscribeService {
 		SubscribeBoat subscribeBoat = new SubscribeBoat(sub.boat, sub.client);
 		SubscribeBoat exist = subscribeBoatRepository.findByBoat(sub.boat.id);
 		
-		if(exist != null && exist.client == sub.client)
+		if(exist != null && exist.client.id == sub.client.id)
 			return false;
 		
 		subscribeBoatRepository.save(subscribeBoat);
@@ -79,7 +79,7 @@ public class SubscribeService {
 	{
 		SubscribeBoat exist = subscribeBoatRepository.findByBoat(sub.boat.id);
 		
-		if(exist != null && exist.client == sub.client)
+		if(exist != null && exist.client.id == sub.client.id)
 			subscribeBoatRepository.deleteById(exist.id);
 			return true;
 	}

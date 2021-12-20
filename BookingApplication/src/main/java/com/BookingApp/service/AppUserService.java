@@ -118,6 +118,12 @@ public class AppUserService {
 
 		return new ResponseEntity<List<ComplaintDto>>(dtos,HttpStatus.OK);
 	}
+	
+	@GetMapping(path = "/getUser/{userId}")
+    public AppUser getUser(@PathVariable("userId") long id)
+	{	
+		return userRepository.findById(id).get();
+	}
 
 	
 }

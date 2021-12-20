@@ -54,8 +54,9 @@ Vue.component("Navbar", {
 					<a href="/#/profileClient">Moj profil</a>
 				</div>
 				<div v-if="(activeUser.role==='fishing_instructor')">
-					<a href="/#/fishingInstructorsAdventures">My adventures</a>
+					<a href="/#/fishingInstructorsAdventures">Avanture</a>
 					<a href="/#/profileFishingInstructor">Moj profil</a>
+					<a href="/#/historyOfFishingAppointments">Rezervacije</a>
 				</div>
 				<div v-if="(activeUser.role==='client')">
 					<a href="/#/sendComplaint">Napisi zalbu</a>

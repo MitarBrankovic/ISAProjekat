@@ -36,6 +36,8 @@ public class FishingAppointment {
 	@Column
 	public boolean available;
 	@Column
+	public double rating;
+	@Column
 	public String extraNotes;
 	@Column
 	public double price;
@@ -47,7 +49,7 @@ public class FishingAppointment {
 	public FishingAppointment() {}
 	
 	public FishingAppointment(long id, LocalDateTime appointmentStart, String address, String city, long duration,
-			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, String extraNotes, double price) {
+			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, double rating, String extraNotes, double price) {
 		super();
 		this.id = id;
 		this.appointmentStart = appointmentStart;
@@ -57,12 +59,13 @@ public class FishingAppointment {
 		this.maxAmountOfPeople = maxAmountOfPeople;
 		this.appointmentType =  appointmentType;
 		this.available = available;
+		this.rating = rating;
 		this.extraNotes = extraNotes;
 		this.price = price;
 	}
 	
 	public FishingAppointment(LocalDateTime appointmentStart, String address, String city, long duration,
-			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, String extraNotes, double price) {
+			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, double rating, String extraNotes, double price) {
 		super();
 		this.appointmentStart = appointmentStart;
 		this.address = address;
@@ -71,6 +74,7 @@ public class FishingAppointment {
 		this.maxAmountOfPeople = maxAmountOfPeople;
 		this.appointmentType =  appointmentType;
 		this.available = available;
+		this.rating = rating;
 		this.extraNotes = extraNotes;
 		this.price = price;
 	}

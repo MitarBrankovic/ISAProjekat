@@ -8,6 +8,8 @@ Vue.component("ProfileFishingInstructor", {
             timeUntil: "",
             instructorUser: "",
             availabilityEdit: { dateFrom: "", dateUntil: "", timeFrom: "", timeUntil: "", instructorsId: ""},
+            sendCheck:false,
+            textAreaDelete: "",
         }
     },
     template :`
@@ -70,10 +72,32 @@ Vue.component("ProfileFishingInstructor", {
             </div>
             <button type="button" style="margin-top: 5%; margin-left: 7%;" v-on:click="enableInfoEdit()" class="btn btn-secondary btn-lg">Promeni podatke</button>
             <button type="button" style="margin-top: 5%; margin-left: 7%;" v-on:click="saveInfoEdit()" class="btn btn-primary btn-lg">Sačuvaj izmene</button>
-            <button type="button" style="margin-top: 5%; margin-left: 7%;" class="btn btn-danger btn-lg">Zahtev za brisanje naloga</button>
+            <button type="button" style="margin-top: 5%; margin-left: 7%;" data-bs-toggle="modal" data-bs-target="#deleteAccountReq" class="btn btn-danger btn-lg">Zahtev za brisanje naloga</button>
         </div>
     </div>
 </div>
+
+<!-- Modal za slanje zahteva za brisanje naloga -->
+	<div class="modal fade" id="deleteAccountReq" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Zahtev za brisanje naloga</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <span class="input-group-text" style="margin-top: 1%;">Razlozi brisanja naloga:</span>
+            <textarea class="form-control" v-model="textAreaDelete" rows="8" placeholder="Unesite razloge zbog kojih brišete nalog..."></textarea>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-primary" v-on:click="sendRequest()">Pošalji zahtev</button>
+	        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Otkaži</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
 </div>
 </div>	  
     	`
@@ -134,6 +158,33 @@ Vue.component("ProfileFishingInstructor", {
 			}
         },
         
+        sendRequest(){
+        	if (this.textAreaDelete == "") {
+        		Swal.fire({icon: 'error', title: 'Greška', text: 'Popunite polje za razlog brisanja naloga !'})
+        	} else {
+        	if (!this.sendCheck) {
+	            axios
+	            .post('/appUser/sendRequest/' + this.textAreaDelete + "/" + this.activeUser.id)
+	            .then(response=>{
+	                //window.location.reload()
+	                this.editClick = false
+	                this.sendCheck = response.data
+	                $('#deleteAccountReq').modal('hide');
+	                this.textAreaDelete = ""
+	            })
+	            .catch(error=>{
+	                console.log("Greska.")	
+	                alert("Podaci su lose uneti.")
+	                window.location.reload()
+	            })
+	        }
+	        else {
+	        	Swal.fire({icon: 'error', title: 'Greška', text: 'Već ste poslali zahtev za brisanje naloga !'})
+	        }
+	        }
+
+        },
+        
         updateUserInfoOnFront() {
         	let from = this.activeUser.availableFrom.split("T")
 	    	let until = this.activeUser.availableUntil.split("T")
@@ -192,10 +243,25 @@ Vue.component("ProfileFishingInstructor", {
     			document.getElementById("biography").disabled = true
     	},
     	
-    	
     },
     mounted(){
-    	this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
+    	 this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
+        if(this.activeUser.role != 'fishing_instructor')
+            this.$router.push('/')
+
+        userId = this.activeUser.id 
+        axios
+        .get('/appUser/requestExists/' + userId)
+        .then(response=>{
+            //window.location.reload()
+            this.sendCheck = response.data
+        })
+        .catch(error=>{
+            console.log("Greska.")	
+            alert("Podaci su lose uneti.")
+            window.location.reload()
+
+        })
     	console.log(this.activeUser)
     	let from = this.activeUser.availableFrom.split("T")
     	let until = this.activeUser.availableUntil.split("T")

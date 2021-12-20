@@ -16,4 +16,7 @@ public interface FishingAppointmentRepository extends JpaRepository<FishingAppoi
 
 	@Query("select f from FishingAppointment f where f.client.id = :appUserId")
 	public List<FishingAppointment> findAllAppointmentsByClient(@Param("appUserId") long appUserId);
+	
+	@Query("SELECT fa FROM FishingAppointment fa WHERE fa.fishingAdventure.fishingInstructor.id=?1")
+	public Set<FishingAppointment> findInstructorsReservationHistory(long id);
 }

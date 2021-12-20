@@ -25,10 +25,10 @@ Vue.component("SearchInstructorsAdventures",{
 	          	<input type="text" class="form-control" v-model="search.address" placeholder="Unesite adresu..."/>
 	      	  </div>
 	      	  <div class="col col-sm-2">
-	          	<button type="button" v-on:click="searchFun()" class="btn btn-primary bi bi-search">Pretraži</button>
+	          	<button type="button" v-on:click="searchFun()" class="btn btn-primary bi bi-search"> Pretraži</button>
 	      	  </div>
 	      	  <div class="col col-sm-2">
-	          	<button type="button" v-on:click="cancelSearch()" class="btn  btn-outline-danger bi bi-x">Otkaži pretragu/filter</button>
+	          	<button type="button" v-on:click="cancelSearch()" class="btn  btn-outline-danger bi bi-x"> Otkaži pretragu/filter</button>
 	      	  </div>
 	      	  <div class="col col-sm-3">
 	      	  </div>
@@ -38,16 +38,16 @@ Vue.component("SearchInstructorsAdventures",{
 	      	  <h4>Filteri</h4>
 	      	  </div>
 	      	  <div class="col col-sm-2">
-	          	<button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="nameAscFun()">Ime - rastuće</button>
+	          	<button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="nameAscFun()"> Ime</button>
 	      	  </div>
 	      	  <div class="col col-sm-2">
-	          	<button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="nameDescFun()">Ime - opadajuće</button>
+	          	<button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="nameDescFun()"> Ime</button>
 	      	  </div>
 	      	  <div class="col col-sm-2">
-	          	<button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="addressAscFun()">Adresa - rastuće</button>
+	          	<button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="addressAscFun()"> Adresa</button>
 	      	  </div>
 	      	  <div class="col col-sm-2">
-	          	<button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="addressDescFun()">Adresa - opadajuće</button>
+	          	<button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="addressDescFun()"> Adresa</button>
 	      	  </div>
 	      	  <div class="col col-sm-3">
 	      	  </div>

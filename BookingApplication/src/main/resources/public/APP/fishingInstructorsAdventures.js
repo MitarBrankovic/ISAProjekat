@@ -10,6 +10,7 @@ Vue.component("FishingInstructorsAdventures", {
             behaviourRules: "", equipment: "", pricePerHour: "", cancellingPrecentage: "", adventureId: ""},
             adventures: "",
             adventureIdRemove: "",
+            
         }
     },
     template :`

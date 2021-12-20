@@ -57,13 +57,25 @@ public class FishingAppointmentService {
 		}
 		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
 	} 
+	
+	@GetMapping(path = "/getReservationsHistory/{instructorsId}")
+	public ResponseEntity<List<FishingAppointment>> getInstructorsReservationsHistory(@PathVariable("instructorsId") long id)
+	{
+		List<FishingAppointment> appointments = new ArrayList<FishingAppointment>();
+		for(FishingAppointment appointment : fishingAppointmentRepository.findInstructorsReservationHistory(id))
+		{
+			if (appointment.client != null)
+				appointments.add(appointment);
+		}
+		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
+	}
 
 	@PostMapping(path = "/addQuickAppointment")
     public ResponseEntity<List<FishingAppointment>> addAppointment(@RequestBody FishingAppointmentDto appointmentDTO)
 	{	
 		if(appointmentDTO != null) {
 			FishingAppointment appointment = new FishingAppointment(appointmentDTO.formatDateFrom(), appointmentDTO.address, appointmentDTO.city, 
-											 appointmentDTO.durationInHours(), appointmentDTO.maxAmountOfPeople, AppointmentType.quick, true,
+											 appointmentDTO.durationInHours(), appointmentDTO.maxAmountOfPeople, AppointmentType.quick, true, 0,
 											 "", appointmentDTO.price);
 			appointment.fishingAdventure = getAdventureById(appointmentDTO.adventureId);
 			fishingAppointmentRepository.save(appointment);

@@ -138,7 +138,7 @@ Vue.component("ProfileClient", {
         sendRequest:function(){
             userId = this.activeUser.id
             axios
-            .post('/appUser/sendRequest/' + this.textAreaDelete+ "/" + userId)
+            .post('/appUser/sendRequest/' + this.textAreaDelete + "/" + userId)
             .then(response=>{
                 //window.location.reload()
                 this.editClick = false

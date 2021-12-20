@@ -259,6 +259,8 @@ Vue.component("SelectedFishingAdventure", {
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
+        if(this.activeUser.role != 'fishing_instructor')
+            this.$router.push('/')
         axios
             .get("fishingAdventures/getSelectedAdventure/" + this.$route.query.id)
 	        .then(response => (this.adventure = response.data))

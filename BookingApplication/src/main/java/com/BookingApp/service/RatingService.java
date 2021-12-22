@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.model.Cottage;
 import com.BookingApp.dto.RatingAdvDto;
+import com.BookingApp.dto.RatingCottDto;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.RatingFishingAdventure;
@@ -53,7 +54,7 @@ public class RatingService {
 	
 	
 	@PostMapping(path="/rateAdventure")
-	public boolean rateDrug(@RequestBody RatingAdvDto dto)
+	public boolean rateAdventure(@RequestBody RatingAdvDto dto)
 	{
 		for(RatingFishingAdventure r: ratingFishingAdventureRepository.findAll()) {	//optimizovati
 			if(r.client.id == dto.client.id && r.fishingAdventure.id == dto.fishingAdventure.id)
@@ -103,6 +104,64 @@ public class RatingService {
 			}
 		}
 		return new ResponseEntity<List<RatingFishingAdventure>>(ratedAdventures,HttpStatus.OK);
+		
+	}
+	
+	
+	
+	@PostMapping(path="/rateCottage")
+	public boolean rateCottage(@RequestBody RatingCottDto dto)
+	{
+		for(RatingCottage r: ratingCottageRepository.findAll()) {	//optimizovati
+			if(r.client.id == dto.client.id && r.cottage.id == dto.cottage.id)
+				return false;
+		}
+		
+		RatingCottage rate = new RatingCottage(); 
+		rate.cottage = dto.cottage;
+		rate.client = dto.client;
+		rate.rating = dto.rating;
+		rate.date = LocalDateTime.now();
+		rate.revision = dto.revision;
+		rate.isApproved = false;
+		ratingCottageRepository.save(rate);
+		formCottRating();
+		return true;
+	}
+	
+	
+	@GetMapping(path="/formCottRating")
+	public void formCottRating()
+	{
+		for(Cottage cottage : cottageRepository.findAll()){
+			int counter = 0;
+			int sum = 0;
+			for (RatingCottage ratingAdventure : ratingCottageRepository.findAll()) {
+				if(ratingAdventure.cottage.id == cottage.id){
+					counter ++;
+					sum += ratingAdventure.rating;
+				}
+			}
+			if(counter != 0){
+				cottage.rating = (double)sum/counter;
+				cottageRepository.save(cottage);
+			}
+		}
+	}
+	
+	
+	@GetMapping(path="/getMyRatedCottages/{email}")
+	public ResponseEntity<List<RatingCottage>> getMyRatedCottages(@PathVariable String email)
+	{
+		List<RatingCottage> ratedCottages = new ArrayList<RatingCottage>();
+		for(RatingCottage cottRating : ratingCottageRepository.findAll())
+		{
+			if(cottRating.client.email.equalsIgnoreCase(email))
+			{
+				ratedCottages.add(cottRating);
+			}
+		}
+		return new ResponseEntity<List<RatingCottage>>(ratedCottages,HttpStatus.OK);
 		
 	}
 	

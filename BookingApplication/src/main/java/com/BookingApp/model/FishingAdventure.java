@@ -41,7 +41,7 @@ public class FishingAdventure {
 	@Column
 	public String priceAndInfo;
 	@Column
-	public long rating;
+	public double rating;
 	@Column
 	public long cancellingPrecentage;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -56,7 +56,7 @@ public class FishingAdventure {
 	}
 	
 	public FishingAdventure(long id, String name, String address, String city, String description,
-			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, long rating,
+			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, double rating,
 			long cancellingPrecentage) {
 		super();
 		this.id = id;
@@ -74,7 +74,7 @@ public class FishingAdventure {
 	}
 	
 	public FishingAdventure(String name, String address, String city, String description,
-			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, long rating,
+			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, double rating,
 			long cancellingPrecentage) {
 		super();
 		this.name = name;

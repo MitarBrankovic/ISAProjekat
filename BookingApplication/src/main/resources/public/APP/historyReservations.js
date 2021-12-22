@@ -2,12 +2,14 @@ Vue.component("HistoryReservations", {
     data: function() {
         return {
             activeUser:"",
-            cottagesButton:true,
+            cottagesButton:false,
             boatsButton:false,
-            adventuresButton:false,
+            adventuresButton:true,
             cottages:[],
             boats:[],
-            adventures:[]
+            adventures:[],
+            myRatedAdventures:[],
+            upcomingAdventures:[]
         }
     },
     template:`  
@@ -98,6 +100,9 @@ Vue.component("HistoryReservations", {
                         <td>{{appointment.duration}} h</td>
                         <td>{{appointment.maxAmountOfPeople}}</td>
                         <td>{{appointment.price}} din.</td>
+                        <td v-if="!adventureIsRated(appointment) && !adventureIsUpcoming(appointment)"><button  type="submit" class="button" v-on:click="rateAdventure(appointment)">Oceni</button></td>
+                        <td v-else-if="adventureIsRated(appointment)"><label>Ocenjeno</label></td>
+                        <td v-else-if="adventureIsUpcoming(appointment)"><label>Nije jos zavrseno</label></td>
                         </tr>
                     </tbody>
                 </table>
@@ -110,14 +115,18 @@ Vue.component("HistoryReservations", {
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
         if(this.activeUser.role != 'client')
         this.$router.push('/')
-
+        
         axios.all([axios.get('/cottageAppointments/getAllCottAppointmentsByClient/' + this.activeUser.id),
         axios.get('/boatAppointments/getAllBoatAppointmentsByClient/' + this.activeUser.id),
-        axios.get('/fishingAppointments/getAllAdvAppointmentsByClient/' + this.activeUser.id)])
+        axios.get('/fishingAppointments/getAllAdvAppointmentsByClient/' + this.activeUser.id),
+        axios.get('/rating/getMyRatedAdventures/' + this.activeUser.email),
+        axios.get('/fishingAppointments/getReservedAdvAppointmentsByClient/' + this.activeUser.id)])
         .then(axios.spread((...responses) => {
            this.cottages = responses[0].data
            this.boats = responses[1].data
            this.adventures = responses[2].data
+           this.myRatedAdventures = responses[3].data
+           this.upcomingAdventures = responses[4].data
        }))
 	},
     methods:{
@@ -168,6 +177,84 @@ Vue.component("HistoryReservations", {
             .then(response=>{
                 this.adventures = response.data
             })
+        },
+        adventureIsRated:function(appointment){
+            var postoji = false
+            for(var i = 0; i < this.myRatedAdventures.length; i++){
+                if(this.activeUser.id == this.myRatedAdventures[i].client.id && appointment.fishingAdventure.id == this.myRatedAdventures[i].fishingAdventure.id){
+                    postoji = true
+                    break
+                }
+            }
+            return postoji
+        },
+        adventureIsUpcoming:function(appointment){
+            var postoji = false
+            for(var i = 0; i < this.upcomingAdventures.length; i++){
+                if(appointment.id == this.upcomingAdventures[i].appointment.id){
+                    postoji = true
+                    break
+                }
+            }
+            return postoji
+        },
+        rateAdventure:function(appointment){
+            /*const ratingAdvDto = {
+                fishingAdventure: appointment.fishingAdventure,
+                client: this.activeUser,
+                rating: 3
+            }
+
+            axios
+            .post('/rating/rateAdventure', ratingAdvDto)
+            .then(response=>{
+                window.location.reload()
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+
+            })*/
+
+
+
+            (async () => {
+                const { value: formValues } = await Swal.fire({
+                    title: 'Multiple inputs',
+                    html:
+                    '<input id="swal-input1" class="swal2-textarea">' +
+                    '<div style="margin-left:5%;" class="rate centerIt" name="myForm" id="group">'+
+                        '<input type="radio" id="star1" name="group" value="5" />' +
+                        '<label for="star1" title="text">1 star</label>' +
+                        '<input type="radio" id="star2" name="group" value="4" />' +
+                        '<label for="star2" title="text">2 stars</label>' +
+                        '<input type="radio" id="star3" name="group" value="3" />' +
+                        '<label for="star3" title="text">3 stars</label>' +
+                        '<input type="radio" id="star4" name="group" value="2" />' +
+                        '<label for="star4" title="text">4 stars</label>' +
+                        '<input type="radio" id="star5" name="group" value="1" />' +
+                        '<label for="star5" title="text">5 stars</label>' +
+                    '</div>',
+                    focusConfirm: false,
+                    preConfirm: () => {
+                    return [
+                        document.getElementById('swal-input1').value,
+                        //document.getElementById('group').value,
+                        document.forms.myForm.group.value
+                    ]
+                    }
+                })
+                
+                if (formValues) {
+                    Swal.fire(JSON.stringify(formValues))
+                }
+
+            })()
+
+
+
+
         }
     }
 });

@@ -49,6 +49,8 @@ public class Boat {
 	public CancellationTerms cancellationTerms;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public ShipOwner shipOwner;
+	@Column
+	public double rating;
 	
 	public Boat() {
 		super();
@@ -73,6 +75,28 @@ public class Boat {
 		this.fishingEquipment = fishingEquipment;
 		this.priceList = priceList;
 		this.cancellationTerms = cancellationTerms;
+	}
+	
+	public Boat(long id, String name, String boatType, double length, String engineNumber, long enginePower,
+			double maxSpeed, String navigationEquipment, String address, String description, long capacity,
+			String rules, String fishingEquipment, String priceList, CancellationTerms cancellationTerms, double rating) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.boatType = boatType;
+		this.length = length;
+		this.engineNumber = engineNumber;
+		this.enginePower = enginePower;
+		this.maxSpeed = maxSpeed;
+		this.navigationEquipment = navigationEquipment;
+		this.address = address;
+		this.description = description;
+		this.capacity = capacity;
+		this.rules = rules;
+		this.fishingEquipment = fishingEquipment;
+		this.priceList = priceList;
+		this.cancellationTerms = cancellationTerms;
+		this.rating = rating;
 	}
 	
 }

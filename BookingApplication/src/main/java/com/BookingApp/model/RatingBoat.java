@@ -1,17 +1,14 @@
 package com.BookingApp.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class RatingBoat {
@@ -20,34 +17,40 @@ public class RatingBoat {
 	@SequenceGenerator(name = "myRatingAdvSeqGen", sequenceName = "myRatingAdvSeqGen", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "myRatingAdvSeqGen")
 	public long id;
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.EAGER)
+	@OneToOne
 	public Boat boat;
 	@Column
 	public double rating;
 	@Column
-	public LocalDate ratingDate;
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.EAGER)
+	public LocalDateTime date;
+	@OneToOne
 	public AppUser client;
+	@Column
+	public boolean isApproved;
+	@Column 
+	public String revision;
 	
 	public RatingBoat() {}
 
 
-	public RatingBoat(long id, Boat boat, double rating, LocalDate ratingDate, AppUser client) {
+	public RatingBoat(long id, Boat boat, double rating, LocalDateTime date, AppUser client, boolean isApproved, String revision) {
 		super();
 		this.id = id;
 		this.boat = boat;
 		this.rating = rating;
-		this.ratingDate = ratingDate;
+		this.date = date;
 		this.client = client;
+		this.isApproved = isApproved;
+		this.revision = revision;
 	}
 	
-	public RatingBoat(Boat boat, double rating, LocalDate ratingDate, AppUser client) {
+	public RatingBoat(Boat boat, double rating, LocalDateTime date, AppUser client, boolean isApproved, String revision) {
 		super();
 		this.boat = boat;
 		this.rating = rating;
-		this.ratingDate = ratingDate;
+		this.date = date;
 		this.client = client;
+		this.isApproved = isApproved;
+		this.revision = revision;
 	}
 }

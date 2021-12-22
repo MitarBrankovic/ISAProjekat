@@ -11,7 +11,9 @@ Vue.component("HistoryReservations", {
             myRatedAdventures:[],
             upcomingAdventures:[],
             myRatedCottages:[],
-            upcomingCottages:[]
+            upcomingCottages:[],
+            myRatedBoats:[],
+            upcomingBoats:[]
         }
     },
     template:`  
@@ -76,6 +78,9 @@ Vue.component("HistoryReservations", {
                         <td>{{appointment.duration}} h</td>
                         <td>{{appointment.maxAmountOfPeople}}</td>
                         <td>{{appointment.price}} din.</td>
+                        <td v-if="!boatIsRated(appointment) && !boatIsUpcoming(appointment)"><button  type="submit" class="button" v-on:click="rateBoat(appointment)">Oceni</button></td>
+                        <td v-else-if="boatIsRated(appointment)"><label>Ocenjeno</label></td>
+                        <td v-else-if="boatIsUpcoming(appointment)"><label>Nije jos zavrseno</label></td>
                         </tr>
                     </tbody>
                 </table>
@@ -127,7 +132,9 @@ Vue.component("HistoryReservations", {
         axios.get('/rating/getMyRatedAdventures/' + this.activeUser.email),
         axios.get('/fishingAppointments/getReservedAdvAppointmentsByClient/' + this.activeUser.id),
         axios.get('/rating/getMyRatedCottages/' + this.activeUser.email),
-        axios.get('/cottageAppointments/getReservedCottAppointmentsByClient/' + this.activeUser.id)])
+        axios.get('/cottageAppointments/getReservedCottAppointmentsByClient/' + this.activeUser.id),
+        axios.get('/rating/getMyRatedBoats/' + this.activeUser.email),
+        axios.get('/boatAppointments/getReservedBoatAppointmentsByClient/' + this.activeUser.id)])
         .then(axios.spread((...responses) => {
            this.cottages = responses[0].data
            this.boats = responses[1].data
@@ -136,6 +143,8 @@ Vue.component("HistoryReservations", {
            this.upcomingAdventures = responses[4].data
            this.myRatedCottages = responses[5].data
            this.upcomingCottages = responses[6].data
+           this.myRatedBoats = responses[7].data
+           this.upcomingBoats = responses[8].data
        }))
 	},
     methods:{
@@ -324,6 +333,81 @@ Vue.component("HistoryReservations", {
         
                     axios
                     .post('/rating/rateCottage', ratingCottDto)
+                    .then(response=>{
+                        window.location.reload()
+                    })
+                    .catch(error=>{
+                        console.log("Greska.")	
+                        alert("Podaci su lose uneti.")
+                        window.location.reload()
+        
+                    })
+                }
+
+            })()
+        },
+        boatIsRated:function(appointment){
+            var postoji = false
+            for(var i = 0; i < this.myRatedBoats.length; i++){
+                if(this.activeUser.id == this.myRatedBoats[i].client.id && appointment.boat.id == this.myRatedBoats[i].boat.id){
+                    postoji = true
+                    break
+                }
+            }
+            return postoji
+        },
+        boatIsUpcoming:function(appointment){
+            var postoji = false
+            for(var i = 0; i < this.upcomingBoats.length; i++){
+                if(appointment.id == this.upcomingBoats[i].appointment.id){
+                    postoji = true
+                    break
+                }
+            }
+            return postoji
+        },
+        rateBoat:function(appointment){
+            (async () => {
+                const { value: formValues } = await Swal.fire({
+                    title: 'Ocenite ovaj brod',
+                    html:
+                    '<label id="swalh" class="swal2-label" required>Komentar:</label>' +
+                    '<input id="swal-input1" class="swal2-textarea" required>' +
+                    '<form style="margin-left:5%;" class="rate centerIt starInvert" name="myForm" id="group">'+
+                        '<input type="radio" id="star5" name="group" value="5" />' +
+                        '<label for="star5" title="text">5 stars</label>' +
+                        '<input type="radio" id="star4" name="group" value="4" />' +
+                        '<label for="star4" title="text">4 stars</label>' +
+                        '<input type="radio" id="star3" name="group" value="3" />' +
+                        '<label for="star3" title="text">3 stars</label>' +
+                        '<input type="radio" id="star2" name="group" value="2" />' +
+                        '<label for="star2" title="text">2 stars</label>' +
+                        '<input type="radio" id="star1" name="group" value="1" />' +
+                        '<label for="star1" title="text">1 star</label>' +
+                    '</form>',
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        if (!document.getElementById('swal-input1').value || !document.forms.myForm.group.value){
+                            Swal.showValidationMessage('Popunite sva polja!')
+                        }else{
+                            return [
+                                document.getElementById('swal-input1').value,
+                                document.forms.myForm.group.value
+                            ]
+                        }   
+                    }
+                })
+                
+                if (formValues) {
+                    const ratingBoatDto = {
+                        boat: appointment.boat,
+                        client: this.activeUser,
+                        rating: formValues[1],
+                        revision: formValues[0]
+                    }
+        
+                    axios
+                    .post('/rating/rateBoat', ratingBoatDto)
                     .then(response=>{
                         window.location.reload()
                     })

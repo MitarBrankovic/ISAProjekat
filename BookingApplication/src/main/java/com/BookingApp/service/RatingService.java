@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.model.Cottage;
 import com.BookingApp.dto.RatingAdvDto;
+import com.BookingApp.dto.RatingBoatDto;
 import com.BookingApp.dto.RatingCottDto;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.FishingAdventure;
@@ -162,6 +163,61 @@ public class RatingService {
 			}
 		}
 		return new ResponseEntity<List<RatingCottage>>(ratedCottages,HttpStatus.OK);
+		
+	}
+	
+	
+	@PostMapping(path="/rateBoat")
+	public boolean rateBoat(@RequestBody RatingBoatDto dto)
+	{
+		for(RatingBoat r: ratingBoatRepository.findAll()) {	//optimizovati
+			if(r.client.id == dto.client.id && r.boat.id == dto.boat.id)
+				return false;
+		}
+		
+		RatingBoat rate = new RatingBoat(); 
+		rate.boat = dto.boat;
+		rate.client = dto.client;
+		rate.rating = dto.rating;
+		rate.date = LocalDateTime.now();
+		rate.revision = dto.revision;
+		rate.isApproved = false;
+		ratingBoatRepository.save(rate);
+		formBoatRating();
+		return true;
+	}
+	
+	@GetMapping(path="/formBoatRating")
+	public void formBoatRating()
+	{
+		for(Boat boat : boatRepository.findAll()){
+			int counter = 0;
+			int sum = 0;
+			for (RatingBoat ratingAdventure : ratingBoatRepository.findAll()) {
+				if(ratingAdventure.boat.id == boat.id){
+					counter ++;
+					sum += ratingAdventure.rating;
+				}
+			}
+			if(counter != 0){
+				boat.rating = (double)sum/counter;
+				boatRepository.save(boat);
+			}
+		}
+	}
+	
+	@GetMapping(path="/getMyRatedBoats/{email}")
+	public ResponseEntity<List<RatingBoat>> getMyRatedBoats(@PathVariable String email)
+	{
+		List<RatingBoat> ratedBoats = new ArrayList<RatingBoat>();
+		for(RatingBoat boatRating : ratingBoatRepository.findAll())
+		{
+			if(boatRating.client.email.equalsIgnoreCase(email))
+			{
+				ratedBoats.add(boatRating);
+			}
+		}
+		return new ResponseEntity<List<RatingBoat>>(ratedBoats,HttpStatus.OK);
 		
 	}
 	

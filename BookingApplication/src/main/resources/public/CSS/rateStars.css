@@ -39,3 +39,7 @@
 
     color: #EFB0A1;
 }
+
+.starInvert{
+    transform: scaleX(-1)
+}

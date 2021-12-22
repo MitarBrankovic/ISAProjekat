@@ -205,16 +205,16 @@ Vue.component("HistoryReservations", {
                     html:
                     '<label id="swalh" class="swal2-label" required>Komentar:</label>' +
                     '<input id="swal-input1" class="swal2-textarea" required>' +
-                    '<form style="margin-left:5%;" class="rate centerIt" name="myForm" id="group">'+
-                        '<input type="radio" id="star5" name="group" value="1" />' +
+                    '<form style="margin-left:5%;" class="rate centerIt starInvert" name="myForm" id="group">'+
+                        '<input type="radio" id="star5" name="group" value="5" />' +
                         '<label for="star5" title="text">5 stars</label>' +
-                        '<input type="radio" id="star4" name="group" value="2" />' +
+                        '<input type="radio" id="star4" name="group" value="4" />' +
                         '<label for="star4" title="text">4 stars</label>' +
                         '<input type="radio" id="star3" name="group" value="3" />' +
                         '<label for="star3" title="text">3 stars</label>' +
-                        '<input type="radio" id="star2" name="group" value="4" />' +
+                        '<input type="radio" id="star2" name="group" value="2" />' +
                         '<label for="star2" title="text">2 stars</label>' +
-                        '<input type="radio" id="star1" name="group" value="5" />' +
+                        '<input type="radio" id="star1" name="group" value="1" />' +
                         '<label for="star1" title="text">1 star</label>' +
                     '</form>',
                     focusConfirm: false,

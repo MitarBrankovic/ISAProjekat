@@ -3,7 +3,8 @@ Vue.component("ProfileCottage", {
         return {
             activeUser: "",
             cottage : "",
-			appointments : []
+			appointments : [],
+            subscibedCottages:[]
         }
     },
     template : ` 
@@ -16,7 +17,11 @@ Vue.component("ProfileCottage", {
     <br> Pravila : {{this.cottage.rules}}
     <br> Cenovnik i dodatne usluge:
     <br> {{this.cottage.priceList}}
-    </p>
+    </p><br>
+    <button v-if="activeUser.role == 'client' && !exist()" type="submit" class="button" v-on:click="subscribe()">Pretplati se</button>
+    <button v-if="activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
+
+    <br><br><hr>
     <table class="table">
         <thead>
             <td>Datum i vreme pocetka rezervacije</td>
@@ -55,16 +60,63 @@ Vue.component("ProfileCottage", {
                 window.location.reload()
 
             })
+        },
+        subscribe:function(){
+            const subscribeCottage = {
+                id: 0,
+                cottage: this.cottage,
+                client: this.activeUser
+            }
+            axios
+            .post('/subscribe/subscribeCottage', subscribeCottage)
+            .then(response=>{
+                window.location.reload()
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+            })
+        },
+        unsubscribe:function(){
+            const subscribeCottage = {
+                id: 0,
+                cottage: this.cottage,
+                client: this.activeUser
+            }
+            axios
+            .post('/subscribe/unsubscribeCottage', subscribeCottage)
+            .then(response=>{
+                window.location.reload()
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+            })
+        },
+        exist:function(){
+            var postoji = false
+            for(var i = 0; i < this.subscibedCottages.length; i++){
+                if(this.activeUser.id == this.subscibedCottages[i].client.id && this.cottage.id == this.subscibedCottages[i].cottage.id){
+                    postoji = true
+                    break
+                }
+            }
+            return postoji
         }
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
-        axios
-            	.get("cottages/getSelectedCottage/" + this.$route.query.id)
-	            .then(response => (this.cottage = response.data));
-		axios
-            	.get("cottageAppointments/getAllQuickAppointments/" + this.$route.query.id)
-	            .then(response => (this.appointments = response.data));
+
+        axios.all([
+            axios.get("cottages/getSelectedCottage/" + this.$route.query.id), 
+            axios.get("cottageAppointments/getAllQuickAppointments/" + this.$route.query.id),
+            axios.get('/subscribe/getAllSubscibedCottages')]).then(axios.spread((...responses) => {
+           this.cottage = responses[0].data
+           this.appointments = responses[1].data
+           this.subscibedCottages = responses[2].data
+       }))
     },
 
 });

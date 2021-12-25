@@ -4,6 +4,7 @@ Vue.component("ProfileBoat", {
             activeUser: "",
             boat : "",
 			appointments : [],
+            subscibedBoats:[]
         }
     },
     template : ` 
@@ -22,8 +23,12 @@ Vue.component("ProfileBoat", {
     <br> Fising equipment : {{boat.fishingEquipment}}
     <br> Price list : {{boat.priceList}}
     <br> Cancelation terms : {{boat.cancellationTerms}}
+    </p><br>
+    <button v-if="activeUser.role == 'client' && !exist()" type="submit" class="button" v-on:click="subscribe()">Pretplati se</button>
+    <button v-if="activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
 
-    </p>
+    <br><br><hr>
+
     <table class="table">
         <thead>
             <td>Datum i vreme pocetka rezervacije</td>
@@ -62,16 +67,63 @@ Vue.component("ProfileBoat", {
                 window.location.reload()
 
             })
+        },
+        subscribe:function(){
+            const subscibedBoat = {
+                id: 0,
+                boat: this.boat,
+                client: this.activeUser
+            }
+            axios
+            .post('/subscribe/subscribeBoat', subscibedBoat)
+            .then(response=>{
+                window.location.reload()
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+            })
+        },
+        unsubscribe:function(){
+            const subscibedBoat = {
+                id: 0,
+                boat: this.boat,
+                client: this.activeUser
+            }
+            axios
+            .post('/subscribe/unsubscribeBoat', subscibedBoat)
+            .then(response=>{
+                window.location.reload()
+            })
+            .catch(error=>{
+                console.log("Greska.")	
+                alert("Podaci su lose uneti.")
+                window.location.reload()
+            })
+        },
+        exist:function(){
+            var postoji = false
+            for(var i = 0; i < this.subscibedBoats.length; i++){
+                if(this.activeUser.id == this.subscibedBoats[i].client.id && this.boat.id == this.subscibedBoats[i].boat.id){
+                    postoji = true
+                    break
+                }
+            }
+            return postoji
         }
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
-        axios
-            .get("boats/getSelectedBoat/" + this.$route.query.id)
-            .then(response => (this.boat = response.data));
-		axios
-            .get("boatAppointments/getAllQuickAppointments/" + this.$route.query.id)
-            .then(response => (this.appointments = response.data));
+
+        axios.all([
+            axios.get("boats/getSelectedBoat/" + this.$route.query.id), 
+            axios.get("boatAppointments/getAllQuickAppointments/" + this.$route.query.id),
+            axios.get('/subscribe/getAllSubscibedBoats')]).then(axios.spread((...responses) => {
+            this.boat = responses[0].data
+            this.appointments = responses[1].data
+            this.subscibedBoats = responses[2].data
+        }))
     },
 
 });

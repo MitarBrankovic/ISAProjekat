@@ -29,7 +29,7 @@ Vue.component("HistoryOfFishingAppointments", {
             <tr v-for="appointment in appointments">
             <td>{{appointment.fishingAdventure.name}}</td>
             <td>{{appointment.fishingAdventure.address}}, {{appointment.fishingAdventure.city}} </td>
-            <td>{{appointment.appointmentStart}}</td>
+            <td>{{appointment.appointmentStart.substring(8,10)}}.{{appointment.appointmentStart.substring(5,7)}}.{{appointment.appointmentStart.substring(0,4)}}. {{appointment.appointmentStart.substring(11,13)}}:{{appointment.appointmentStart.substring(14,16)}}</td>
             <td>{{appointment.duration}} h</td>
             <td>{{appointment.maxAmountOfPeople}}</td>
             <td>{{appointment.extraNotes}}</td>

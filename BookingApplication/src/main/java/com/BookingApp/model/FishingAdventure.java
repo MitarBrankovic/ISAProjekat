@@ -33,7 +33,6 @@ public class FishingAdventure {
 	public String city;
 	@Column
 	public String description;
-	@Lob
 	@Column
 	public String photo;
 	@Column
@@ -56,7 +55,7 @@ public class FishingAdventure {
 	}
 	
 	public FishingAdventure(long id, String name, String address, String city, String description,
-			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, double rating,
+			String photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
 			long cancellingPrecentage) {
 		super();
 		this.id = id;
@@ -74,7 +73,7 @@ public class FishingAdventure {
 	}
 	
 	public FishingAdventure(String name, String address, String city, String description,
-			String photo, int maxAmountOfPeople, String behaviourRules, String equipment, String priceAndInfo, double rating,
+			String photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
 			long cancellingPrecentage) {
 		super();
 		this.name = name;

@@ -46,7 +46,7 @@ Vue.component("SelectedFishingAdventure", {
         </thead>
         <tbody>
             <tr v-for="appointment in appointments" v-if="appointment.appointmentType == 'quick'">
-            <td>{{appointment.appointmentStart}}</td>
+            <td>{{appointment.appointmentStart.substring(8,10)}}.{{appointment.appointmentStart.substring(5,7)}}.{{appointment.appointmentStart.substring(0,4)}}. {{appointment.appointmentStart.substring(11,13)}}:{{appointment.appointmentStart.substring(14,16)}}</td>
             <td>{{appointment.duration}} h</td>
             <td>{{appointment.maxAmountOfPeople}}</td>
             <td>{{appointment.extraNotes}}</td>

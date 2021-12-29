@@ -61,6 +61,12 @@ public class SubscribeService {
 		return new ResponseEntity<List<SubscribeCottage>>(subscribeCottageRepository.findAll(),HttpStatus.OK);
 	}
 	
+	@GetMapping(path="/getAllSubscibedCottagesByClient/{clientId}")
+	public ResponseEntity<List<SubscribeCottage>> getAllSubscibedCottagesByClient(@PathVariable("clientId") long id)
+	{	
+		return new ResponseEntity<List<SubscribeCottage>>(subscribeCottageRepository.findAllByClient(id),HttpStatus.OK);
+	}
+	
 	
 	@PostMapping(path = "/subscribeBoat")
 	public boolean subscribeBoat(@RequestBody SubscribeBoat sub)
@@ -91,6 +97,12 @@ public class SubscribeService {
 		return new ResponseEntity<List<SubscribeBoat>>(subscribeBoatRepository.findAll(),HttpStatus.OK);
 	}
 	
+	@GetMapping(path="/getAllSubscibedBoatsByClient/{clientId}")
+	public ResponseEntity<List<SubscribeBoat>> getAllSubscibedBoatsByClient(@PathVariable("clientId") long id)
+	{	
+		return new ResponseEntity<List<SubscribeBoat>>(subscribeBoatRepository.findAllByClient(id),HttpStatus.OK);
+	}
+	
 	
 	@PostMapping(path = "/subscribeAdventure")
 	public boolean subscribeAdventure(@RequestBody SubscribeAdventure sub)
@@ -119,6 +131,12 @@ public class SubscribeService {
 	public ResponseEntity<List<SubscribeAdventure>> getAllSubscibedAdventures()
 	{	
 		return new ResponseEntity<List<SubscribeAdventure>>(subscribeAdvRepository.findAll(),HttpStatus.OK);
+	}
+	
+	@GetMapping(path="/getAllSubscibedAdventuresByClient/{clientId}")
+	public ResponseEntity<List<SubscribeAdventure>> getAllSubscibedAdventuresByClient(@PathVariable("clientId") long id)
+	{	
+		return new ResponseEntity<List<SubscribeAdventure>>(subscribeAdvRepository.findAllByClient(id),HttpStatus.OK);
 	}
 
 	

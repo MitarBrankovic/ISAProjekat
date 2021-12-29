@@ -36,6 +36,9 @@ Vue.component("Navbar", {
 				<div v-if="(activeUser.role==='client')">
 					<a href="#/historyReservations">Istorija zakazanih termina</a>
 				</div>
+				<div v-if="(activeUser.role==='client')">
+					<a href="#/subscriptions">Pretplate</a>
+				</div>
 			</div>
 		</div>
 

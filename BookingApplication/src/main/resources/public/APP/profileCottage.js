@@ -9,7 +9,7 @@ Vue.component("ProfileCottage", {
     },
     template : ` 
     <div>
-    <h1>{{this.cottage.name}}</h1>address
+    <h1>{{this.cottage.name}}</h1>
     <p>Adresa: {{this.cottage.address}}
     <br> Opis :{{this.cottage.description}}
     <br> Broj soba: {{this.cottage.roomsNum}}
@@ -22,14 +22,17 @@ Vue.component("ProfileCottage", {
     <button v-if="activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
 
     <br><br><hr>
-    <table class="table">
+    <div class="container-fluid">
+    <table class="table table-success table-striped table-sm table-bordered">
         <thead>
+        <tr>
             <td>Datum i vreme pocetka rezervacije</td>
             <td>Trajanje</td>
             <td>Maksimalan broj osoba</td>
             <td>Dodatne usluge</td>
             <td>Cena</td>
             <td>Stanje</td>
+        </tr>
         </thead>
         <tbody>
             <tr v-for="a in appointments">
@@ -43,6 +46,7 @@ Vue.component("ProfileCottage", {
             </tr>
         </tbody>
     </table>
+    </div>
 
 </div>  
     	`

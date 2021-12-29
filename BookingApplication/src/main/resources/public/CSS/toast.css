@@ -23,9 +23,14 @@ html{
     }
   
     a{
-      color: #eae7dc;
+      color: #04AA6D;
     }
-  
+    
+    a:hover 
+    {
+       color: #008000 !important;
+    }
+
     #tabs
     {
       background-color: #dc3545;
@@ -41,10 +46,6 @@ html{
       color: white;
     }
   
-    a:hover 
-    {
-       color: #424242 !important;
-    }
   
     button:hover 
     {
@@ -198,8 +199,7 @@ html{
       align-items : center;
     }
 
-    .linkAppointment{
-      color:black;
+    .linkAppointment, .linkSubscription{
        text-decoration: underline;
        cursor: pointer;
     }

@@ -29,14 +29,16 @@ Vue.component("ProfileBoat", {
 
     <br><br><hr>
 
-    <table class="table">
+    <table class="table table-success table-striped table-sm table-bordered">
         <thead>
+        <tr>
             <td>Datum i vreme pocetka rezervacije</td>
             <td>Trajanje</td>
             <td>Maksimalan broj osoba</td>
             <td>Dodatne usluge</td>
             <td>Cena</td>
             <td></td>
+        </tr>
         </thead>
         <tbody>
             <tr v-for="a in appointments">

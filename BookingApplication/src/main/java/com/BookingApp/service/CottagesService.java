@@ -1,6 +1,8 @@
 package com.BookingApp.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,6 +50,8 @@ public class CottagesService {
 		boolean nameDesc = dto.nameDesc;
 		boolean addressAsc = dto.addressAsc;
 		boolean addressDesc = dto.addressDesc;
+		boolean rateAsc = dto.rateAsc;
+		boolean rateDesc = dto.rateDesc;
 		
 
 		List<Cottage> cottages = cottageRepository.findAll();
@@ -132,6 +136,27 @@ public class CottagesService {
 
 				}
 			}
+		}
+		
+		if(rateAsc) {
+			Collections.sort(cottages, new Comparator<Cottage>() {
+			    @Override
+				public int compare(Cottage o1, Cottage o2) {
+			        //return o1.rating.compareTo(o2.rating);
+			        return Double.compare(o1.rating, o2.rating);
+			    }
+			});
+		}
+		
+		
+		if(rateDesc) {
+			Collections.sort(cottages, new Comparator<Cottage>() {
+			    @Override
+				public int compare(Cottage o1, Cottage o2) {
+			    	return Double.compare(o1.rating, o2.rating);
+			    }
+			});
+			Collections.reverse(cottages);
 		}
 		
 		

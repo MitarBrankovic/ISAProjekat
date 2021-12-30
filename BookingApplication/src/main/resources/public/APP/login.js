@@ -6,28 +6,39 @@ Vue.component("Login", {
         }
     },
     template:`  
-	<div>
-		<div>
-			<form method="POST" @submit.prevent = "submitForm">
-			<div class="forma container">
-				<h1>Login</h1>
-				<hr>
-				<label class="col-sm-2 col-form-label" for="email"><b>Email</b></label>
-				<input class="col-sm-2 col-form-control" type="text" v-model="email" required>
-				<br>
-				<label class="col-sm-2 col-form-label" for="password"><b>Password</b></label>
-				<input class="col-sm-2 col-form-control" type="password" v-model="password" required>
-				<br><br><br>
-				<button class="button" type="submit">Login</button>
-				<br>
-				<div class="container signin">
-					<p>Nemate nalog? <a href="#/register">Register</a>.</p>
-			  	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-3 col-md-2"></div>
+
+			<div class="col-lg-6 col-md-8 login-box">
+				<form method="POST" @submit.prevent = "submitForm">
+					<div class="forma container">
+						<div class="col-lg-12 login-key">
+							<i class="bi bi-key" aria-hidden="true"></i>
+						</div>
+						<div class="col-lg-12 login-title">LOGIN</div><br>
+						<div class="form-group">
+							<label class="form-control-label" for="email"><b>Email</b></label>
+							<input class="form-control inputPass" type="text" v-model="email" required>
+						</div>
+						<br>
+
+
+						<div class="form-group">
+							<label class="form-control-label" for="password"><b>Password</b></label>
+							<input class="form-control inputPass" type="password" v-model="password" required>
+						</div>
+						<br>
+						<button class="button" type="submit">Login</button>
+						<br><br>
+						<div class="container signin">
+							<p>Nemate nalog? <a href="#/register">Register</a>.</p>
+						</div>
+					</div>
+				</form>
 			</div>
-			
-			</form>
-		</div>
-        <a id="logout" v href="/#/logout">Logout</a>
+		</div>	
+
 	</div>
     `       
         ,

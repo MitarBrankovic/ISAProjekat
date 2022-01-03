@@ -20,6 +20,7 @@ import com.BookingApp.dto.ReservedFishingAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
 import com.BookingApp.dto.DateReservationDto;
 import com.BookingApp.dto.FishingAppointmentDto;
+import com.BookingApp.dto.ReserveAdventureDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.BoatAppointment;
@@ -208,6 +209,29 @@ public class FishingAppointmentService {
 			}	
 		}	
 		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/reserveAdventure")
+	public boolean reserveAdventure(@RequestBody ReserveAdventureDto reserveAdventureDto)
+	{	
+		/*FishingAppointment fishingAppointment = new FishingAppointment();
+		fishingAppointment.appointmentStart = reserveAdventureDto.datePick.atStartOfDay().plusHours(reserveAdventureDto.time);
+		fishingAppointment.duration = 3;
+		fishingAppointment.appointmentType = AppointmentType.regular;
+		fishingAppointment.client = reserveAdventureDto.client;
+		fishingAppointment.extraNotes = reserveAdventureDto.additionalPricingText;
+		fishingAppointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
+		fishingAppointment.maxAmountOfPeople = 5;
+		fishingAppointment.price = reserveAdventureDto.totalPrice;*/
+		
+		FishingAppointment appointment = new FishingAppointment(reserveAdventureDto.datePick.atStartOfDay().plusHours(reserveAdventureDto.time), reserveAdventureDto.fishingAdventure.address, reserveAdventureDto.fishingAdventure.city, 
+				 3, 5, AppointmentType.regular, false, 0,reserveAdventureDto.additionalPricingText, reserveAdventureDto.totalPrice);
+		appointment.client = reserveAdventureDto.client;
+		appointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
+
+		fishingAppointmentRepository.save(appointment);
+		
+		return true;
 	}
 	
 	

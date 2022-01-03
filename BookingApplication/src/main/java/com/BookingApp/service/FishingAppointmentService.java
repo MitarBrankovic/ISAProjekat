@@ -133,8 +133,12 @@ public class FishingAppointmentService {
 
 		if(oldAppointment.isPresent()) {
 			FishingAppointment appointment = oldAppointment.get();
-			appointment.client = null;
-			fishingAppointmentRepository.save(appointment);
+			if(appointment.appointmentType == AppointmentType.quick) {
+				appointment.client = null;
+				fishingAppointmentRepository.save(appointment);
+			}else if(appointment.appointmentType == AppointmentType.regular) {
+				fishingAppointmentRepository.delete(appointment);
+			}
 			return true;
 		}
 		return false;

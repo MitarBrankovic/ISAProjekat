@@ -5,9 +5,9 @@ Vue.component("BasicReservation", {
             stepper: 0,
             barProcentage: 25,
             times:[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-            time:0,
+            time:"",
             datePick:"",
-            radio:"",
+            radio:"avanture",
             adventures:[],
             adventuresHelper:[],
             adventure:"",
@@ -24,23 +24,24 @@ Vue.component("BasicReservation", {
             </div>
 
             <div v-if="stepper == 0" style="margin-top: 50px;">
+                <h2 class="centerIt" style="margin-bottom: 50px;">Izaberite datum i vreme</h2>
                 <div class="form-check form-check-inline">
-                    <input v-model="radio" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="vikendice">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="vikendice" v-model="radio">
                     <label class="form-check-label" for="inlineRadio1">Vikendice</label>
                 </div>
+
                 <div class="form-check form-check-inline">
-                    <input v-model="radio" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="brodovi">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="brodovi" v-model="radio">
                     <label class="form-check-label" for="inlineRadio2">Brodovi</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input v-model="radio" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="avanture">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="avanture" checked  v-model="radio">
                     <label class="form-check-label" for="inlineRadio3">Avanture</label>
                 </div><br><br><br>
 
-
                 <input id="datePickerId" v-model="datePick" type="date" name="trip-start" min="0" ></input>
                 <select class="col-sm-2 col-form-select" v-model="time" requiered>
-                    <option disabled value="">Please select one</option>
+                    <option value="" selected disabled>Izaberite vreme</option>
                     <option v-for="c in times" :value="c">{{c}}:00</option>
                 </select><br><br>
 
@@ -80,7 +81,7 @@ Vue.component("BasicReservation", {
                 </div>
 
                 <div class="centerIt">
-                    <button style="margin-right: 5px;" class="btn btn-success" type="button" v-on:click="stepperDown()">Nazad</button>
+                    <button style="margin-right: 5px;" class="btn btn-secondary" type="button" v-on:click="stepperDown()">Nazad</button>
                     <button class="btn btn-success" type="button" v-on:click="secondNext()">Next</button>
                 </div>
             </div>
@@ -107,7 +108,7 @@ Vue.component("BasicReservation", {
                 </div>
 
                 <div class="centerIt">
-                    <button style="margin-right: 5px;" class="btn btn-success" type="button" v-on:click="stepperDown()">Nazad</button>
+                    <button style="margin-right: 5px;" class="btn btn-secondary" type="button" v-on:click="stepperDown()">Nazad</button>
                     <button class="btn btn-success" type="button" v-on:click="stepperUp()">Next</button>
                 </div>
             </div>
@@ -140,7 +141,7 @@ Vue.component("BasicReservation", {
 
 
                 <div class="centerIt" style="margin-top: 50px;">
-                    <button style="margin-right: 5px;" class="btn btn-success" type="button" v-on:click="stepperDown()">Nazad</button>
+                    <button style="margin-right: 5px;" class="btn btn-secondary" type="button" v-on:click="stepperDown()">Nazad</button>
                     <button class="btn btn-success" type="button" v-on:click="reserveAdventure()">Finish</button>
                 </div>
             </div>
@@ -152,48 +153,55 @@ Vue.component("BasicReservation", {
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
         if(this.activeUser.role != 'client')
-        this.$router.push('/')
+            tthis.$router.push('/')
 
         datePickerId.min = new Date().toISOString().slice(0, -14);
 	},
     methods:{
         firstNext() {
-            const dto = {
-                datePick: this.datePick,
-                time: this.time,
-            }
-
-            if(this.radio == "vikendice"){
-
-            }else if(this.radio == "brodovi"){
-
-
-            }else if(this.radio == "avanture"){
+            if(this.datePick == "" || this.time == ""){
+                this.sweetError()
+            }else{
+                const dto = {
+                    datePick: this.datePick,
+                    time: this.time,
+                }
+    
+                if(this.radio == "vikendice"){
+    
+                }else if(this.radio == "brodovi"){
+    
+                }else if(this.radio == "avanture"){
+                    axios
+                    .post('/fishingAppointments/getAllFreeAdventures', dto)
+                    .then(response=>{
+                        this.adventures = response.data
+                        this.adventuresHelper =response.data
+                    })
+                    .catch(error=>{
+                        console.log("Greska.")	
+                        alert("Podaci su lose uneti.")
+                    })
+                }
+                this.stepperUp()
+            }   
+        },
+        secondNext() {
+            if(this.adventure == ""){
+                this.sweetError()
+            }else{
                 axios
-                .post('/fishingAppointments/getAllFreeAdventures', dto)
+                .get('/pricelist/getInstructorsPricelist/' + this.adventure.fishingInstructor.id)
                 .then(response=>{
-                    this.adventures = response.data
-                    this.adventuresHelper =response.data
+                    this.priceListAdventures = response.data
                 })
                 .catch(error=>{
                     console.log("Greska.")	
                     alert("Podaci su lose uneti.")
+                    //window.location.reload()
                 })
+                this.stepperUp()
             }
-            this.stepperUp()
-        },
-        secondNext() {
-            axios
-            .get('/pricelist/getInstructorsPricelist/' + this.adventure.fishingInstructor.id)
-            .then(response=>{
-                this.priceListAdventures = response.data
-            })
-            .catch(error=>{
-                console.log("Greska.")	
-                alert("Podaci su lose uneti.")
-                //window.location.reload()
-            })
-            this.stepperUp()
         },
         stepperUp() {
             var bars = $('.progress-bar');
@@ -307,6 +315,13 @@ Vue.component("BasicReservation", {
               Toast.fire({
                 icon: 'success',
                 title: 'Signed in successfully'
+              })
+        },
+        sweetError(){
+            Swal.fire({
+                icon: 'error',
+                title: 'Greska...',
+                text: 'Popunite sva polja!',
               })
         }
     }

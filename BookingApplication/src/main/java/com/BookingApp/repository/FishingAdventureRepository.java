@@ -14,4 +14,6 @@ public interface FishingAdventureRepository extends JpaRepository<FishingAdventu
 
 	@Query("SELECT fi FROM FishingAdventure fi WHERE fi.fishingInstructor.id=?1")
 	public Set<FishingAdventure> findInstructorsAdventures(long id);
+	
+
 }

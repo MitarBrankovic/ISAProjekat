@@ -32,12 +32,8 @@ Vue.component("Navbar", {
 			<div class="dropdown-content1" >
 				<div v-if="(activeUser.role==='client')">
 					<a href="#/scheduledAppointments">Zakazani termini</a>
-				</div>
-				<div v-if="(activeUser.role==='client')">
 					<a href="#/historyReservations">Istorija zakazanih termina</a>
-				</div>
-				<div v-if="(activeUser.role==='client')">
-					<a href="#/subscriptions">Pretplate</a>
+					<a href="#/basicReservation">Zakazi termin</a>
 				</div>
 			</div>
 		</div>
@@ -55,14 +51,13 @@ Vue.component("Navbar", {
 			<div class="dropdown-content1" >
 				<div v-if="(activeUser.role==='client')">
 					<a href="/#/profileClient">Moj profil</a>
+					<a href="#/subscriptions">Pretplate</a>
+					<a href="/#/sendComplaint">Napisi zalbu</a>
 				</div>
 				<div v-if="(activeUser.role==='fishing_instructor')">
 					<a href="/#/fishingInstructorsAdventures">Avanture</a>
 					<a href="/#/profileFishingInstructor">Moj profil</a>
 					<a href="/#/historyOfFishingAppointments">Rezervacije</a>
-				</div>
-				<div v-if="(activeUser.role==='client')">
-					<a href="/#/sendComplaint">Napisi zalbu</a>
 				</div>
 				<a href="/#/logout">Logout</a>
 			</div>

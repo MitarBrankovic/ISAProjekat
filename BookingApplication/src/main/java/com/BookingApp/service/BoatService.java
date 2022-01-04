@@ -1,6 +1,8 @@
 package com.BookingApp.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.dto.SearchDto;
 import com.BookingApp.model.Boat;
+import com.BookingApp.model.Cottage;
 import com.BookingApp.repository.BoatRepository;
 
 
@@ -57,7 +60,8 @@ public class BoatService {
 			boolean nameDesc = dto.nameDesc;
 			boolean addressAsc = dto.addressAsc;
 			boolean addressDesc = dto.addressDesc;
-			
+			boolean rateAsc = dto.rateAsc;
+			boolean rateDesc = dto.rateDesc;
 
 			List<Boat> boats = boatRepository.findAll();
 
@@ -141,6 +145,27 @@ public class BoatService {
 
 					}
 				}
+			}
+			
+			if(rateAsc) {
+				Collections.sort(boats, new Comparator<Boat>() {
+				    @Override
+					public int compare(Boat o1, Boat o2) {
+				        //return o1.rating.compareTo(o2.rating);
+				        return Double.compare(o1.rating, o2.rating);
+				    }
+				});
+			}
+			
+			
+			if(rateDesc) {
+				Collections.sort(boats, new Comparator<Boat>() {
+				    @Override
+					public int compare(Boat o1, Boat o2) {
+				    	return Double.compare(o1.rating, o2.rating);
+				    }
+				});
+				Collections.reverse(boats);
 			}
 			
 			

@@ -29,8 +29,8 @@ const UsersAdmin = {template : '<UsersAdmin></UsersAdmin>'}
 const RequestNewAcc = { template: '<RequestNewAcc></RequestNewAcc>' }
 const AdminChangePassword = { template: '<AdminChangePassword></AdminChangePassword>' }
 const RatingApproval = { template: '<RatingApproval></RatingApproval>' }
-
-
+const Subscriptions = {  template: '<Subscriptions></Subscriptions>' }
+const BasicReservation = {  template: '<BasicReservation></BasicReservation>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -66,7 +66,8 @@ const router = new VueRouter({
         { path: '/adminChangePassword', component: AdminChangePassword },
         { path: '/usersAdmin', component: UsersAdmin },
         { path: '/ratingApproval', component: RatingApproval },
-        
+        { path: '/subscriptions', component: Subscriptions },
+        { path: '/basicReservation', component: BasicReservation },
 
     ]
 

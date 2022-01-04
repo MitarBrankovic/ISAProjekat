@@ -1,6 +1,8 @@
 package com.BookingApp.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -23,6 +25,7 @@ import com.BookingApp.dto.PricelistItemRemoveDto;
 import com.BookingApp.dto.SearchAdventureDto;
 import com.BookingApp.dto.SearchInstructorsAdventuresDto;
 import com.BookingApp.model.AppointmentType;
+import com.BookingApp.model.Boat;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.PricelistItem;
@@ -149,6 +152,8 @@ public class FishingAdventureService {
 		boolean nameDesc = dto.nameDesc;
 		boolean addressAsc = dto.addressAsc;
 		boolean addressDesc = dto.addressDesc;
+		boolean rateAsc = dto.rateAsc;
+		boolean rateDesc = dto.rateDesc;
 		
 
 		List<FishingAdventure> adventures = fishingAdventureRepository.findAll();
@@ -237,6 +242,27 @@ public class FishingAdventureService {
 
 				}
 			}
+		}
+		
+		if(rateAsc) {
+			Collections.sort(adventures, new Comparator<FishingAdventure>() {
+			    @Override
+				public int compare(FishingAdventure o1, FishingAdventure o2) {
+			        //return o1.rating.compareTo(o2.rating);
+			        return Double.compare(o1.rating, o2.rating);
+			    }
+			});
+		}
+		
+		
+		if(rateDesc) {
+			Collections.sort(adventures, new Comparator<FishingAdventure>() {
+			    @Override
+				public int compare(FishingAdventure o1, FishingAdventure o2) {
+			    	return Double.compare(o1.rating, o2.rating);
+			    }
+			});
+			Collections.reverse(adventures);
 		}
 		
 		

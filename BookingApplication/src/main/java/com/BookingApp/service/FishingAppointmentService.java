@@ -1,5 +1,6 @@
 package com.BookingApp.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.dto.ReservedFishingAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
+import com.BookingApp.dto.DateReservationDto;
 import com.BookingApp.dto.FishingAppointmentDto;
+import com.BookingApp.dto.ReserveAdventureDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.BoatAppointment;
@@ -130,8 +133,12 @@ public class FishingAppointmentService {
 
 		if(oldAppointment.isPresent()) {
 			FishingAppointment appointment = oldAppointment.get();
-			appointment.client = null;
-			fishingAppointmentRepository.save(appointment);
+			if(appointment.appointmentType == AppointmentType.quick) {
+				appointment.client = null;
+				fishingAppointmentRepository.save(appointment);
+			}else if(appointment.appointmentType == AppointmentType.regular) {
+				fishingAppointmentRepository.delete(appointment);
+			}
 			return true;
 		}
 		return false;
@@ -178,6 +185,57 @@ public class FishingAppointmentService {
 		List<FishingAppointment> adventures = fishingAppointmentRepository.findAllAppointmentsByClient(id);
 		
 		return new ResponseEntity<List<FishingAppointment>>(adventures,HttpStatus.OK);
+	}
+	
+	
+	@PostMapping(path = "/getAllFreeAdventures")
+	public ResponseEntity<List<FishingAdventure>> getAllFreeAdventures(@RequestBody DateReservationDto dateReservationDto)
+	{	
+		LocalDateTime datePick = dateReservationDto.datePick.atStartOfDay().plusHours(dateReservationDto.time); //.plusHours(dateReservationDto.time);
+		
+		boolean exist;
+		List<FishingAdventure> adventures = new ArrayList<FishingAdventure>();
+		for(FishingAdventure adventure: fishingAdventureRepository.findAll()) {
+			exist = false;
+			for(FishingAppointment fishingAppointment : fishingAppointmentRepository.findAll()) {
+				LocalDateTime start = fishingAppointment.appointmentStart;
+				LocalDateTime end = fishingAppointment.appointmentStart.plusHours(fishingAppointment.duration);
+				LocalDateTime datePickEnd = datePick.plusHours(fishingAppointment.duration);
+				if( (((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))		
+						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end))) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
+						&& adventure.fishingInstructor.id == fishingAppointment.fishingAdventure.fishingInstructor.id) {
+					exist = true;
+					break;
+				}				
+			}
+			if(!exist) {
+				adventures.add(adventure);
+			}	
+		}	
+		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/reserveAdventure")
+	public boolean reserveAdventure(@RequestBody ReserveAdventureDto reserveAdventureDto)
+	{	
+		/*FishingAppointment fishingAppointment = new FishingAppointment();
+		fishingAppointment.appointmentStart = reserveAdventureDto.datePick.atStartOfDay().plusHours(reserveAdventureDto.time);
+		fishingAppointment.duration = 3;
+		fishingAppointment.appointmentType = AppointmentType.regular;
+		fishingAppointment.client = reserveAdventureDto.client;
+		fishingAppointment.extraNotes = reserveAdventureDto.additionalPricingText;
+		fishingAppointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
+		fishingAppointment.maxAmountOfPeople = 5;
+		fishingAppointment.price = reserveAdventureDto.totalPrice;*/
+		
+		FishingAppointment appointment = new FishingAppointment(reserveAdventureDto.datePick.atStartOfDay().plusHours(reserveAdventureDto.time), reserveAdventureDto.fishingAdventure.address, reserveAdventureDto.fishingAdventure.city, 
+				 3, 5, AppointmentType.regular, false, 0,reserveAdventureDto.additionalPricingText, reserveAdventureDto.totalPrice);
+		appointment.client = reserveAdventureDto.client;
+		appointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
+
+		fishingAppointmentRepository.save(appointment);
+		
+		return true;
 	}
 	
 	

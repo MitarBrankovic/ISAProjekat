@@ -35,6 +35,7 @@ template: `
                                 <li class="list-group-item">{{c.address}}</li>
                                 <li class="list-group-item">Num of rooms: {{c.roomsNum}}</li>
                                 <li class="list-group-item">Num of beds: {{c.bedsNum}}</li>
+                                <li class="list-group-item">Rating: {{c.rating}}</li>
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showCottageInformation(c.id)" class="btn btn-secondary">Info</button>
@@ -71,6 +72,7 @@ template: `
                                 <li class="list-group-item">{{b.description}}</li>
                                 <li class="list-group-item">Engine: {{b.enginePower}}hp | {{b.maxSpeed}}km/h</li>
                                 <li class="list-group-item">{{b.address}}</li>
+                                <li class="list-group-item">Rating: {{b.rating}}</li>
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showBoatInformation(b.id)" class="btn btn-secondary">Info</button>
@@ -102,6 +104,7 @@ template: `
                                 <li class="list-group-item">{{a.city}} {{a.address}}</li>
                                 <li class="list-group-item">Instructor: {{a.fishingInstructor.name}} {{a.fishingInstructor.surname}}</li>
                                 <li class="list-group-item">{{a.priceAndInfo}}</li>
+                                <li class="list-group-item">Rating: {{a.rating}}</li>
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showAdventureInformation(a.id)" class="btn btn-secondary">Info</button>

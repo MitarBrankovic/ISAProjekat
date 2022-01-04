@@ -42,11 +42,15 @@ Vue.component("Login", {
 							title: 'Error',
 							text: 'Wrong username or password',
 						  })
-					}else{
+					}else if (response.data.verified){
 						localStorage.setItem('activeUser',JSON.stringify(response.data))
 						localStorage.removeItem('email') 
 						this.$router.push('/')
 						window.location.reload()
+					}
+					else {
+						localStorage.setItem('activeUser',JSON.stringify(response.data))
+			            this.$router.push({ path: '/adminChangePassword', query: { id: response.data.id }});
 					}
 				})
 				.catch(error=>{

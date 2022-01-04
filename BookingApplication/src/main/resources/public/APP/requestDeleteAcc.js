@@ -7,14 +7,15 @@ Vue.component("RequestDeleteAcc", {
     },
     template:`  
         <div style="margin-top: 30px;" v-if="activeUser.role=='admin'">
-            <h2 class="flex title-div bigtitle">All requests</h2>
+            <h2 class="flex title-div bigtitle" style="color: #5cb85c;">Svi zahtevi za brisanje naloga</h2>
             <div v-for="r in requests" class="list-group container">
                 <div class="list-item">
                     <p>
-                        <b>User Id:</b> {{r.appUserId}}<br>
-                        <b>Text of request:</b> {{r.text}}<br>
-						<button class="btn btn-success" type="button" v-on:click="acceptRequest(r)">Accept</button>
-						<button class="btn btn-danger" type="button" v-on:click="declineRequest(r)">Decline</button>
+                        <b>Korisnik:</b> {{r.appUserName}}<br>
+                        <b>Tip korisnika:</b> {{r.appUserType}}<br>
+                        <b>Tekst zahteva:</b> {{r.text}}<br>
+						<button style="margin-top: 1%; margin-right: 1%" class="btn btn-success" type="button" v-on:click="acceptRequest(r)">Prihvati</button>
+						<button style="margin-top: 1%; margin-left: 1%" class="btn btn-danger" type="button" v-on:click="declineRequest(r)">Odbij</button>
                         <hr>
                     </p>
                 </div>

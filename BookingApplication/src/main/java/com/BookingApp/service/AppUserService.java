@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.dto.ComplaintDto;
+import com.BookingApp.dto.RequestDeleteAccDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.Complaint;
 import com.BookingApp.model.RequestDeleteAcc;
+import com.BookingApp.model.UserType;
 import com.BookingApp.repository.BoatRepository;
 import com.BookingApp.repository.ComplaintRepository;
 import com.BookingApp.repository.CottageOwnerRepository;
@@ -85,9 +87,29 @@ public class AppUserService {
 	}
 	
 	@GetMapping(path="/getRequests")
-	public ResponseEntity<List<RequestDeleteAcc>> getRequests()
+	public ResponseEntity<List<RequestDeleteAccDto>> getRequests()
 	{	
-		return new ResponseEntity<List<RequestDeleteAcc>>(requestDeleteAccRepository.findAll(),HttpStatus.OK);
+		List <RequestDeleteAccDto> requestsDTOs = new ArrayList<RequestDeleteAccDto>();
+		List <RequestDeleteAcc> requests = requestDeleteAccRepository.findAll();
+		for(RequestDeleteAcc req : requests) {
+			AppUser user = userRepository.findById(req.appUserId).get();
+			requestsDTOs.add(new RequestDeleteAccDto(req.id, req.appUserId, req.isFinished, req.text, user.name + " " + user.surname, TranslateRole(user.role)));
+		}
+		return new ResponseEntity<List<RequestDeleteAccDto>>(requestsDTOs,HttpStatus.OK);
+		
+	}
+	
+	private String TranslateRole(UserType role) {
+		if (role == UserType.admin)
+			return "Administrator";
+		else if (role == UserType.client)
+			return "Klijent";
+		else if (role == UserType.cottage_owner)
+			return "Vlasnik vikendice";
+		else if (role == UserType.fishing_instructor)
+			return "Instruktor pecanja";
+		else
+			return "Vlasnik broda";
 	}
 	
 	@GetMapping(path="/getComplaints")
@@ -125,5 +147,11 @@ public class AppUserService {
 		return userRepository.findById(id).get();
 	}
 
+	@PostMapping(path="/deleteUser")
+	public ResponseEntity<List<AppUser>> deleteUser(@RequestBody AppUser user)
+	{	
+		userRepository.deleteById(user.id);
+		return new ResponseEntity<List<AppUser>>(userRepository.findAll(),HttpStatus.OK);
+	}
 	
 }

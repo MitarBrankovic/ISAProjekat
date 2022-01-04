@@ -51,6 +51,7 @@ public class RegistrationService {
 	@PostMapping(path = "/registerUser")
 	public boolean registerUser(@RequestBody AppUser appUser)
 	{	
+		
 		Optional<AppUser> oldUser = Optional.ofNullable(userRepository.findByEmail(appUser.email)); // Mail -> Korisnik
 		if(!oldUser.isPresent()) {
 			
@@ -164,6 +165,8 @@ public class RegistrationService {
 			appUser = user.get();
 			if(appUser.password.equals(password) && appUser.verified)
 				return appUser;
+			else if(appUser.password.equals(password) && !appUser.verified && appUser.role == UserType.admin)
+				return appUser;
 			else
 				return null;
 		}
@@ -176,5 +179,34 @@ public class RegistrationService {
 		}catch(NumberFormatException ex){
 			return false;
 		}
+	}
+	
+	@PostMapping(path = "/registerOwner")
+	public boolean registerOwner(@RequestBody AppUser appUser)
+	{	
+		Optional<AppUser> oldUser = Optional.ofNullable(userRepository.findByEmail(appUser.email)); // Mail -> Korisnik
+		if(!oldUser.isPresent()) {
+				if(!isNumber(appUser.phoneNumber))
+					return false;
+					
+				if(appUser.role == UserType.cottage_owner) {
+					CottageOwner cottageOwner = new CottageOwner(appUser, "");
+					cottageOwner.verified = false;
+					cottageOwnerRepository.save(cottageOwner);
+				}
+				else if(appUser.role == UserType.fishing_instructor) {
+					FishingInstructor fishingInstructor = new FishingInstructor(appUser, "", "Biografijica", LocalDateTime.now(), LocalDateTime.now().plusDays(14));
+					fishingInstructor.verified = false;
+					fishingInstructorRepository.save(fishingInstructor);
+				}
+				else if(appUser.role == UserType.ship_owner) {
+					ShipOwner shipOwner = new ShipOwner(appUser, "");
+					shipOwner.verified = false;
+					shipOwnerRepository.save(shipOwner);
+				}				
+				return true;
+		}
+		System.out.println("Korisnik sa ovim mailom postoji ili je nepostojeci mail.");
+		return false;
 	}
 }

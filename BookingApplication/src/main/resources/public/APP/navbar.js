@@ -12,15 +12,21 @@ Vue.component("Navbar", {
 			<a href="#">Something</a>
 		</div>
 		<div class="topnav-right dropdown1" v-if="(activeUser !== null) && (activeUser.role==='admin')">
-			<button class="dropbtn1">Something
+			<button class="dropbtn1">Zahtevi
 				<i class="fa fa-caret-down"></i>
 			</button>
 			<div class="dropdown-content1" >
 				<div v-if="(activeUser.role==='admin')">
-					<a href="#/requestDeleteAcc">Zahtev za brisanje naloga</a>
+					<a href="#/requestDeleteAcc">Zahtevi za brisanje naloga</a>
 				</div>
 				<div v-if="(activeUser.role==='admin')">
-					<a href="#/complaints">Complaints</a>
+					<a href="#/complaints">Žalbe</a>
+				</div>
+				<div v-if="(activeUser.role==='admin')">
+					<a href="#/requestNewAcc">Zahtevi za dodavanje naloga</a>
+				</div>
+				<div v-if="(activeUser.role==='admin')">
+					<a href="#/ratingApproval">Ocene</a>
 				</div>
 			</div>
 		</div>
@@ -83,6 +89,10 @@ Vue.component("Navbar", {
 			</div>
 	  	</div>
 	</div>
+	
+	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/usersAdmin">Korisnici</a>
+	<a v-if="(activeUser !== null) && (activeUser.role==='admin') && (activeUser.adminType ==='main')" href="#/addAdmin">Novi admin</a>
+	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/profileAdmin">Moj profil</a>
 	</nav>
     `       
         ,

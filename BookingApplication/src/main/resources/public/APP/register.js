@@ -96,22 +96,40 @@ Vue.component("Register", {
 				verificationCode:this.verificationCode,
                 verified:this.verified
             }
-
-            axios
-            .post('/registration/registerUser',user)
-            .then(response=>{
-                localStorage.setItem('email', user.email)
-                this.bool = response.data
-                if(this.bool === true)
-                {
-                    this.$router.push('/emailVerification')
-                }
-                else
-                {
-                    Swal.fire('Any fool can use a computer')
-                }
-
-            })
+			if (user.role == 'client') {
+	            axios
+	            .post('/registration/registerUser',user)
+	            .then(response=>{
+	                localStorage.setItem('email', user.email)
+	                this.bool = response.data
+	                if(this.bool === true)
+	                {
+	                    this.$router.push('/emailVerification')
+	                }
+	                else
+	                {
+	                    Swal.fire('Any fool can use a computer')
+	                }
+	
+	            })
+            }
+            else {
+            	axios
+	            .post('/registration/registerOwner',user)
+	            .then(response=>{
+	                this.bool = response.data
+	                if(this.bool === true)
+	                {
+	                	Swal.fire({ icon: 'success', title: 'Vaš zahtev za registraciju je poslat adminstratoru. Kada bude odobren, bićete obavešteni putem mejla koji ste uneli.', showConfirmButton: false, timer: 2500 })
+	                    this.$router.push('/')
+	                }
+	                else
+	                {
+	                    Swal.fire({ icon: 'error', title: 'Vaš zahtev za registraciju nije poslat, molimo Vas da proverite ispravnost podataka koje ste uneli.', showConfirmButton: false, timer: 2500 })
+	                }
+	
+	            })
+            }
         },
 		check_pass(){
             if (document.getElementById('password').value ==

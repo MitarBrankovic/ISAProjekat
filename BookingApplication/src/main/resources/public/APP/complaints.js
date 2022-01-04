@@ -11,23 +11,23 @@ Vue.component("Complaints", {
     },
     template:`  
         <div style="margin-top: 30px;" v-if="activeUser.role=='admin'">
-            <h2 class="flex title-div bigtitle">All complaints</h2>
+            <h2 class="flex title-div bigtitle" style="color: #5cb85c;">Sve žalbe</h2>
             <div v-for="c in complaints" class="list-group container">
                 <div class="list-item">
                     <p>
                         <b>Klijent:</b> {{c.client.name}} {{c.client.surname}}<br>
-                        <b>Text of complaint:</b> {{c.text}}<br>
-                        <b>Naziv vlasnika:</b> {{c.nameSurnameOwner}}<br>
+                        <b>Sadržaj žalbe:</b> {{c.text}}<br>
+                        <b>Ime vlasnika:</b> {{c.nameSurnameOwner}}<br>
                         <b>Naziv usluge:</b> {{c.entity}}<br>
-                        <button class="btn btn-success" type="button" v-if="answerClick==false" v-on:click="addToClicked(c)">Open</button>
+                        <button class="btn btn-success" style="margin-top: 1%;" type="button" v-if="answerClick==false" v-on:click="addToClicked(c)">Otvori</button>
                         <br>
                     </p>
 
                     <div v-if="isClicked(c)">
-                    <textarea v-model="textAreaComplaint" id="deleteArea" placeholder="Write a response to the complaint here..." rows="4" cols="50" required></textarea><br>
+                    <textarea class="form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Ovde napišite odgovor na žalbu..." rows="4" cols="70" required></textarea><br>
 
-                        <button class="btn btn-success" type="button" v-on:click="answerComplaint(c)">Answer</button>
-                        <button class="btn btn-danger" type="button" v-on:click="removeFromClicked(c)">Cancel</button>
+                        <button class="btn btn-success" type="button" v-on:click="answerComplaint(c)">Odgovori</button>
+                        <button class="btn btn-danger" type="button" v-on:click="removeFromClicked(c)">Otkaži</button>
                     
                     </div>
                     <hr>
@@ -58,17 +58,22 @@ Vue.component("Complaints", {
                 complaint: c,
                 text: this.textAreaComplaint,
             }
-            axios
-            .post('/admin/answerComplaint', answerComplaintDto)
-            .then(response=>{
-                this.complaints = response.data
-            })
-            .catch(error=>{
-                console.log("Greska.")	
-                alert("Podaci su lose uneti.")
-                window.location.reload()
-
-            })
+            if (this.textAreaComplaint.trim() != "") {
+	            axios
+	            .post('/admin/answerComplaint', answerComplaintDto)
+	            .then(response=>{
+	                this.complaints = response.data
+	                Swal.fire({ icon: 'success', title: 'Odgovorili ste na žalbu !', showConfirmButton: false, timer: 1500 })
+	            })
+	            .catch(error=>{
+	                console.log("Greska.")	
+	                alert("Podaci su lose uneti.")
+	                window.location.reload()
+	
+	            })
+	         }
+	         else
+	         	Swal.fire({icon: 'error', title: 'Greška', text: 'Morate uneti odgovor na žalbu !'})
 
         },
         addToClicked:function(c){

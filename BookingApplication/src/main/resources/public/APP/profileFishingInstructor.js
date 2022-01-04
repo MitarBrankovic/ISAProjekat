@@ -267,11 +267,11 @@ Vue.component("ProfileFishingInstructor", {
     	let until = this.activeUser.availableUntil.split("T")
     	this.dateFrom = from[0]
     	console.log(this.dateFrom)
-    	this.timeFrom = from[1]
+    	this.timeFrom = from[1].substring(0,5)
     	console.log(this.timeFrom)
     	this.dateUntil = until[0]
     	console.log(this.dateUntil)
-    	this.timeUntil = until[1]
+    	this.timeUntil = until[1].substring(0,5)
     	console.log(this.timeUntil)
     },
 

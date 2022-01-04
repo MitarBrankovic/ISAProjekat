@@ -23,6 +23,14 @@ const SearchCottAppointments = {  template: '<SearchCottAppointments></SearchCot
 const SearchBoatAppointments = {  template: '<SearchBoatAppointments></SearchBoatAppointments>' }
 const SearchAdvAppointments = {  template: '<SearchAdvAppointments></SearchAdvAppointments>' }
 const HistoryOfFishingAppointments = {  template: '<HistoryOfFishingAppointments></HistoryOfFishingAppointments>' }
+const ProfileAdmin = {template : '<ProfileAdmin></ProfileAdmin>'}
+const AddAdmin = {template : '<AddAdmin></AddAdmin>'}
+const UsersAdmin = {template : '<UsersAdmin></UsersAdmin>'}
+const RequestNewAcc = { template: '<RequestNewAcc></RequestNewAcc>' }
+const AdminChangePassword = { template: '<AdminChangePassword></AdminChangePassword>' }
+const RatingApproval = { template: '<RatingApproval></RatingApproval>' }
+
+
 
 const router = new VueRouter({
     mode: 'hash',
@@ -52,6 +60,13 @@ const router = new VueRouter({
         { path: '/searchBoatAppointments', component: SearchBoatAppointments },
         { path: '/searchAdvAppointments', component: SearchAdvAppointments },
         { path: '/historyOfFishingAppointments', component: HistoryOfFishingAppointments },
+        { path: '/profileAdmin', component: ProfileAdmin },
+        { path: '/addAdmin', component: AddAdmin },
+        { path: '/requestNewAcc', component: RequestNewAcc },
+        { path: '/adminChangePassword', component: AdminChangePassword },
+        { path: '/usersAdmin', component: UsersAdmin },
+        { path: '/ratingApproval', component: RatingApproval },
+        
 
     ]
 

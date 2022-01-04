@@ -14,7 +14,7 @@ insert into cottage_owner (id, cottage_text) values ( 3, 'neki tekst');
 insert into ship_owner (id, text) values ( 4, 'neki tekst');
 insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 5, 'neki tekst', 'biografija', '2021-12-12 12:00:00', '2021-12-27 12:00:00');
 insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 6, 'neki tekst', 'biografija coveka','2021-12-12 12:00:00', '2021-12-27 12:00:00');
-insert into admin (id, text) values ( 7, 'neki tekst');
+insert into admin (id, text, admin_type) values ( 7, 'neki tekst', 'main');
 
 
 insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list ,cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Zuta vikendica', 'Popovica', 'Wow kako je dobro', 3, 6, 'Nema pravila','10 dinala', 3, 0);

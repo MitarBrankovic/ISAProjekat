@@ -67,4 +67,20 @@ public class AppUser {
 		this.verified = firstLogin;
 	}
 	
+	public AppUser(String name, String surname, String email, String password, String address, String city,
+			String country, String phoneNumber, UserType role, String verificationCode, Boolean firstLogin) {
+		super();
+		this.name = name;
+		this.surname = surname;
+		this.email = email;
+		this.password = password;
+		this.address = address;
+		this.city = city;
+		this.country = country;
+		this.phoneNumber = phoneNumber;
+		this.role = role;
+		this.verificationCode = verificationCode;
+		this.verified = firstLogin;
+	}
+	
 }

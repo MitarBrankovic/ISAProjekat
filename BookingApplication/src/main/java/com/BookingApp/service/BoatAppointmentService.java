@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.DateReservationDto;
+import com.BookingApp.dto.ReserveAdventureDto;
+import com.BookingApp.dto.ReserveBoatDto;
 import com.BookingApp.dto.ReservedBoatAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
 import com.BookingApp.model.AppointmentType;
@@ -24,6 +27,7 @@ import com.BookingApp.model.Boat;
 import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Client;
 import com.BookingApp.model.CottageAppointment;
+import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.repository.BoatAppointmentRepository;
 import com.BookingApp.repository.BoatRepository;
@@ -130,6 +134,43 @@ public class BoatAppointmentService {
 			}
 		}
 		return new ResponseEntity<List<Boat>>(boats,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/getAllFreeBoats")
+	public ResponseEntity<List<Boat>> getAllFreeBoats(@RequestBody DateReservationDto dateReservationDto)
+	{	
+		LocalDateTime datePick = dateReservationDto.datePick.atStartOfDay().plusHours(dateReservationDto.time);
+		
+		boolean exist;
+		List<Boat> boats = new ArrayList<Boat>();
+		for(Boat boat: boatRepository.findAll()) {
+			exist = false;
+			for(BoatAppointment fishingAppointment : boatAppointmentRepository.findAll()) {
+				LocalDateTime start = fishingAppointment.appointmentStart;
+				LocalDateTime end = fishingAppointment.appointmentStart.plusHours(fishingAppointment.duration);
+				LocalDateTime datePickEnd = datePick.plusHours(24);
+				if( (((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))		
+						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end))) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
+						&& boat.id == fishingAppointment.boat.id) {
+					exist = true;
+					break;
+				}				
+			}
+			if(!exist) {
+				boats.add(boat);
+			}	
+		}	
+		return new ResponseEntity<List<Boat>>(boats,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/reserveBoat")
+	public boolean reserveAdventure(@RequestBody ReserveBoatDto reserveBoatDto)
+	{	
+		BoatAppointment appointment = new BoatAppointment(reserveBoatDto.datePick.atStartOfDay().plusHours(reserveBoatDto.time), 24, 4, AppointmentType.regular, 
+				reserveBoatDto.additionalPricingText, reserveBoatDto.totalPrice, reserveBoatDto.boat, reserveBoatDto.client);
+
+		boatAppointmentRepository.save(appointment);
+		return true;
 	}
 	
 	@PostMapping(path = "/searchBoatAppointments")

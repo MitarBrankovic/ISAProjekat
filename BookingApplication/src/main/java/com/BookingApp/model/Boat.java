@@ -45,6 +45,8 @@ public class Boat {
 	public String fishingEquipment;
 	@Column
 	public String priceList;
+	@Column
+	public double pricePerHour;
 	@Enumerated(value = EnumType.STRING)
 	public CancellationTerms cancellationTerms;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -58,7 +60,7 @@ public class Boat {
 
 	public Boat(long id, String name, String boatType, double length, String engineNumber, long enginePower,
 			double maxSpeed, String navigationEquipment, String address, String description, long capacity,
-			String rules, String fishingEquipment, String priceList, CancellationTerms cancellationTerms) {
+			String rules, String fishingEquipment, String priceList, double pricePerHour, CancellationTerms cancellationTerms) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -74,12 +76,13 @@ public class Boat {
 		this.rules = rules;
 		this.fishingEquipment = fishingEquipment;
 		this.priceList = priceList;
+		this.pricePerHour = pricePerHour;
 		this.cancellationTerms = cancellationTerms;
 	}
 	
 	public Boat(long id, String name, String boatType, double length, String engineNumber, long enginePower,
 			double maxSpeed, String navigationEquipment, String address, String description, long capacity,
-			String rules, String fishingEquipment, String priceList, CancellationTerms cancellationTerms, double rating) {
+			String rules, String fishingEquipment, String priceList, double pricePerHour, CancellationTerms cancellationTerms, double rating) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -95,6 +98,7 @@ public class Boat {
 		this.rules = rules;
 		this.fishingEquipment = fishingEquipment;
 		this.priceList = priceList;
+		this.pricePerHour = pricePerHour;
 		this.cancellationTerms = cancellationTerms;
 		this.rating = rating;
 	}

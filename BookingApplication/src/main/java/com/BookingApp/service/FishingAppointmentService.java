@@ -224,7 +224,6 @@ public class FishingAppointmentService {
 		appointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
 
 		fishingAppointmentRepository.save(appointment);
-		
 		return true;
 	}
 	

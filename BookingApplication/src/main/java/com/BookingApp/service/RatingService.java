@@ -241,6 +241,18 @@ public class RatingService {
 		return allRatings;
 	}
 	
+	@PostMapping(path="/declineRating")
+	public List<ClientRatingDto> declineRationg(@RequestBody ClientRatingDto dto)
+	{
+		if (userRepository.findById(dto.ownerId).get().role == UserType.cottage_owner)
+			ratingCottageRepository.deleteById(dto.ratingId);
+		else if (userRepository.findById(dto.ownerId).get().role == UserType.fishing_instructor)
+			ratingFishingAdventureRepository.deleteById(dto.ratingId);
+		else
+			ratingBoatRepository.deleteById(dto.ratingId);
+		return getUnapprovedRatings();
+	}
+	
 	@PostMapping(path="/approveRating")
 	public List<ClientRatingDto> approveRating(@RequestBody ClientRatingDto dto)
 	{

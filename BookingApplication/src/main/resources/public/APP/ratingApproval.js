@@ -70,7 +70,7 @@ Vue.component("RatingApproval", {
         },
         declineRequest:function(r){
             axios
-            .post('/rating/disapproveRating', r)
+            .post('/rating/declineRating', r)
             .then(response=>{
                 this.ratings = response.data
             })

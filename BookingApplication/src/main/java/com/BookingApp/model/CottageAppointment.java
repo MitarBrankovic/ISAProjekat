@@ -31,7 +31,7 @@ public class CottageAppointment {
 	@Column
 	public String extraNotes;
 	@Column
-	public long price;
+	public double price;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Cottage cottage;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -41,9 +41,22 @@ public class CottageAppointment {
 		super();
 	}
 	public CottageAppointment(long id, LocalDateTime appointmentStart, long duration, int maxAmountOfPeople,
-			AppointmentType appointmentType, String extraNotes, long price, Cottage cottage, Client client) {
+			AppointmentType appointmentType, String extraNotes, double price, Cottage cottage, Client client) {
 		super();
 		this.id = id;
+		this.appointmentStart = appointmentStart;
+		this.duration = duration;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+		this.appointmentType = appointmentType;
+		this.extraNotes = extraNotes;
+		this.price = price;
+		this.cottage = cottage;
+		this.client = client;
+	}
+	
+	public CottageAppointment(LocalDateTime appointmentStart, long duration, int maxAmountOfPeople,
+			AppointmentType appointmentType, String extraNotes, double price, Cottage cottage, Client client) {
+		super();
 		this.appointmentStart = appointmentStart;
 		this.duration = duration;
 		this.maxAmountOfPeople = maxAmountOfPeople;

@@ -12,7 +12,12 @@ Vue.component("BasicReservation", {
             adventuresHelper:[],
             adventure:"",
             priceListAdventures:[],
-            myPriceList:[]
+            myPriceList:[],
+
+            cottages:[],
+            cottagesHelper:[],
+            cottage:"",
+            priceListCottages:[],
 
         }
     },
@@ -52,8 +57,34 @@ Vue.component("BasicReservation", {
 
 
             <div v-if="stepper == 1" style="margin-top: 50px;">
-            
-                <div v-if="radio =='avanture'">
+
+                <div v-if="radio =='vikendice'">
+                    <SearchCottages id="search" @clicked="searchCottages"></SearchCottages>
+                    <div class="container-fluid" style="margin-top: 3%; margin-left: 5mm;">
+                        <div class="row row-cols-1 row-cols-md-4 g-4">
+                            <div class="col"  v-for = "a in cottages">
+                                <div class="card" style="width: 93%">
+                                    <img src="../images/cottage.jpg" width="200" height="120" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{a.name}}</h5>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">{{a.description}}</li>
+                                        <li class="list-group-item">{{a.city}} {{a.address}}</li>
+                                        <li class="list-group-item">Vlasnik: {{a.cottageOwner.name}} {{a.cottageOwner.surname}}</li>
+                                        <li class="list-group-item">{{a.pricePerHour}}din/h</li>
+                                        <li class="list-group-item">Rating: {{a.rating}}</li>
+                                    </ul>
+                                    <div class="card-body">
+                                        <button style="margin-left: 2%;" type="button" class="btn btn-success" v-on:click="addCottage(a)">Izaberi</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+
+                <div v-else-if="radio =='avanture'">
                     <SearchAdventures id="search" @clicked="searchAdventures"></SearchAdventures>
                     <div class="container-fluid" style="margin-top: 3%; margin-left: 5mm;">
                         <div class="row row-cols-1 row-cols-md-4 g-4">
@@ -67,7 +98,7 @@ Vue.component("BasicReservation", {
                                         <li class="list-group-item">{{a.description}}</li>
                                         <li class="list-group-item">{{a.city}} {{a.address}}</li>
                                         <li class="list-group-item">Instructor: {{a.fishingInstructor.name}} {{a.fishingInstructor.surname}}</li>
-                                        <li class="list-group-item">{{a.priceAndInfo}}</li>
+                                        <li class="list-group-item">{{a.pricePerHour}}din/h</li>
                                         <li class="list-group-item">Rating: {{a.rating}}</li>
                                     </ul>
                                     <div class="card-body">
@@ -76,18 +107,38 @@ Vue.component("BasicReservation", {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                
+                    </div> 
                 </div>
-
                 <div class="centerIt">
                     <button style="margin-right: 5px;" class="btn btn-secondary" type="button" v-on:click="stepperDown()">Nazad</button>
                     <button class="btn btn-success" type="button" v-on:click="secondNext()">Next</button>
                 </div>
             </div>
+
+
             <div v-if="stepper == 2" style="margin-top: 50px;">
                 <h2 class="centerIt">Dodatne usluge</h2>
-                <div v-if="radio =='avanture'" class="container-fluid" style="margin-top: 3%">
+                <div v-if="radio =='vikendice'" class="container-fluid" style="margin-top: 3%">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td scope="col">Opis</td>
+                                <td scope="col">Cena</td>
+                                <td scope="col"></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="p in priceListCottages">
+                                <td>{{p.description}}</td>
+                                <td>{{p.price}} din.</td>
+                                <td v-if="!isClicked(p)"><button type="button" v-on:click="addPriceList(p)" class="btn btn-success">Dodaj</button> </td>
+                                <td v-if="isClicked(p)"><button class="btn btn-danger" type="button" v-on:click="removeFromPriceList(p)">Cancel</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div v-else-if="radio =='avanture'" class="container-fluid" style="margin-top: 3%">
                     <table class="table">
                         <thead>
                             <tr>
@@ -106,15 +157,37 @@ Vue.component("BasicReservation", {
                         </tbody>
                     </table>
                 </div>
-
                 <div class="centerIt">
                     <button style="margin-right: 5px;" class="btn btn-secondary" type="button" v-on:click="stepperDown()">Nazad</button>
                     <button class="btn btn-success" type="button" v-on:click="stepperUp()">Next</button>
                 </div>
             </div>
+
+
             <div v-if="stepper == 3" style="margin-top: 50px;">
                 <h2 class="centerIt">Finalna cena</h2>
-                <div class="container" style="margin-top: 50px; margin-bottom: 50px;">
+                <div v-if="radio =='vikendice'" class="container" style="margin-top: 50px; margin-bottom: 50px;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td scope="col">Opis</td>
+                                <td scope="col">Cena</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>{{this.cottage.name}}</b></td>
+                                <td>{{this.cottage.pricePerHour}} din/h</td>
+                            </tr>
+                            <tr v-for="p in myPriceList">
+                                <td>{{p.description}}</td>
+                                <td>{{p.price}} din.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>  
+
+                <div v-else-if="radio =='avanture'" class="container" style="margin-top: 50px; margin-bottom: 50px;">
                     <table class="table">
                         <thead>
                             <tr>
@@ -133,8 +206,14 @@ Vue.component("BasicReservation", {
                             </tr>
                         </tbody>
                     </table>
-                </div>    
-                <div>
+                </div>   
+
+                <div v-if="radio =='vikendice'">
+                    <h4>Termin pocinje {{datePick}} u {{time}}:00h, termin traje 24h.</h4>
+                    <h4>Konacna cena je <b>{{finalPriceCottage()}}din.</b></h4>
+                </div>
+
+                <div v-else-if="radio =='avanture'">
                     <h4>Termin pocinje {{datePick}} u {{time}}:00h, termin traje 3h.</h4>
                     <h4>Konacna cena je <b>{{finalPriceAdventure()}}din.</b></h4>
                 </div>
@@ -142,7 +221,8 @@ Vue.component("BasicReservation", {
 
                 <div class="centerIt" style="margin-top: 50px;">
                     <button style="margin-right: 5px;" class="btn btn-secondary" type="button" v-on:click="stepperDown()">Nazad</button>
-                    <button class="btn btn-success" type="button" v-on:click="reserveAdventure()">Finish</button>
+                    <button v-if="radio =='vikendice'" class="btn btn-success" type="button" v-on:click="reserveCottage()">Finish</button>
+                    <button v-else-if="radio =='avanture'" class="btn btn-success" type="button" v-on:click="reserveAdventure()">Finish</button>
                 </div>
             </div>
           
@@ -168,7 +248,16 @@ Vue.component("BasicReservation", {
                 }
     
                 if(this.radio == "vikendice"){
-    
+                    axios
+                    .post('/cottageAppointments/getAllFreeCottages', dto)
+                    .then(response=>{
+                        this.cottages = response.data
+                        this.cottagesHelper =response.data
+                    })
+                    .catch(error=>{
+                        console.log("Greska.")	
+                        alert("Podaci su lose uneti.")
+                    })
                 }else if(this.radio == "brodovi"){
     
                 }else if(this.radio == "avanture"){
@@ -187,21 +276,42 @@ Vue.component("BasicReservation", {
             }   
         },
         secondNext() {
-            if(this.adventure == ""){
-                this.sweetError()
-            }else{
-                axios
-                .get('/pricelist/getInstructorsPricelist/' + this.adventure.fishingInstructor.id)
-                .then(response=>{
-                    this.priceListAdventures = response.data
-                })
-                .catch(error=>{
-                    console.log("Greska.")	
-                    alert("Podaci su lose uneti.")
-                    //window.location.reload()
-                })
-                this.stepperUp()
+            if(this.radio == "vikendice"){
+                if(this.cottage == ""){
+                    this.sweetError()
+                }else{
+                    axios
+                    .get('/pricelist/getInstructorsPricelist/' + this.cottage.cottageOwner.id)
+                    .then(response=>{
+                        this.priceListCottages = response.data
+                    })
+                    .catch(error=>{
+                        console.log("Greska.")	
+                        alert("Podaci su lose uneti.")
+                        //window.location.reload()
+                    })
+                    this.stepperUp()
+                }
+            }else if(this.radio == "brodovi"){
+
+            }else if(this.radio == "avanture"){
+                if(this.adventure == ""){
+                    this.sweetError()
+                }else{
+                    axios
+                    .get('/pricelist/getInstructorsPricelist/' + this.adventure.fishingInstructor.id)
+                    .then(response=>{
+                        this.priceListAdventures = response.data
+                    })
+                    .catch(error=>{
+                        console.log("Greska.")	
+                        alert("Podaci su lose uneti.")
+                        //window.location.reload()
+                    })
+                    this.stepperUp()
+                }
             }
+
         },
         stepperUp() {
             var bars = $('.progress-bar');
@@ -227,6 +337,22 @@ Vue.component("BasicReservation", {
               }
             this.stepper--
         },
+        searchCottages:function(search){
+            console.log(search)
+            axios
+            .post('/cottages/searchCottages',search)
+            .then(response=>{
+                let listBackend = response.data
+                let finalList = []
+                for (const i in listBackend) {
+                    for (const j in this.cottagesHelper) {
+                        if(listBackend[i].id == this.cottagesHelper[j].id)
+                            finalList.push(listBackend[i])
+                    }
+                }
+                this.cottages = finalList
+            })
+        },
         searchAdventures:function(search){
             console.log(search)
             axios
@@ -243,8 +369,14 @@ Vue.component("BasicReservation", {
                 this.adventures = finalList
             })
         },
+        addCottage(a){
+            this.cottage = a
+            this.myPriceList = []
+            this.sweetAnimation()
+        },
         addAdventure(a){
             this.adventure = a
+            this.myPriceList = []
             this.sweetAnimation()
         },
         addPriceList(p){
@@ -269,6 +401,14 @@ Vue.component("BasicReservation", {
             }
             return exists
         },
+        finalPriceCottage(){
+            let cottagePrice = this.cottage.pricePerHour * 24
+            let additionalPricing = 0
+            for(var i = 0; i < this.myPriceList.length; i++){
+                additionalPricing += this.myPriceList[i].price
+            }
+            return cottagePrice + additionalPricing
+        },
         finalPriceAdventure(){
             let adventurePrice = this.adventure.pricePerHour * 3
             let additionalPricing = 0
@@ -277,12 +417,34 @@ Vue.component("BasicReservation", {
             }
             return adventurePrice + additionalPricing
         },
+        reserveCottage(){
+            let additionalPricing = 0
+            let text = ""
+            for(var i = 0; i < this.myPriceList.length; i++){
+                additionalPricing += this.myPriceList[i].price
+                text += this.myPriceList[i].description + ". "
+            }
+            const dto = {
+                datePick: this.datePick,
+                time: this.time,
+                client: this.activeUser,
+                cottage: this.cottage,
+                totalPrice: additionalPricing + this.cottage.pricePerHour * 24,
+                additionalPricingText: text,
+            }
+            axios
+            .post('/cottageAppointments/reserveCottage',dto)
+            .then(response=>{
+                this.sweetAnimation()
+                this.$router.push('/scheduledAppointments')
+            })
+        },
         reserveAdventure(){
             let additionalPricing = 0
             let text = ""
             for(var i = 0; i < this.myPriceList.length; i++){
                 additionalPricing += this.myPriceList[i].price
-                text += this.myPriceList[i].description + ", "
+                text += this.myPriceList[i].description + ". "
             }
             const dto = {
                 datePick: this.datePick,
@@ -292,7 +454,6 @@ Vue.component("BasicReservation", {
                 totalPrice: additionalPricing + this.adventure.pricePerHour * 3,
                 additionalPricingText: text,
             }
-
             axios
             .post('/fishingAppointments/reserveAdventure',dto)
             .then(response=>{

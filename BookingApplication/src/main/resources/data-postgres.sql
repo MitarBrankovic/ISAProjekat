@@ -17,11 +17,11 @@ insert into fishing_instructor (id, text, biography, available_from, available_u
 insert into admin (id, text) values ( 7, 'neki tekst');
 
 
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list ,cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Zuta vikendica', 'Popovica', 'Wow kako je dobro', 3, 6, 'Nema pravila','10 dinala', 3, 2);
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Crvena vikendica', 'Ledinci', 'Wow wow wow', 4, 4, 'Nema pravila','Parking 100 din', 3, 3);
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Zelena vikendica', 'Ledinci', 'Wow wow wow', 2, 12, 'Nema pravila','Wifi dan - 100 din', 3, 3.2);
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Plava vikendica', 'Ledinci', 'Opis', 6, 4, 'Nema pravila','Dorucak - 30 din', 3, 4.4);
-insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Bela vikendica', 'Ledinci', 'Najs', 1, 3, 'Nema pravila','Rucak - 70 din', 3, 4.1);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Zuta vikendica', 'Popovica', 'Wow kako je dobro', 3, 6, 'Nema pravila','10 dinala', 500, 3, 2);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Crvena vikendica', 'Ledinci', 'Wow wow wow', 4, 4, 'Nema pravila','Parking 100 din', 450, 3, 3);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Zelena vikendica', 'Ledinci', 'Wow wow wow', 2, 12, 'Nema pravila','Wifi dan - 100 din', 600, 3, 3.2);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Plava vikendica', 'Ledinci', 'Opis', 6, 4, 'Nema pravila','Dorucak - 30 din', 400, 3, 4.4);
+insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Bela vikendica', 'Ledinci', 'Najs', 1, 3, 'Nema pravila','Rucak - 70 din', 300, 3, 4.1);
 
 insert into request_delete_acc (id, app_user_id, is_finished, text) values ( nextval('request_seq_gen'), 2, false, 'Tekst zahteva');
 
@@ -33,7 +33,7 @@ insert into boat (id, name, boat_type, length, engine_number, engine_power,max_s
 insert into boat (id, name, boat_type, length, engine_number, engine_power,max_speed, navigation_equipment, address, description, capacity, rules, fishing_equipment, price_list, cancellation_terms, ship_owner_id, rating ) values ( nextval('boat_seq_gen'), 'Brodic', 'Gliser',70.0, '23121SDC', 30, 60.0, 'Sonar', 'Bore Tirica 92', 'NAjjaci brod',50, 'Da se gliserise', 'Stap za pecanje', 'votkica - 200 din', 'free_cancellation',4, 4.6);
 insert into boat (id, name, boat_type, length, engine_number, engine_power,max_speed, navigation_equipment, address, description, capacity, rules, fishing_equipment, price_list, cancellation_terms, ship_owner_id, rating ) values ( nextval('boat_seq_gen'), 'AC4 brod', 'Gusarski brod',200.0, '2132dSD', 0, 30.0, '', 'Karibi 3', 'NAjjaci brod',50, 'Iz igrice Edward kapetan broda', 'Stap za pecanje', 'votkica - 200 din', 'free_cancellation',4, 4.5);
 
-insert into cottage_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, cottage_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2022-12-20 12:00:00', 4, 5, 'quick', 'Nema dodatnih informacija', 5000, 1, 1);
+insert into cottage_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, cottage_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2022-01-10 12:00:00', 4, 5, 'quick', 'Nema dodatnih informacija', 5000, 1, 1);
 insert into cottage_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, cottage_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2022-12-25 12:00:00', 2, 5, 'quick', 'Nema dodatnih informacija', 2500, 2, 1);
 insert into cottage_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, cottage_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2022-12-26 12:00:00', 3, 5, 'quick', 'Nema dodatnih informacija', 2500, 2, null);
 insert into cottage_appointment (id, appointment_start, duration, max_amount_of_people, appointment_type,  extra_notes, price, cottage_id, client_id) values ( nextval('cottage_appointment_seq_gen'), '2021-12-28 12:00:00', 4, 5, 'regular', 'Nema dodatnih informacija', 2500, 1, 2);
@@ -60,6 +60,10 @@ insert into pricelist_item (id, price, description, app_user_id) values ( nextva
 insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 500, 'Ručak', 6);
 insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 250, 'Dodatni mamci', 6);
 insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 1400, 'Profesionalni štap', 6);
+insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 650, 'Rucak', 3);
+insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 1200, 'Stoni tenis', 3);
+insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 550, 'Rucak', 4);
+insert into pricelist_item (id, price, description, app_user_id) values ( nextval('pricelist_seq_gen'), 1500, 'Oprema za pecanje', 4);
 
 
 insert into subscribe_cottage (id, cottage_id, client_id) values (nextval('subs_cott_seq_gen'), 1, 1);

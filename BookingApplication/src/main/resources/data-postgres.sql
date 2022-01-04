@@ -8,8 +8,8 @@ insert into app_user (id, name, surname, email, password, address, city, country
 insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified) values ( nextval('my_user_seq'), 'Admin', 'Admin', 'admin@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '1212312', 'admin', true);
 
 
-insert into client (id, text) values ( 1, 'neki tekst');
-insert into client (id, text) values ( 2, 'neki tekst');
+insert into client (id, text, penalties) values ( 1, 'neki tekst', 0);
+insert into client (id, text, penalties) values ( 2, 'neki tekst', 0);
 insert into cottage_owner (id, cottage_text) values ( 3, 'neki tekst');
 insert into ship_owner (id, text) values ( 4, 'neki tekst');
 insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 5, 'neki tekst', 'biografija', '2021-12-12 12:00:00', '2021-12-27 12:00:00');

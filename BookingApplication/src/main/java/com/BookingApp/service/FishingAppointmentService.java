@@ -28,12 +28,14 @@ import com.BookingApp.model.Client;
 import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
+import com.BookingApp.model.FishingAppointmentReport;
 import com.BookingApp.model.FishingInstructor;
 import com.BookingApp.model.RequestDeleteAcc;
 import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.FishingAdventureRepository;
 import com.BookingApp.repository.FishingAppointmentRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
+import com.BookingApp.repository.FishingReportsRepository;
 import com.BookingApp.repository.UserRepository;
 
 import java.util.Optional;
@@ -49,6 +51,8 @@ public class FishingAppointmentService {
 	private FishingAdventureRepository fishingAdventureRepository;
 	@Autowired
 	private ClientRepository clientRepository;
+	@Autowired
+	private FishingReportsRepository fishingReportsRepository;
 
 	public ResponseEntity<List<FishingAppointment>> getAdventureQuickAppointments(long id)
 	{
@@ -61,8 +65,29 @@ public class FishingAppointmentService {
 		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
 	} 
 	
-	@GetMapping(path = "/getReservationsHistory/{instructorsId}")
+	@GetMapping(path = "/getReservationsForReports/{instructorsId}")
 	public ResponseEntity<List<FishingAppointment>> getInstructorsReservationsHistory(@PathVariable("instructorsId") long id)
+	{
+		List<FishingAppointment> appointments = new ArrayList<FishingAppointment>();
+		for(FishingAppointment appointment : fishingAppointmentRepository.findInstructorsReservationHistory(id))
+		{
+			if (appointment.client != null && appointment.appointmentStart.plusHours(appointment.duration).isBefore(LocalDateTime.now()) && !checkIfReportExists(appointment.id))
+				appointments.add(appointment);
+		}
+		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
+	}
+	
+	private boolean checkIfReportExists(long id) {
+		for(FishingAppointmentReport rep : fishingReportsRepository.findAll()) {
+			if (rep.appointment.id == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@GetMapping(path = "/getReservationsHistory/{instructorsId}")
+	public ResponseEntity<List<FishingAppointment>> getInstructorsReservationsForReport(@PathVariable("instructorsId") long id)
 	{
 		List<FishingAppointment> appointments = new ArrayList<FishingAppointment>();
 		for(FishingAppointment appointment : fishingAppointmentRepository.findInstructorsReservationHistory(id))

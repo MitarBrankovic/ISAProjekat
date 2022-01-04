@@ -31,6 +31,10 @@ const AdminChangePassword = { template: '<AdminChangePassword></AdminChangePassw
 const RatingApproval = { template: '<RatingApproval></RatingApproval>' }
 const Subscriptions = {  template: '<Subscriptions></Subscriptions>' }
 const BasicReservation = {  template: '<BasicReservation></BasicReservation>' }
+const FishingInstructorsReports = {  template: '<FishingInstructorsReports></FishingInstructorsReports>' }
+const PenaltyApproval = {  template: '<PenaltyApproval></PenaltyApproval>' }
+
+
 
 const router = new VueRouter({
     mode: 'hash',
@@ -68,6 +72,10 @@ const router = new VueRouter({
         { path: '/ratingApproval', component: RatingApproval },
         { path: '/subscriptions', component: Subscriptions },
         { path: '/basicReservation', component: BasicReservation },
+		{ path: '/fishingInstructorsReports', component: FishingInstructorsReports },
+		{ path: '/penaltyApproval', component: PenaltyApproval },
+		
+		
 
     ]
 

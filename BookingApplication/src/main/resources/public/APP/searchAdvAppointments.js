@@ -21,21 +21,21 @@ Vue.component("SearchAdvAppointments",{
     template:`
         <div>
             <h3 id="search3">Pretraga termina avantura</h3>
-            <input type="text" v-model="search.name" placeholder="name"/>
-            <input type="text" v-model="search.owner" placeholder="address"/>
-            <button type="button" v-on:click="searchFun()" class="btn btn-sm btn-primary bi bi-search">Search</button>
-            <button type="button" v-on:click="cancelSearch()" class="btn btn-sm btn-outline-danger bi bi-x">Cancel search</button>
+            <input type="text" v-model="search.name" placeholder="naziv"/>
+            <input type="text" v-model="search.owner" placeholder="adresa"/>
+            <button type="button" v-on:click="searchFun()" class="btn btn-sm btn-success bi bi-search">Pretrazi</button>
+            <button type="button" v-on:click="cancelSearch()" class="btn btn-sm btn-outline-danger bi bi-x">Otkazi</button>
             <br>
         
-            <div>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="dateAscFun()">Date</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="dateDescFun()">Date</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="priceAscFun()">Price</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="priceDescFun()">Price</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="durationAscFun()">Duration</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="durationDescFun()">Duration</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="nameAscFun()">Name</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="nameDescFun()">Name</button>
+            <div style="margin-top:5px">
+                <button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="dateAscFun()">Datum</button>
+                <button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="dateDescFun()">Datum</button>
+                <button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="priceAscFun()">Cena</button>
+                <button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="priceDescFun()">Cena</button>
+                <button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="durationAscFun()">Trajanje</button>
+                <button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="durationDescFun()">Trajanje</button>
+                <button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="nameAscFun()">Naziv</button>
+                <button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="nameDescFun()">Naziv</button>
             </div>
         
         

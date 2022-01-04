@@ -25,7 +25,7 @@ Vue.component("HistoryReservations", {
             </div>
             <div v-if="cottagesButton">
                 <h2 class="flex title-div bigtitle">Istorija rezervacija vikendica</h2>
-                <SearchCottAppointments style="margin-top: 30px;" id="search" @clicked="searchCottAppointments"></SearchCottAppointments>
+                <SearchCottAppointments style="margin-top: 30px;" id="search" @clicked="searchCottAppointments"></SearchCottAppointments><br><br>
 
                 <div class="container-fluid">
                 <table class="table">
@@ -57,7 +57,7 @@ Vue.component("HistoryReservations", {
 
             <div v-else-if="boatsButton">
                 <h2 class="flex title-div bigtitle">Istorija rezervacija brodova</h2>
-                <SearchBoatAppointments style="margin-top: 30px;" id="search" @clicked="searchBoatAppointments"></SearchBoatAppointments>
+                <SearchBoatAppointments style="margin-top: 30px;" id="search" @clicked="searchBoatAppointments"></SearchBoatAppointments><br><br>
 
                 <div class="container-fluid">
                 <table class="table">
@@ -89,7 +89,7 @@ Vue.component("HistoryReservations", {
 
             <div v-else-if="adventuresButton">
                 <h2 class="flex title-div bigtitle">Istorija rezervacija avantura</h2>
-                <SearchAdvAppointments style="margin-top: 30px;" id="search" @clicked="searchAdvAppointments"></SearchAdvAppointments>
+                <SearchAdvAppointments style="margin-top: 30px;" id="search" @clicked="searchAdvAppointments"></SearchAdvAppointments><br><br>
 
                 <div class="container-fluid">
                 <table class="table">

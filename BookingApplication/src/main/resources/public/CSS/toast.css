@@ -199,7 +199,22 @@ html{
       align-items : center;
     }
 
+    .leftIt{
+      float:left;
+      display : flex;
+
+    }
+
     .linkAppointment, .linkSubscription{
        text-decoration: underline;
        cursor: pointer;
     }
+
+    .height100{
+      height: 85vh;
+    }
+
+    .razmak-card{
+      margin:14px;
+    }
+

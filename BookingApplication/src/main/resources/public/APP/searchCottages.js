@@ -16,20 +16,20 @@ Vue.component("SearchCottages",{
     },
     template:`
         <div>
-            <h3 id="search3">Search cottages</h3>
-            <input type="text" v-model="search.name" placeholder="name"/>
-            <input type="text" v-model="search.address" placeholder="address"/>
-            <button type="button" v-on:click="searchFun()" class="btn btn-sm btn-primary bi bi-search">Search</button>
-            <button type="button" v-on:click="cancelSearch()" class="btn btn-sm btn-outline-danger bi bi-x">Cancel search</button>
+            <h3 id="search3">Pretraga vikendica</h3>
+            <input type="text" v-model="search.name" placeholder="naziv"/>
+            <input type="text" v-model="search.address" placeholder="adresa"/>
+            <button type="button" v-on:click="searchFun()" class="btn btn-sm btn-success bi bi-search">Pretrazi</button>
+            <button type="button" v-on:click="cancelSearch()" class="btn btn-sm btn-outline-danger bi bi-x">Otkazi</button>
             <br>
         
-            <div>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="nameAscFun()">Name</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="nameDescFun()">Name</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="addressAscFun()">Address</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="addressDescFun()">Address</button>
-                <button class="bi bi-arrow-up btn btn-info" type="button" v-on:click="rateAscFun()">Rate</button>
-                <button class="bi bi-arrow-down btn btn-info" type="button" v-on:click="rateDescFun()">Rate</button>
+            <div style="margin-top:5px">
+                <button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="nameAscFun()">Naziv</button>
+                <button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="nameDescFun()">Naziv</button>
+                <button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="addressAscFun()">Adresa</button>
+                <button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="addressDescFun()">Adresa</button>
+                <button class="bi bi-arrow-up btn btn-secondary" type="button" v-on:click="rateAscFun()">Ocena</button>
+                <button class="bi bi-arrow-down btn btn-secondary" type="button" v-on:click="rateDescFun()">Ocena</button>
             </div>
         
         

@@ -30,6 +30,8 @@ public class Cottage {
 	public String rules;
 	@Column
 	public String priceList;
+	@Column
+	public double pricePerHour;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public CottageOwner cottageOwner;
 	@Column
@@ -38,7 +40,7 @@ public class Cottage {
 	public Cottage() {}
 
 	
-	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList) {
+	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList, double pricePerHour) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -48,9 +50,10 @@ public class Cottage {
 		this.bedsNum = bedsNum;
 		this.rules = rules;
 		this.priceList = priceList;
+		this.pricePerHour = pricePerHour;
 	}
 	
-	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList, double rating) {
+	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList, double pricePerHour, double rating) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -60,6 +63,7 @@ public class Cottage {
 		this.bedsNum = bedsNum;
 		this.rules = rules;
 		this.priceList = priceList;
+		this.pricePerHour = pricePerHour;
 		this.rating = rating;
 	}
 	

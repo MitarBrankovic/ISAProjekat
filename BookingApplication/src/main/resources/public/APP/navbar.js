@@ -70,7 +70,7 @@ Vue.component("Navbar", {
 		</div>
 		  
 		<div class="topnav-right" v-if="(activeUser !== null)">
-		    <a id="logout" class="nav-link" href="/#/logout">Logout</a>
+		    <a id="logout" class="nav-link" href="/#/logout">Logout <i class="bi bi-box-arrow-in-right"></i></a>
 		</div>
 		<div class="topnav-right dropdown1" v-if="(activeUser !== null) && (activeUser.role==='admin')">
             <button class="dropbtn1">Something

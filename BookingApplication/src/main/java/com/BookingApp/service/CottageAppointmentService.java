@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.DateReservationDto;
+import com.BookingApp.dto.ReserveAdventureDto;
+import com.BookingApp.dto.ReserveCottageDto;
 import com.BookingApp.dto.ReservedCottageAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
 import com.BookingApp.dto.SearchDto;
@@ -27,6 +30,7 @@ import com.BookingApp.model.Cottage;
 import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.CottageOwner;
 import com.BookingApp.model.FishingAdventure;
+import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.FishingInstructor;
 import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.CottageAppointmentRepository;
@@ -134,6 +138,44 @@ public class CottageAppointmentService {
 			}
 		}
 		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/getAllFreeCottages")
+	public ResponseEntity<List<Cottage>> getAllFreeCottages(@RequestBody DateReservationDto dateReservationDto)
+	{	
+		LocalDateTime datePick = dateReservationDto.datePick.atStartOfDay().plusHours(dateReservationDto.time); //.plusHours(dateReservationDto.time);
+		
+		boolean exist;
+		List<Cottage> cottages = new ArrayList<Cottage>();
+		for(Cottage cottage: cottageRepository.findAll()) {
+			exist = false;
+			for(CottageAppointment cottageAppointment : cottageAppointmentRepository.findAll()) {
+				LocalDateTime start = cottageAppointment.appointmentStart;
+				LocalDateTime end = cottageAppointment.appointmentStart.plusHours(cottageAppointment.duration);
+				LocalDateTime datePickEnd = datePick.plusHours(24);
+				if( (((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))		
+						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end))) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
+						&& cottage.id == cottageAppointment.cottage.id) {
+					exist = true;
+					break;
+				}				
+			}
+			if(!exist) {
+				cottages.add(cottage);
+			}	
+		}	
+		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/reserveCottage")
+	public boolean reserveCottage(@RequestBody ReserveCottageDto reserveCottageDto)
+	{	
+		CottageAppointment appointment = new CottageAppointment(reserveCottageDto.datePick.atStartOfDay().plusHours(reserveCottageDto.time), 24, 4, AppointmentType.regular, 
+				reserveCottageDto.additionalPricingText, reserveCottageDto.totalPrice, reserveCottageDto.cottage, reserveCottageDto.client);
+
+		cottageAppointmentRepository.save(appointment);
+		
+		return true;
 	}
 	
 	

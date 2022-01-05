@@ -72,7 +72,7 @@ Vue.component("FishingInstructorsAdventures", {
 	                  <div class="row">
 	                  <div class="col-sm-6" style="margin-left: -2.5%;">
 	                  <label class="input-group-text" for="inputGroupFile01">Izbor slike:</label>
-	                  <input id="uploadImage" name="myPhoto" onchange="PreviewImage();" type="file" accept="image/png, image/jpeg" class="form-control">
+	                  <input id="uploadImage" name="myPhoto" required @change=imageAddedNew type="file" accept="image/png, image/jpeg" class="form-control">
 	                  </div>
 	                  </div>
 	                  <div class="row" style="margin-top: 5%;">
@@ -156,7 +156,7 @@ Vue.component("FishingInstructorsAdventures", {
             <div class="row row-cols-1 row-cols-md-4 g-4">
               <div class="col" v-for="adventure in adventures">
                 <div class="card" style="width: 93%">
-                  <img :src="editSelectedAdventure.photo" height="220" class="card-img-top" alt="...">
+                  <img :src="_arrayBufferToBase64(adventure.photo)" height="220" class="card-img-top" alt="...">
                   <div class="card-body">
                     <h5 class="card-title">{{ adventure.name }}</h5>
                   </div>
@@ -231,7 +231,6 @@ Vue.component("FishingInstructorsAdventures", {
     	},
     	
         addNewAdventure() {
-        	this.newAdventure.photo = document.getElementById("uploadImage").value
         	this.newAdventure.instructorsId = instructorsId
         	if (this.checkNewAdventure()){
         	console.log(this.newAdventure)
@@ -257,15 +256,15 @@ Vue.component("FishingInstructorsAdventures", {
         checkNewAdventure(){
         console.log(this.checkIfRoundNumber())
         	if (this.newAdventure.name !== "" && this.newAdventure.address !== "" &&  this.newAdventure.city !== "" && 
-        	this.newAdventure.description !== "" && this.newAdventure.photo !== "" && this.newAdventure.behaviourRules !== "" && 
+        	this.newAdventure.description !== "" && this.newAdventure.photo !== "" && this.newAdventure.photo !== null && this.newAdventure.behaviourRules !== "" && 
         	this.newAdventure.equipment !== "" && this.newAdventure.maxAmountOfPeople !== "" && this.newAdventure.pricePerHour !== "" &&
-        	this.newAdventure.cancellingPrecentage !== "" && this.newAdventure.maxAmountOfPeople > 0 && this.newAdventure.pricePerHour > 49 &&
-        	!this.newAdventure.maxAmountOfPeople.includes(".") && !this.editAdventure.maxAmountOfPeople.includes("e"))
+        	this.newAdventure.cancellingPrecentage !== "" && this.newAdventure.maxAmountOfPeople > 0 && this.newAdventure.pricePerHour > 49)
+        	// !this.newAdventure.maxAmountOfPeople.includes(".") && !this.editAdventure.maxAmountOfPeople.includes("e")
         		return true;
         	else
         		return false;
         },
-        
+       
         checkIfRoundNumber() {
         let nes = this.editAdventure.maxAmountOfPeople
         let stringnes = nes.toString()
@@ -280,7 +279,7 @@ Vue.component("FishingInstructorsAdventures", {
  		},       
         checkEditAdventure(){
         	if (this.editAdventure.name !== "" && this.editAdventure.address !== "" &&  this.editAdventure.city !== "" && 
-        	this.editAdventure.description !== "" && this.editAdventure.photo !== "" && this.editAdventure.behaviourRules !== "" && 
+        	this.editAdventure.description !== "" && this.editAdventure.photo !== null && this.editAdventure.photo !== "" && this.editAdventure.behaviourRules !== "" && 
         	this.editAdventure.equipment !== "" && this.editAdventure.maxAmountOfPeople !== "" && this.editAdventure.pricePerHour !== "" &&
         	this.editAdventure.cancellingPrecentage !== "" && this.editAdventure.maxAmountOfPeople > 0 && this.editAdventure.pricePerHour > 49 && this.checkIfRoundNumber())
         		return true;
@@ -312,7 +311,7 @@ Vue.component("FishingInstructorsAdventures", {
         
          imageAdded(e){
             var files = e.target.files;
-
+			PreviewImageEdit();
 			if(!files.length)
 				return;
 			
@@ -330,28 +329,38 @@ Vue.component("FishingInstructorsAdventures", {
 			reader.readAsDataURL(file);
         },
         
+        imageAddedNew(e){
+            var files = e.target.files;
+			PreviewImage();
+			if(!files.length)
+				return;
+			
+				this.createImageNew(files[0]);
+        },
+        createImageNew(file){
+			var image = new Image();
+            var reader = new FileReader();
+			var vm = this;
+
+			reader.onload = (e) =>{
+				this.newAdventure.photo = e.target.result;
+
+			};
+			reader.readAsDataURL(file);
+        },
+        
         editSelectedAdventure() {
-        	
-        	axios
-               .post('/fishingAdventures/checkAdventureRemoval/' + this.editAdventure.adventureId)
-               .then(response=>{
-                  if (response.data) {
-			        	if (this.checkEditAdventure()){
-			        	console.log(this.editAdventure)
-			        		axios
-				               .post('/fishingAdventures/editAdventure', this.editAdventure)
-				               .then(response=>{
-				                  this.adventures = response.data
-				               })
-			        	}
-			        	else {
-			        		Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li su validni maksimalni broj osoba (ceo broj > 0) i cena po satu (broj > 49)!'})
-			        	}
-                  }
-                  else {
-                  	Swal.fire({icon: 'error', title: 'Greška', text: 'Ne možete obrisati ovu avanturu, jer postoje zakazani termini za nju !'})
-                  }
-               })
+        	if (this.checkEditAdventure()){
+        	console.log(this.editAdventure)
+        		axios
+	               .post('/fishingAdventures/editAdventure', this.editAdventure)
+	               .then(response=>{
+	                  this.adventures = response.data
+	               })
+        	}
+        	else {
+        		Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li su validni maksimalni broj osoba (ceo broj > 0) i cena po satu (broj > 49)!'})
+        	}
         },
     },
     
@@ -375,12 +384,15 @@ Vue.component("FishingInstructorsAdventures", {
         })
         axios
         	.get('/fishingAdventures/getFishingInstructorsAdventures/' + instructorsId)
-	        .then(response => (this.adventures = response.data));
+	        .then(response => {
+	        this.adventures = response.data
+	        console.log(this.adventures)
+	        });
     },
 
 });
 
- function PreviewImage() {
+   function PreviewImage() {
         var oFReader = new FileReader();
         oFReader.readAsDataURL(document.getElementById("uploadImage").files[0]);
 
@@ -397,3 +409,65 @@ Vue.component("FishingInstructorsAdventures", {
             document.getElementById("uploadPreviewEdit").src = oFREvent.target.result;
         };
     };
+	
+	function _arrayBufferToBase64( buffer ) {
+	    var binary = '';
+	    var bytes = new Uint8Array( buffer );
+	    var len = bytes.byteLength;
+	    for (var i = 0; i < len; i++) {
+	        binary += String.fromCharCode( bytes[ i ] );
+	    }
+    return window.btoa( binary );
+	}
+
+function _base64ArrayBuffer(arrayBuffer) {
+  var base64    = ''
+  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+  var bytes         = new Uint8Array(arrayBuffer)
+  var byteLength    = bytes.byteLength
+  var byteRemainder = byteLength % 3
+  var mainLength    = byteLength - byteRemainder
+
+  var a, b, c, d
+  var chunk
+
+  // Main loop deals with bytes in chunks of 3
+  for (var i = 0; i < mainLength; i = i + 3) {
+    // Combine the three bytes into a single integer
+    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+
+    // Use bitmasks to extract 6-bit segments from the triplet
+    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
+    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
+    d = chunk & 63               // 63       = 2^6 - 1
+
+    // Convert the raw binary segments to the appropriate ASCII encoding
+    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+  }
+
+  // Deal with the remaining bytes and padding
+  if (byteRemainder == 1) {
+    chunk = bytes[mainLength]
+
+    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
+
+    // Set the 4 least significant bits to zero
+    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
+
+    base64 += encodings[a] + encodings[b] + '=='
+  } else if (byteRemainder == 2) {
+    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+
+    a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
+    b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
+
+    // Set the 2 least significant bits to zero
+    c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
+
+    base64 += encodings[a] + encodings[b] + encodings[c] + '='
+  }
+  console.log(base64)
+  return base64
+}

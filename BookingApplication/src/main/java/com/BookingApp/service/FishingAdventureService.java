@@ -1,6 +1,7 @@
 package com.BookingApp.service;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -75,9 +76,10 @@ public class FishingAdventureService {
 	@PostMapping(path = "/addNewAdventure")
     public Set<FishingAdventure> addAdventure(@RequestBody NewAdventureDto adventureDTO)
 	{	
+		byte[] decodedPhoto = Base64.getMimeDecoder().decode(adventureDTO.photo);
 		if(adventureDTO != null) {
 			FishingAdventure adventure = new FishingAdventure(adventureDTO.name, adventureDTO.address, adventureDTO.city, adventureDTO.description, 
-					adventureDTO.photo, adventureDTO.maxAmountOfPeople, adventureDTO.behaviourRules, adventureDTO.equipment, 
+					decodedPhoto, adventureDTO.maxAmountOfPeople, adventureDTO.behaviourRules, adventureDTO.equipment, 
 					adventureDTO.pricePerHour, 0, adventureDTO.cancellingPrecentage);
 			adventure.fishingInstructor = fishingInstructorRepository.findById(adventureDTO.instructorsId).get();
 			fishingAdventureRepository.save(adventure);
@@ -89,7 +91,7 @@ public class FishingAdventureService {
 	@PostMapping(path = "/editAdventure")
     public Set<FishingAdventure> editAdventure(@RequestBody EditAdventureDto adventureDTO)
 	{	
-		
+		byte[] decodedPhoto = Base64.getMimeDecoder().decode(adventureDTO.photo);
 		if(adventureDTO != null) {
 			long instructorsId = fishingAdventureRepository.findById(adventureDTO.adventureId).get().fishingInstructor.id;
 			List<FishingAdventure> allAdventures = fishingAdventureRepository.findAll();
@@ -99,7 +101,7 @@ public class FishingAdventureService {
 					adventure.address = adventureDTO.address;
 					adventure.city = adventureDTO.city;
 					adventure.description = adventureDTO.description;
-					adventure.photo = adventureDTO.photo;
+					adventure.photo = decodedPhoto;
 					adventure.maxAmountOfPeople = adventureDTO.maxAmountOfPeople;
 					adventure.behaviourRules = adventureDTO.behaviourRules;
 					adventure.equipment = adventureDTO.equipment;

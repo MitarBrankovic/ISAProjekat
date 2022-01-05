@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.dto.SearchDto;
 import com.BookingApp.model.Cottage;
+import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.repository.CottageRepository;
 
 
@@ -35,6 +36,13 @@ public class CottagesService {
 		{
 			cottages.add(cottage);
 		}
+		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
+	}
+	@GetMapping(path = "/getAllCottagesByOwner/{ownerId}")
+	public ResponseEntity<List<Cottage>> getAllCottagesByOwner(@PathVariable("ownerId") long id)
+	{	
+		List<Cottage> cottages = cottageRepository.getAllCottagesForOwner(id);
+		
 		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
 	}
 	

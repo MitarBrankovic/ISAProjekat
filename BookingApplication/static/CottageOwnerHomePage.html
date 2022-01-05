@@ -1,0 +1,49 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+	<link href="css/toast.css" rel="stylesheet" />
+	<meta charset="utf-8"/>
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+</head> 
+<body>
+<div>
+    <div style="margin-top: 30px;" class="nav nav-tabs centerIt">
+        <button class="button-tab nav-item" type="button" v-on:click="cottagesFun()">Moje vikendice</button>
+        <button class="button-tab nav-item" type="button" v-on:click="boatsFun()">Rezervacije</button>
+        <button class="button-tab nav-item" type="button" v-on:click="adventuresFun()">Kalendar rezervacija</button>
+    </div>
+    <div v-if="cottagesButton">
+        <SearchCottages id="search" @clicked="searchCottages"></SearchCottages>
+
+        <div class="container-fluid" style="margin-top: 3%; margin-left: 5mm;">
+            <div class="row row-cols-1 row-cols-md-4 g-4">
+                <div class="col"  v-for = "c in cottages">
+                    <div class="card" style="width: 93%">
+                        <img src="../images/cottage.jpg" width="300" height="220" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{c.name}}</h5>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{c.description}}</li>
+                            <li class="list-group-item">{{c.address}}</li>
+                            <li class="list-group-item">Num of rooms: {{c.roomsNum}}</li>
+                            <li class="list-group-item">Num of beds: {{c.bedsNum}}</li>
+                        </ul>
+                        <div class="card-body">
+                            <button style="margin-left: 2%;" type="button" v-on:click="showCottageInformation(c.id)" class="btn btn-secondary">Info</button>
+                            <button style="margin-left: 8%;" type="button" class="btn btn-primary">Izmeni</button>
+                            <button style="margin-left: 8%;" type="button" class="btn btn-danger">Obrisi</button>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</body>

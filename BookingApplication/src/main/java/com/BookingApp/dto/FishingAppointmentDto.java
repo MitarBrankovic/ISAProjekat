@@ -9,25 +9,18 @@ public class FishingAppointmentDto {
 	public String timeFrom;
 	public String dateUntil;
 	public String timeUntil;
-	public String address;
-	public String city;
-	public int maxAmountOfPeople;
 	public String extraNotes;
 	public double price;
 	public long adventureId;
 	
 	public FishingAppointmentDto() {}
 	
-	public FishingAppointmentDto(String dateFrom, String timeFrom, String dateUntil, String timeUntil, String address,
-			String city, int maxAmountOfPeople, String extraNotes, double price, long adventureId) {
+	public FishingAppointmentDto(String dateFrom, String timeFrom, String dateUntil, String timeUntil, String extraNotes, double price, long adventureId) {
 		super();
 		this.dateFrom = dateFrom;
 		this.timeFrom = timeFrom;
 		this.dateUntil = dateUntil;
 		this.timeUntil = timeUntil;
-		this.address = address;
-		this.city = city;
-		this.maxAmountOfPeople = maxAmountOfPeople;
 		this.extraNotes = extraNotes;
 		this.price = price;
 		this.adventureId = adventureId;

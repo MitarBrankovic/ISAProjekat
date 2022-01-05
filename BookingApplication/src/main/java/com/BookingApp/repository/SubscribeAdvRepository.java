@@ -15,4 +15,7 @@ public interface SubscribeAdvRepository extends JpaRepository<SubscribeAdventure
 	
 	@Query("select r from SubscribeAdventure r where r.client.id = :id")
 	public List<SubscribeAdventure> findAllByClient(@Param("id") long id);
+	
+	@Query("select r from SubscribeAdventure r where r.fishingAdventure.id = :id")
+	public List<SubscribeAdventure> findAllByAdventure(@Param("id") long id);
 }

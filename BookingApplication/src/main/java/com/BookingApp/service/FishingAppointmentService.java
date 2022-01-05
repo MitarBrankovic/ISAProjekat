@@ -8,6 +8,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,24 +20,29 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.dto.ReservedFishingAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
+import com.BookingApp.dto.AppointmentReportDto;
 import com.BookingApp.dto.DateReservationDto;
 import com.BookingApp.dto.FishingAppointmentDto;
 import com.BookingApp.dto.ReserveAdventureDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
+import com.BookingApp.model.Boat;
 import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Client;
+import com.BookingApp.model.Cottage;
 import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.FishingAppointmentReport;
 import com.BookingApp.model.FishingInstructor;
 import com.BookingApp.model.RequestDeleteAcc;
+import com.BookingApp.model.SubscribeAdventure;
 import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.FishingAdventureRepository;
 import com.BookingApp.repository.FishingAppointmentRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
 import com.BookingApp.repository.FishingReportsRepository;
+import com.BookingApp.repository.SubscribeAdvRepository;
 import com.BookingApp.repository.UserRepository;
 
 import java.util.Optional;
@@ -53,6 +60,10 @@ public class FishingAppointmentService {
 	private ClientRepository clientRepository;
 	@Autowired
 	private FishingReportsRepository fishingReportsRepository;
+	@Autowired
+	private JavaMailSender javaMailSender;
+	@Autowired
+	private SubscribeAdvRepository subscribeFishingRepository;
 
 	public ResponseEntity<List<FishingAppointment>> getAdventureQuickAppointments(long id)
 	{
@@ -101,18 +112,61 @@ public class FishingAppointmentService {
 	@PostMapping(path = "/addQuickAppointment")
     public ResponseEntity<List<FishingAppointment>> addAppointment(@RequestBody FishingAppointmentDto appointmentDTO)
 	{	
+		FishingAdventure adventure = fishingAdventureRepository.findById(appointmentDTO.adventureId).get();
 		if(appointmentDTO != null) {
-			FishingAppointment appointment = new FishingAppointment(appointmentDTO.formatDateFrom(), appointmentDTO.address, appointmentDTO.city, 
-											 appointmentDTO.durationInHours(), appointmentDTO.maxAmountOfPeople, AppointmentType.quick, true, 0,
-											 "", appointmentDTO.price);
+			FishingAppointment appointment = new FishingAppointment(appointmentDTO.formatDateFrom(), adventure.address, adventure.city, 
+											 appointmentDTO.durationInHours(), adventure.maxAmountOfPeople, AppointmentType.quick, true, 0,
+											 appointmentDTO.extraNotes, appointmentDTO.price);
 			appointment.fishingAdventure = getAdventureById(appointmentDTO.adventureId);
 			fishingAppointmentRepository.save(appointment);
+			sendEmailToSubscribers(appointmentDTO);
 			return getAdventureQuickAppointments(appointmentDTO.adventureId);
 		}
 		return null;
 	}
 	
+	public boolean sendEmailToSubscribers(FishingAppointmentDto appDto)
+	{	
+		FishingAdventure adventure = fishingAdventureRepository.findById(appDto.adventureId).get();
+		String title = "New action notification";
+		String body = "Hello,\nThere is a new action reservation available for " + adventure.name + " - " + adventure.address + ", " + adventure.city + " . \n"
+					+ "\nAction information:\n"
+					+	"\nStart :" + appDto.dateFrom + " - " + appDto.timeFrom + "\n"
+					+	"\nDuration : " + appDto.durationInHours() + " hours \n"
+					+	"\nCapacity : " + adventure.maxAmountOfPeople +" people \n"
+					+	"\nPrice : " + appDto.price +"\n"
+					+	"\nExtras : " + appDto.extraNotes +"\n"
+				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+		List <SubscribeAdventure> subs =  subscribeFishingRepository.findAllByAdventure(appDto.adventureId);
+		for (SubscribeAdventure sa : subs) {
+			try 
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmail(sa.client.email,body,title);	
+					}
+				};
+				t.start();
+			} 
+			catch (Exception e) 
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 	
+	public void sendEmail(String to, String body, String title)
+	{
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo(to);
+		msg.setSubject(title);
+		msg.setText(body);
+		javaMailSender.send(msg);
+		System.out.println("Email sent...");
+	}
+
 	private FishingAdventure getAdventureById(long id) {
 		Optional<FishingAdventure> adventure = fishingAdventureRepository.findById(id);
 		FishingAdventure ret = adventure.get(); 

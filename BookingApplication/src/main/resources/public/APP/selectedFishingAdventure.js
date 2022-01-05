@@ -6,8 +6,7 @@ Vue.component("SelectedFishingAdventure", {
             pricelistIdRemove: "",
             adventureIdRemove: "",
             userId:"",
-            quickAppointment: {dateFrom: "", timeFrom: "", dateUntil: "", timeUntil: "", address: "", 
-            city: "", maxAmountOfPeople: 1, extraNotes: "", price: 100, adventureId: 0 },
+            quickAppointment: {dateFrom: "", timeFrom: "", dateUntil: "", timeUntil: "", extraNotes: "", price: 100, adventureId: 0 },
             appointments: "",
             pricelist: "",
             newPricelistItem: {instructorsId: "", description: "", price: 50},
@@ -26,7 +25,7 @@ Vue.component("SelectedFishingAdventure", {
     <br> Oprema : {{adventure.equipment}}
     <br> Cena po satu : {{adventure.pricePerHour}} din/h
     <br> Procenat za otkazivanje : {{adventure.cancellingPrecentage}} %
-    <br> Ocena : {{adventure.rating}} /5
+    <br> Ocena : {{adventure.rating}}/5
     </p><br>
     <button v-if="activeUser.role == 'client' && !exist()" type="submit" class="button" v-on:click="subscribe()">Pretplati se</button>
     <button v-if="activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
@@ -133,12 +132,6 @@ Vue.component("SelectedFishingAdventure", {
                           <span class="input-group-text" id="basic-addon1">Vreme-do</span> 
                       </div>
                 </div>
-              <span class="input-group-text" id="basic-addon1" style="margin-top: 2%;">Adresa:</span>
-              <input type="text" class="form-control" v-model="quickAppointment.address" placeholder="Unesite adresu...">
-              <span class="input-group-text" id="basic-addon1" style="margin-top: 2%;">Grad:</span>
-              <input type="text" class="form-control" v-model="quickAppointment.city" placeholder="Unesite grad...">
-              <span style="margin-top: 2%;" class="input-group-text">Maksimalni broj osoba:</span>
-              <input type="number" min="1" max="30" v-model="quickAppointment.maxAmountOfPeople" class="form-control" placeholder="Unesite maksimalni broj osoba...">
               <span class="input-group-text" style="margin-top: 2%;">Dodatne usluge:</span>
               <textarea class="form-control" id="usernameInput" v-model="quickAppointment.extraNotes" rows="3" placeholder="Unesite dodatne usluge..."></textarea>
               <span class="input-group-text" id="basic-addon1" style="margin-top: 2%;">Cena:</span>
@@ -167,8 +160,6 @@ Vue.component("SelectedFishingAdventure", {
 	                  this.quickAppointment.timeFrom = ""
 	                  this.quickAppointment.dateUntil = ""
 	                  this.quickAppointment.timeUntil = ""
-	                  this.quickAppointment.address = ""
-	                  this.quickAppointment.city = ""
 	                  this.quickAppointment.extraNotes = ""
 	               })
 	               .catch(error=>{
@@ -178,7 +169,7 @@ Vue.component("SelectedFishingAdventure", {
 	               })
            }
            else{
-           	  Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li su validni maksimalni broj osoba (> 0) i cena (> 99)!'})
+           	  Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li je validna cena (> 99)!'})
            }
         },
         
@@ -233,9 +224,8 @@ Vue.component("SelectedFishingAdventure", {
         
         checkNewAppointment(){
         	if (this.quickAppointment.dateFrom !== "" && this.quickAppointment.timeFrom !== "" &&  this.quickAppointment.dateUntil !== "" && 
-        	this.quickAppointment.timeUntil !== "" && this.quickAppointment.address !== "" && this.quickAppointment.city !== "" && 
-        	this.quickAppointment.extraNotes !== "" && this.quickAppointment.maxAmountOfPeople !== "" && this.quickAppointment.price !== "" &&
-        	this.quickAppointment.price > 99 && this.quickAppointment.maxAmountOfPeople > 0)
+        	this.quickAppointment.timeUntil !== "" && this.quickAppointment.extraNotes !== "" && this.quickAppointment.price !== "" &&
+        	this.quickAppointment.price > 99)
         		return true;
         	else
         		return false;
@@ -254,8 +244,6 @@ Vue.component("SelectedFishingAdventure", {
             this.quickAppointment.timeFrom = ""
             this.quickAppointment.dateUntil = ""
             this.quickAppointment.timeUntil = ""
-            this.quickAppointment.address = ""
-            this.quickAppointment.city = ""
             this.quickAppointment.extraNotes = ""
     	},
     	clearNewPricelistItem(){

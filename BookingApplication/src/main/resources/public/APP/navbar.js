@@ -7,9 +7,18 @@ Vue.component("Navbar", {
     },
     template:`  
     <nav class="topnav">
+	<div v-if="(activeUser !== null) && (activeUser.role!=='cottage_owner')">
 	  <a class="active" href="/#/">Home</a>
-		<div v-if="(activeUser===null)">
-			<a href="#">Something</a>
+	</div>
+	<div v-else>
+	<a class="active" href="/#/">Home</a>
+	</div>
+	
+		<div v-if="(activeUser !== null) && (activeUser.role==='cottage_owner')">
+			<a href="#/cottageOwnerHome">Moje vikendice</a>
+		</div>
+		<div v-if="(activeUser !== null) && (activeUser.role==='cottage_owner')">
+			<a href="#/cottageOwnerHome">Istorija rezervacija</a>
 		</div>
 		<div class="topnav-right dropdown1" v-if="(activeUser !== null) && (activeUser.role==='admin')">
 			<button class="dropbtn1">Zahtevi
@@ -64,6 +73,9 @@ Vue.component("Navbar", {
 					<a href="/#/fishingInstructorsAdventures">Avanture</a>
 					<a href="/#/profileFishingInstructor">Moj profil</a>
 					<a href="/#/historyOfFishingAppointments">Rezervacije</a>
+				</div>
+				<div v-if="(activeUser.role==='cottage_owner')">
+					<a href="/#/profileCottageOwner">Moj profil</a>
 				</div>
 				<a href="/#/logout">Logout</a>
 			</div>

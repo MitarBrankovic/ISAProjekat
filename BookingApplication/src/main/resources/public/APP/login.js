@@ -47,21 +47,23 @@ Vue.component("Login", {
 			axios
                 .post('/registration/login/' + this.email + "/" + this.password)
 				.then(response => {
-					if(response.data == null || response.data == ""){
+					if(response.data.user == null || response.data.user == ""){
 						Swal.fire({
 							icon: 'error',
 							title: 'Error',
 							text: 'Wrong username or password',
 						  })
-					}else if (response.data.verified){
-						localStorage.setItem('activeUser',JSON.stringify(response.data))
+					}else if (response.data.user.verified){
+						localStorage.setItem('activeUser',JSON.stringify(response.data.user))
+						localStorage.setItem('jwt',JSON.stringify(response.data.accessToken))
 						localStorage.removeItem('email') 
 						this.$router.push('/')
 						window.location.reload()
 					}
 					else {
-						localStorage.setItem('activeUser',JSON.stringify(response.data))
-			            this.$router.push({ path: '/adminChangePassword', query: { id: response.data.id }});
+						localStorage.setItem('activeUser',JSON.stringify(response.data.user))
+						localStorage.setItem('jwt',JSON.stringify(response.data.accessToken))
+			            this.$router.push({ path: '/adminChangePassword', query: { id: response.data.user.id }});
 					}
 				})
 				.catch(error=>{

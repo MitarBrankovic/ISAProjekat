@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.UserTokenState;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.Client;
 import com.BookingApp.model.CottageOwner;
@@ -161,7 +162,7 @@ public class RegistrationService {
 	
 	
 	@PostMapping(path = "/login/{email}/{password}")
-	public AppUser loginUser(@PathVariable("email") String email, @PathVariable("password") String password)
+	public UserTokenState loginUser(@PathVariable("email") String email, @PathVariable("password") String password)
 	{	
 		Optional<AppUser> user = Optional.ofNullable(userRepository.findByEmail(email));
 		AppUser appUser;
@@ -172,10 +173,12 @@ public class RegistrationService {
 		else
 		{
 			appUser = user.get();
+			String jwt = tokenUtils.generateToken(appUser.getUsername());
+			int expiresIn = tokenUtils.getExpiredIn();
 			if(appUser.password.equals(password) && appUser.verified)
-				return appUser;
+				return new UserTokenState(jwt, expiresIn,appUser);
 			else if(appUser.password.equals(password) && !appUser.verified && appUser.role == UserType.admin)
-				return appUser;
+				return new UserTokenState(jwt, expiresIn,appUser);
 			else
 				return null;
 		}

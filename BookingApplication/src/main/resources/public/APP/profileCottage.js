@@ -72,14 +72,17 @@ Vue.component("ProfileCottage", {
                 client: this.activeUser
             }
             axios
-            .post('/subscribe/subscribeCottage', subscribeCottage)
+            .post('/subscribe/subscribeCottage', subscribeCottage,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
-                window.location.reload()
+                //window.location.reload()
             })
             .catch(error=>{
                 console.log("Greska.")	
                 alert("Podaci su lose uneti.")
-                window.location.reload()
+                //window.location.reload()
             })
         },
         unsubscribe:function(){

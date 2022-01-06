@@ -14,6 +14,7 @@ Vue.component("Logout",{
         created(){
            
             localStorage.removeItem('activeUser')
+            localStorage.removeItem('jwt')
             this.$router.push("/")
             window.location.reload()
         }

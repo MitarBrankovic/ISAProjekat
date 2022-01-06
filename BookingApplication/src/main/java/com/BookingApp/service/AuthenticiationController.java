@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ import com.BookingApp.util.TokenUtils;
 
 
 //Kontroler zaduzen za autentifikaciju korisnika
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticiationController {
@@ -58,21 +60,7 @@ public class AuthenticiationController {
 		int expiresIn = tokenUtils.getExpiredIn();
 
 		// Vrati token kao odgovor na uspesnu autentifikaciju
-		return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
+		return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user));
 	}
 
-	// Endpoint za registraciju novog korisnika
-	/*@PostMapping("/signup")
-	public ResponseEntity<AppUser> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
-
-		AppUser existUser = this.userService.findByUsername(userRequest.getUsername());
-
-		if (existUser != null) {
-			throw new ResourceConflictException(userRequest.getId(), "Username already exists");
-		}
-
-		AppUser user = this.userService.save(userRequest);
-
-		return new ResponseEntity<>(user, HttpStatus.CREATED);
-	}*/
 }

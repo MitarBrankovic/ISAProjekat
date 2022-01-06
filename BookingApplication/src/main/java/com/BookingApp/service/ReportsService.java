@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +35,7 @@ import com.BookingApp.repository.FishingAppointmentRepository;
 import com.BookingApp.repository.FishingReportsRepository;
 import com.BookingApp.repository.UserRepository;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/reports")
 public class ReportsService {

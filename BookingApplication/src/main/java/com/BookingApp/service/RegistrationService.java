@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +29,9 @@ import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
 import com.BookingApp.repository.ShipOwnerRepository;
 import com.BookingApp.repository.UserRepository;
+import com.BookingApp.util.TokenUtils;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/registration")
 public class RegistrationService {
@@ -44,6 +47,12 @@ public class RegistrationService {
 	private ShipOwnerRepository shipOwnerRepository;
 	@Autowired
 	private JavaMailSender javaMailSender;
+	
+	@Autowired
+	private TokenUtils tokenUtils;
+
+	@Autowired
+	private AuthenticationManager authenticationManager;
 	
 	private static HashMap<String, String> verification = new HashMap<String, String>();
 	

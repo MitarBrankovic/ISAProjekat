@@ -1,21 +1,37 @@
 package com.BookingApp.dto;
 
+import com.BookingApp.model.AppUser;
+
 public class UserTokenState {
 	
     private String accessToken;
-    private Long expiresIn;
+    private int expiresIn;
+    private AppUser user;
 
-    public UserTokenState() {
+    public AppUser getUser() {
+		return user;
+	}
+
+	public void setUser(AppUser user) {
+		this.user = user;
+	}
+
+	public UserTokenState() {
         this.accessToken = null;
-        this.expiresIn = null;
+        this.expiresIn = 0;
+        this.user = null;
     }
 
-    public UserTokenState(String accessToken, long expiresIn) {
-        this.accessToken = accessToken;
-        this.expiresIn = expiresIn;
-    }
 
-    public String getAccessToken() {
+
+    public UserTokenState(String accessToken, int expiresIn, AppUser user) {
+		super();
+		this.accessToken = accessToken;
+		this.expiresIn = expiresIn;
+		this.user = user;
+	}
+
+	public String getAccessToken() {
         return accessToken;
     }
 
@@ -23,11 +39,11 @@ public class UserTokenState {
         this.accessToken = accessToken;
     }
 
-    public Long getExpiresIn() {
+    public int getExpiresIn() {
         return expiresIn;
     }
 
-    public void setExpiresIn(Long expiresIn) {
+    public void setExpiresIn(int expiresIn) {
         this.expiresIn = expiresIn;
     }
     

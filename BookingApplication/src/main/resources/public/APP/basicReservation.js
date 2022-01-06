@@ -6,8 +6,12 @@ Vue.component("BasicReservation", {
             barProcentage: 25,
             times:[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
             time:"",
+            days:[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            day:1,
+            numOfPeople:[4, 5, 6, 7, 8, 9, 10],
+            num:"",
             datePick:"",
-            radio:"avanture",
+            radio:"vikendice",
             adventures:[],
             adventuresHelper:[],
             adventure:"",
@@ -53,6 +57,16 @@ Vue.component("BasicReservation", {
                     <option v-for="c in times" :value="c">{{c}}:00</option>
                 </select><br><br>
 
+                <select class="col-sm-2 col-form-select" v-model="num" requiered>
+                    <option value="" selected disabled>Izaberite broj osoba</option>
+                    <option v-for="n in numOfPeople" :value="n">{{n}} osoba</option>
+                </select><br><br>
+
+                <select v-if="radio != 'avanture'" class="col-sm-2 col-form-select" v-model="day" requiered>
+                    <option value="" selected disabled>Izaberite broj dana</option>
+                    <option v-for="d in days" :value="d">{{d}} dana</option>
+                </select><br><br>
+
                 <div class="centerIt">
                     <button class="btn btn-success" type="button" v-on:click="firstNext()">Next</button>
                 </div>
@@ -76,6 +90,7 @@ Vue.component("BasicReservation", {
                                         <li class="list-group-item">{{a.city}} {{a.address}}</li>
                                         <li class="list-group-item">Vlasnik: {{a.cottageOwner.name}} {{a.cottageOwner.surname}}</li>
                                         <li class="list-group-item">{{a.pricePerHour}}din/h</li>
+                                        <li class="list-group-item">Maks broj ljudi: {{a.maxAmountOfPeople}}</li>
                                         <li class="list-group-item">Rating: {{a.rating}}</li>
                                     </ul>
                                     <div class="card-body">
@@ -102,6 +117,7 @@ Vue.component("BasicReservation", {
                                         <li class="list-group-item">{{a.city}} {{a.address}}</li>
                                         <li class="list-group-item">Vlasnik: {{a.shipOwner.name}} {{a.shipOwner.surname}}</li>
                                         <li class="list-group-item">{{a.pricePerHour}}din/h</li>
+                                        <li class="list-group-item">Maks broj ljudi: {{a.maxAmountOfPeople}}</li>
                                         <li class="list-group-item">Rating: {{a.rating}}</li>
                                     </ul>
                                     <div class="card-body">
@@ -128,6 +144,7 @@ Vue.component("BasicReservation", {
                                         <li class="list-group-item">{{a.city}} {{a.address}}</li>
                                         <li class="list-group-item">Instructor: {{a.fishingInstructor.name}} {{a.fishingInstructor.surname}}</li>
                                         <li class="list-group-item">{{a.pricePerHour}}din/h</li>
+                                        <li class="list-group-item">Maks broj ljudi: {{a.maxAmountOfPeople}}</li>
                                         <li class="list-group-item">Rating: {{a.rating}}</li>
                                     </ul>
                                     <div class="card-body">
@@ -279,12 +296,12 @@ Vue.component("BasicReservation", {
                 </div>   
 
                 <div v-if="radio =='vikendice'">
-                    <h4>Termin pocinje {{datePick}} u {{time}}:00h, termin traje 24h.</h4>
+                    <h4>Termin pocinje {{datePick}} u {{time}}:00h, termin traje {{duration()}}h</h4>
                     <h4>Konacna cena je <b>{{finalPriceCottage()}}din.</b></h4>
                 </div>
 
                 <div v-else-if="radio =='brodovi'">
-                    <h4>Termin pocinje {{datePick}} u {{time}}:00h, termin traje 24h.</h4>
+                    <h4>Termin pocinje {{datePick}} u {{time}}:00h, termin traje {{duration()}}h.</h4>
                     <h4>Konacna cena je <b>{{finalPriceBoat()}}din.</b></h4>
                 </div>
 
@@ -315,12 +332,14 @@ Vue.component("BasicReservation", {
 	},
     methods:{
         firstNext() {
-            if(this.datePick == "" || this.time == ""){
+            if(this.datePick == "" || this.time == "" || this.num == ""){
                 this.sweetError()
             }else{
                 const dto = {
                     datePick: this.datePick,
                     time: this.time,
+                    day: this.day,
+                    num: this.num
                 }
     
                 if(this.radio == "vikendice"){
@@ -522,7 +541,7 @@ Vue.component("BasicReservation", {
             return exists
         },
         finalPriceCottage(){
-            let cottagePrice = this.cottage.pricePerHour * 24
+            let cottagePrice = this.cottage.pricePerHour * 24 * this.day
             let additionalPricing = 0
             for(var i = 0; i < this.myPriceList.length; i++){
                 additionalPricing += this.myPriceList[i].price
@@ -530,7 +549,7 @@ Vue.component("BasicReservation", {
             return cottagePrice + additionalPricing
         },
         finalPriceBoat(){
-            let boatPrice = this.boat.pricePerHour * 24
+            let boatPrice = this.boat.pricePerHour * 24 * this.day
             let additionalPricing = 0
             for(var i = 0; i < this.myPriceList.length; i++){
                 additionalPricing += this.myPriceList[i].price
@@ -545,6 +564,9 @@ Vue.component("BasicReservation", {
             }
             return adventurePrice + additionalPricing
         },
+        duration(){
+            return 24*this.day
+        },
         reserveCottage(){
             let additionalPricing = 0
             let text = ""
@@ -555,9 +577,10 @@ Vue.component("BasicReservation", {
             const dto = {
                 datePick: this.datePick,
                 time: this.time,
+                day: this.day,
                 client: this.activeUser,
                 cottage: this.cottage,
-                totalPrice: additionalPricing + this.cottage.pricePerHour * 24,
+                totalPrice: additionalPricing + this.cottage.pricePerHour * 24 * this.day,
                 additionalPricingText: text,
             }
             axios
@@ -577,9 +600,10 @@ Vue.component("BasicReservation", {
             const dto = {
                 datePick: this.datePick,
                 time: this.time,
+                day: this.day,
                 client: this.activeUser,
                 boat: this.boat,
-                totalPrice: additionalPricing + this.boat.pricePerHour * 24,
+                totalPrice: additionalPricing + this.boat.pricePerHour * 24 * this.day,
                 additionalPricingText: text,
             }
             axios

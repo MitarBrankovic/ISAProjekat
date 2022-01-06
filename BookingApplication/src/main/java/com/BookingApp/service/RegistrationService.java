@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.UserTokenState;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.Client;
 import com.BookingApp.model.CottageOwner;
@@ -27,8 +30,9 @@ import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
 import com.BookingApp.repository.ShipOwnerRepository;
 import com.BookingApp.repository.UserRepository;
+import com.BookingApp.util.TokenUtils;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/registration")
 public class RegistrationService {
@@ -44,6 +48,12 @@ public class RegistrationService {
 	private ShipOwnerRepository shipOwnerRepository;
 	@Autowired
 	private JavaMailSender javaMailSender;
+	
+	@Autowired
+	private TokenUtils tokenUtils;
+
+	@Autowired
+	private AuthenticationManager authenticationManager;
 	
 	private static HashMap<String, String> verification = new HashMap<String, String>();
 	
@@ -152,7 +162,7 @@ public class RegistrationService {
 	
 	
 	@PostMapping(path = "/login/{email}/{password}")
-	public AppUser loginUser(@PathVariable("email") String email, @PathVariable("password") String password)
+	public UserTokenState loginUser(@PathVariable("email") String email, @PathVariable("password") String password)
 	{	
 		Optional<AppUser> user = Optional.ofNullable(userRepository.findByEmail(email));
 		AppUser appUser;
@@ -163,10 +173,12 @@ public class RegistrationService {
 		else
 		{
 			appUser = user.get();
+			String jwt = tokenUtils.generateToken(appUser.getUsername());
+			int expiresIn = tokenUtils.getExpiredIn();
 			if(appUser.password.equals(password) && appUser.verified)
-				return appUser;
+				return new UserTokenState(jwt, expiresIn,appUser);
 			else if(appUser.password.equals(password) && !appUser.verified && appUser.role == UserType.admin)
-				return appUser;
+				return new UserTokenState(jwt, expiresIn,appUser);
 			else
 				return null;
 		}

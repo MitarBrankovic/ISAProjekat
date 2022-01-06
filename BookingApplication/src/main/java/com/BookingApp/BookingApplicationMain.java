@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @SpringBootApplication(scanBasePackages = {"com.BookingApp"})
-@RestController
 public class BookingApplicationMain {
 	
 	public static void main(String[] args) {

@@ -29,7 +29,7 @@ public class FishingAppointment {
 	@Column
 	public long duration;
 	@Column
-	public int maxAmountOfPeople;
+	public long maxAmountOfPeople;
 	@Enumerated(value = EnumType.STRING)
 	@Column
 	public AppointmentType appointmentType;
@@ -49,7 +49,7 @@ public class FishingAppointment {
 	public FishingAppointment() {}
 	
 	public FishingAppointment(long id, LocalDateTime appointmentStart, String address, String city, long duration,
-			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, double rating, String extraNotes, double price) {
+			long maxAmountOfPeople, AppointmentType appointmentType, boolean available, double rating, String extraNotes, double price) {
 		super();
 		this.id = id;
 		this.appointmentStart = appointmentStart;
@@ -65,7 +65,7 @@ public class FishingAppointment {
 	}
 	
 	public FishingAppointment(LocalDateTime appointmentStart, String address, String city, long duration,
-			int maxAmountOfPeople, AppointmentType appointmentType, boolean available, double rating, String extraNotes, double price) {
+			long maxAmountOfPeople, AppointmentType appointmentType, boolean available, double rating, String extraNotes, double price) {
 		super();
 		this.appointmentStart = appointmentStart;
 		this.address = address;

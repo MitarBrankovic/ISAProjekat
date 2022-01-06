@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +38,7 @@ import com.BookingApp.repository.CottageAppointmentRepository;
 import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.CottageRepository;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/cottageAppointments")
 public class CottageAppointmentService {
@@ -105,6 +106,7 @@ public class CottageAppointmentService {
 			if(cottageAppointment.client != null && cottageAppointment.client.id == id && cottageAppointment.appointmentStart.isAfter(LocalDateTime.now())) {
 				ReservedCottageAppointmentDto dto = new ReservedCottageAppointmentDto();
 				dto.appointment = cottageAppointment;
+				dto.end = dto.appointment.appointmentStart.plusHours(dto.appointment.duration);
 				if(LocalDateTime.now().isBefore(cottageAppointment.appointmentStart.minusDays(3)))
 					dto.dateIsCorrect = true;
 				else
@@ -143,7 +145,7 @@ public class CottageAppointmentService {
 	@PostMapping(path = "/getAllFreeCottages")
 	public ResponseEntity<List<Cottage>> getAllFreeCottages(@RequestBody DateReservationDto dateReservationDto)
 	{	
-		LocalDateTime datePick = dateReservationDto.datePick.atStartOfDay().plusHours(dateReservationDto.time); //.plusHours(dateReservationDto.time);
+		LocalDateTime datePick = dateReservationDto.datePick.atStartOfDay().plusHours(dateReservationDto.time);
 		
 		boolean exist;
 		List<Cottage> cottages = new ArrayList<Cottage>();
@@ -152,10 +154,13 @@ public class CottageAppointmentService {
 			for(CottageAppointment cottageAppointment : cottageAppointmentRepository.findAll()) {
 				LocalDateTime start = cottageAppointment.appointmentStart;
 				LocalDateTime end = cottageAppointment.appointmentStart.plusHours(cottageAppointment.duration);
-				LocalDateTime datePickEnd = datePick.plusHours(24);
-				if( (((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))		
-						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end))) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
-						&& cottage.id == cottageAppointment.cottage.id) {
+				LocalDateTime datePickEnd = datePick.plusDays(dateReservationDto.day);
+				if( ((((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))	
+						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end)) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
+						|| (start.isAfter(datePick) && start.isBefore(datePickEnd))
+						|| (end.isAfter(datePick) && end.isBefore(datePickEnd)))
+						&& cottage.id == cottageAppointment.cottage.id)
+						|| cottage.maxAmountOfPeople <= dateReservationDto.num) {
 					exist = true;
 					break;
 				}				
@@ -170,8 +175,8 @@ public class CottageAppointmentService {
 	@PostMapping(path = "/reserveCottage")
 	public boolean reserveCottage(@RequestBody ReserveCottageDto reserveCottageDto)
 	{	
-		CottageAppointment appointment = new CottageAppointment(reserveCottageDto.datePick.atStartOfDay().plusHours(reserveCottageDto.time), 24, 4, AppointmentType.regular, 
-				reserveCottageDto.additionalPricingText, reserveCottageDto.totalPrice, reserveCottageDto.cottage, reserveCottageDto.client);
+		CottageAppointment appointment = new CottageAppointment(reserveCottageDto.datePick.atStartOfDay().plusHours(reserveCottageDto.time), 24*reserveCottageDto.day, reserveCottageDto.cottage.maxAmountOfPeople,
+				AppointmentType.regular, reserveCottageDto.additionalPricingText, reserveCottageDto.totalPrice, reserveCottageDto.cottage, reserveCottageDto.client);
 
 		cottageAppointmentRepository.save(appointment);
 		

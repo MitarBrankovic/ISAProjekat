@@ -36,11 +36,13 @@ public class Cottage {
 	public CottageOwner cottageOwner;
 	@Column
 	public double rating;
+	@Column
+	public int maxAmountOfPeople;
 	
 	public Cottage() {}
 
 	
-	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList, double pricePerHour) {
+	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList, double pricePerHour, int maxAmountOfPeople) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -51,9 +53,10 @@ public class Cottage {
 		this.rules = rules;
 		this.priceList = priceList;
 		this.pricePerHour = pricePerHour;
+		this.maxAmountOfPeople = maxAmountOfPeople;
 	}
 	
-	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList, double pricePerHour, double rating) {
+	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList, double pricePerHour, double rating, int maxAmountOfPeople) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -65,6 +68,7 @@ public class Cottage {
 		this.priceList = priceList;
 		this.pricePerHour = pricePerHour;
 		this.rating = rating;
+		this.maxAmountOfPeople = maxAmountOfPeople;
 	}
 	
 	

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,8 @@ import com.BookingApp.repository.BoatAppointmentRepository;
 import com.BookingApp.repository.BoatRepository;
 import com.BookingApp.repository.ClientRepository;
 
+
+@CrossOrigin
 @RestController
 @RequestMapping("/boatAppointments")
 public class BoatAppointmentService {
@@ -102,6 +105,7 @@ public class BoatAppointmentService {
 			if(boatAppointment.client != null && boatAppointment.client.id == id && boatAppointment.appointmentStart.isAfter(LocalDateTime.now())) {
 				ReservedBoatAppointmentDto dto = new ReservedBoatAppointmentDto();
 				dto.appointment = boatAppointment;
+				dto.end = dto.appointment.appointmentStart.plusHours(dto.appointment.duration);
 				if(LocalDateTime.now().isBefore(boatAppointment.appointmentStart.minusDays(3)))
 					dto.dateIsCorrect = true;
 				else
@@ -148,10 +152,13 @@ public class BoatAppointmentService {
 			for(BoatAppointment fishingAppointment : boatAppointmentRepository.findAll()) {
 				LocalDateTime start = fishingAppointment.appointmentStart;
 				LocalDateTime end = fishingAppointment.appointmentStart.plusHours(fishingAppointment.duration);
-				LocalDateTime datePickEnd = datePick.plusHours(24);
-				if( (((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))		
-						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end))) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
-						&& boat.id == fishingAppointment.boat.id) {
+				LocalDateTime datePickEnd = datePick.plusDays(dateReservationDto.day);
+				if( ((((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))		
+						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end)) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
+						|| (start.isAfter(datePick) && start.isBefore(datePickEnd))
+						|| (end.isAfter(datePick) && end.isBefore(datePickEnd)))
+						&& boat.id == fishingAppointment.boat.id)
+						|| boat.maxAmountOfPeople <= dateReservationDto.num) {
 					exist = true;
 					break;
 				}				
@@ -166,7 +173,7 @@ public class BoatAppointmentService {
 	@PostMapping(path = "/reserveBoat")
 	public boolean reserveAdventure(@RequestBody ReserveBoatDto reserveBoatDto)
 	{	
-		BoatAppointment appointment = new BoatAppointment(reserveBoatDto.datePick.atStartOfDay().plusHours(reserveBoatDto.time), 24, 4, AppointmentType.regular, 
+		BoatAppointment appointment = new BoatAppointment(reserveBoatDto.datePick.atStartOfDay().plusHours(reserveBoatDto.time), 24*reserveBoatDto.day, reserveBoatDto.boat.maxAmountOfPeople, AppointmentType.regular, 
 				reserveBoatDto.additionalPricingText, reserveBoatDto.totalPrice, reserveBoatDto.boat, reserveBoatDto.client);
 
 		boatAppointmentRepository.save(appointment);

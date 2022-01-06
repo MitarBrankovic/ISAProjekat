@@ -9,6 +9,7 @@ public class ReserveCottageDto {
 
 	public LocalDate datePick;
 	public int time;
+	public int day;
 	public Client client;
 	public Cottage cottage;
 	public int totalPrice;
@@ -16,11 +17,12 @@ public class ReserveCottageDto {
 	
 	public ReserveCottageDto() {}
 	
-	public ReserveCottageDto(LocalDate datePick, int time, Client client, Cottage cottage,
+	public ReserveCottageDto(LocalDate datePick, int time, int day, Client client, Cottage cottage,
 			int totalPrice, String additionalPricingText) {
 		super();
 		this.datePick = datePick;
 		this.time = time;
+		this.day = day;
 		this.client = client;
 		this.cottage = cottage;
 		this.totalPrice = totalPrice;

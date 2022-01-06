@@ -1,6 +1,7 @@
 package com.BookingApp.service;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +36,7 @@ import com.BookingApp.repository.FishingAdventureRepository;
 import com.BookingApp.repository.FishingAppointmentRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/fishingAdventures")
 public class FishingAdventureService {
@@ -75,9 +78,10 @@ public class FishingAdventureService {
 	@PostMapping(path = "/addNewAdventure")
     public Set<FishingAdventure> addAdventure(@RequestBody NewAdventureDto adventureDTO)
 	{	
+		byte[] decodedPhoto = Base64.getMimeDecoder().decode(adventureDTO.photo);
 		if(adventureDTO != null) {
 			FishingAdventure adventure = new FishingAdventure(adventureDTO.name, adventureDTO.address, adventureDTO.city, adventureDTO.description, 
-					adventureDTO.photo, adventureDTO.maxAmountOfPeople, adventureDTO.behaviourRules, adventureDTO.equipment, 
+					decodedPhoto, adventureDTO.maxAmountOfPeople, adventureDTO.behaviourRules, adventureDTO.equipment, 
 					adventureDTO.pricePerHour, 0, adventureDTO.cancellingPrecentage);
 			adventure.fishingInstructor = fishingInstructorRepository.findById(adventureDTO.instructorsId).get();
 			fishingAdventureRepository.save(adventure);
@@ -89,7 +93,7 @@ public class FishingAdventureService {
 	@PostMapping(path = "/editAdventure")
     public Set<FishingAdventure> editAdventure(@RequestBody EditAdventureDto adventureDTO)
 	{	
-		
+		byte[] decodedPhoto = Base64.getMimeDecoder().decode(adventureDTO.photo);
 		if(adventureDTO != null) {
 			long instructorsId = fishingAdventureRepository.findById(adventureDTO.adventureId).get().fishingInstructor.id;
 			List<FishingAdventure> allAdventures = fishingAdventureRepository.findAll();
@@ -99,7 +103,7 @@ public class FishingAdventureService {
 					adventure.address = adventureDTO.address;
 					adventure.city = adventureDTO.city;
 					adventure.description = adventureDTO.description;
-					adventure.photo = adventureDTO.photo;
+					adventure.photo = decodedPhoto;
 					adventure.maxAmountOfPeople = adventureDTO.maxAmountOfPeople;
 					adventure.behaviourRules = adventureDTO.behaviourRules;
 					adventure.equipment = adventureDTO.equipment;

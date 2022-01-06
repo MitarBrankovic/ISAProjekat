@@ -33,8 +33,9 @@ public class FishingAdventure {
 	public String city;
 	@Column
 	public String description;
-	@Column
-	public String photo;
+	@Lob
+	@Type(type = "org.hibernate.type.ImageType")
+	public byte[] photo;
 	@Column
 	public long maxAmountOfPeople;
 	@Column
@@ -55,7 +56,7 @@ public class FishingAdventure {
 	}
 	
 	public FishingAdventure(long id, String name, String address, String city, String description,
-			String photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
+			byte[] photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
 			long cancellingPrecentage) {
 		super();
 		this.id = id;
@@ -73,7 +74,7 @@ public class FishingAdventure {
 	}
 	
 	public FishingAdventure(String name, String address, String city, String description,
-			String photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
+			byte[] photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
 			long cancellingPrecentage) {
 		super();
 		this.name = name;

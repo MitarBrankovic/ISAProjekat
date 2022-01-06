@@ -8,6 +8,7 @@ insert into app_user (id, name, surname, email, password, address, city, country
 insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified) values ( nextval('my_user_seq'), 'Admin', 'Admin', 'admin@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '1212312', 'admin', true);
 
 
+
 insert into client (id, text, penalties) values ( 1, 'neki tekst', 0);
 insert into client (id, text, penalties) values ( 2, 'neki tekst', 0);
 insert into cottage_owner (id, cottage_text) values ( 3, 'neki tekst');
@@ -16,6 +17,20 @@ insert into fishing_instructor (id, text, biography, available_from, available_u
 insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 6, 'neki tekst', 'biografija coveka','2021-12-12 12:00:00', '2021-12-27 12:00:00');
 insert into admin (id, text, admin_type) values ( 7, 'neki tekst', 'main');
 
+INSERT INTO ROLE (name) VALUES ('ROLE_USER');
+INSERT INTO ROLE (name) VALUES ('ROLE_ADMIN');
+INSERT INTO ROLE (name) VALUES ('ROLE_BOATOWNER');
+INSERT INTO ROLE (name) VALUES ('ROLE_COTTAGEOWNER');
+INSERT INTO ROLE (name) VALUES ('ROLE_CLIENT');
+INSERT INTO ROLE (name) VALUES ('ROLE_FISHINGINSTRUCTOR');
+
+INSERT INTO USER_ROLE (user_id, role_id) VALUES (1, 5);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES (2, 5);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES (3, 4);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES (4, 3);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES (5, 6);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES (6, 6);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES (7, 2);
 
 insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Zuta vikendica', 'Popovica', 'Wow kako je dobro', 3, 6, 'Nema pravila','10 dinala', 500, 3, 2);
 insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating) values ( nextval('cottage_seq_gen'), 'Crvena vikendica', 'Ledinci', 'Wow wow wow', 4, 4, 'Nema pravila','Parking 100 din', 450, 3, 3);

@@ -156,7 +156,8 @@ Vue.component("FishingInstructorsAdventures", {
             <div class="row row-cols-1 row-cols-md-4 g-4">
               <div class="col" v-for="adventure in adventures">
                 <div class="card" style="width: 93%">
-                  <img :src="_arrayBufferToBase64(adventure.photo)" height="220" class="card-img-top" alt="...">
+                <!--<img :src="data:image/png;base64,{{adventure.photo.substring()}}" width = "100px" heigth = "200">-->
+                  <!--<img :src="_arrayBufferToBase64(adventure.photo)" height="220" class="card-img-top" alt="...">-->
                   <div class="card-body">
                     <h5 class="card-title">{{ adventure.name }}</h5>
                   </div>

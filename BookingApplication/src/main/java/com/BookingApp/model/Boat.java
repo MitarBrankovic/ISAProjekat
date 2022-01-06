@@ -53,6 +53,8 @@ public class Boat {
 	public ShipOwner shipOwner;
 	@Column
 	public double rating;
+	@Column
+	public int maxAmountOfPeople;
 	
 	public Boat() {
 		super();
@@ -82,7 +84,7 @@ public class Boat {
 	
 	public Boat(long id, String name, String boatType, double length, String engineNumber, long enginePower,
 			double maxSpeed, String navigationEquipment, String address, String description, long capacity,
-			String rules, String fishingEquipment, String priceList, double pricePerHour, CancellationTerms cancellationTerms, double rating) {
+			String rules, String fishingEquipment, String priceList, double pricePerHour, CancellationTerms cancellationTerms, double rating, int maxAmountOfPeople) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -101,6 +103,7 @@ public class Boat {
 		this.pricePerHour = pricePerHour;
 		this.cancellationTerms = cancellationTerms;
 		this.rating = rating;
+		this.maxAmountOfPeople = maxAmountOfPeople;
 	}
 	
 }

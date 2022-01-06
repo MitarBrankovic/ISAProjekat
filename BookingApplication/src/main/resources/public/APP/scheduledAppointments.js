@@ -26,6 +26,7 @@ Vue.component("ScheduledAppointments", {
                     <tr>
                         <td>Naziv vikendice</td>
                         <td>Datum i vreme pocetka rezervacije</td>
+                        <td>Kraj termina</td>
                         <td>Trajanje</td>
                         <td>Maksimalan broj osoba</td>
                         <td>Cena</td>
@@ -36,6 +37,7 @@ Vue.component("ScheduledAppointments", {
                         <tr v-for="dto in cottageDtos">
                         <td><a class="linkAppointment" v-on:click="showCottageInformation(dto.appointment.cottage.id)">{{dto.appointment.cottage.name}}</a></td>
                         <td>{{dto.appointment.appointmentStart}}</td>
+                        <td>{{dto.end}}</td>
                         <td>{{dto.appointment.duration}} h</td>
                         <td>{{dto.appointment.maxAmountOfPeople}}</td>
                         <td>{{dto.appointment.price}} din.</td>
@@ -55,6 +57,7 @@ Vue.component("ScheduledAppointments", {
                     <tr>
                         <td>Naziv broda</td>
                         <td>Datum i vreme pocetka rezervacije</td>
+                        <td>Kraj termina</td>
                         <td>Trajanje</td>
                         <td>Maksimalan broj osoba</td>
                         <td>Cena</td>
@@ -65,6 +68,7 @@ Vue.component("ScheduledAppointments", {
                         <tr v-for="dto in boatDtos">
                         <td><a class="linkAppointment" v-on:click="showBoatInformation(dto.appointment.boat.id)">{{dto.appointment.boat.name}}</a></td>
                         <td>{{dto.appointment.appointmentStart}}</td>
+                        <td>{{dto.end}}</td>
                         <td>{{dto.appointment.duration}} h</td>
                         <td>{{dto.appointment.maxAmountOfPeople}}</td>
                         <td>{{dto.appointment.price}} din.</td>
@@ -84,6 +88,7 @@ Vue.component("ScheduledAppointments", {
                     <tr>
                         <td>Naziv avanture</td>
                         <td>Datum i vreme pocetka rezervacije</td>
+                        <td>Kraj termina</td>
                         <td>Trajanje</td>
                         <td>Maksimalan broj osoba</td>
                         <td>Cena</td>
@@ -94,6 +99,7 @@ Vue.component("ScheduledAppointments", {
                         <tr v-for="dto in adventuresDtos">
                         <td><a class="linkAppointment" v-on:click="showAdventureInformation(dto.appointment.fishingAdventure.id)">{{dto.appointment.fishingAdventure.name}}</a></td>
                         <td>{{dto.appointment.appointmentStart}}</td>
+                        <td>{{dto.end}}</td>
                         <td>{{dto.appointment.duration}} h</td>
                         <td>{{dto.appointment.maxAmountOfPeople}}</td>
                         <td>{{dto.appointment.price}} din.</td>

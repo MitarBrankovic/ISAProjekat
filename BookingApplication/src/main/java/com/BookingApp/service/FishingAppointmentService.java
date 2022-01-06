@@ -235,6 +235,7 @@ public class FishingAppointmentService {
 			if(fishingAppointment.client != null && fishingAppointment.client.id == id && fishingAppointment.appointmentStart.isAfter(LocalDateTime.now())) {
 				ReservedFishingAppointmentDto dto = new ReservedFishingAppointmentDto();
 				dto.appointment = fishingAppointment;
+				dto.end = dto.appointment.appointmentStart.plusHours(dto.appointment.duration);
 				if(LocalDateTime.now().isBefore(fishingAppointment.appointmentStart.minusDays(3)))
 					dto.dateIsCorrect = true;
 				else
@@ -273,7 +274,7 @@ public class FishingAppointmentService {
 	@PostMapping(path = "/getAllFreeAdventures")
 	public ResponseEntity<List<FishingAdventure>> getAllFreeAdventures(@RequestBody DateReservationDto dateReservationDto)
 	{	
-		LocalDateTime datePick = dateReservationDto.datePick.atStartOfDay().plusHours(dateReservationDto.time); //.plusHours(dateReservationDto.time);
+		LocalDateTime datePick = dateReservationDto.datePick.atStartOfDay().plusHours(dateReservationDto.time);
 		
 		boolean exist;
 		List<FishingAdventure> adventures = new ArrayList<FishingAdventure>();
@@ -282,10 +283,13 @@ public class FishingAppointmentService {
 			for(FishingAppointment fishingAppointment : fishingAppointmentRepository.findAll()) {
 				LocalDateTime start = fishingAppointment.appointmentStart;
 				LocalDateTime end = fishingAppointment.appointmentStart.plusHours(fishingAppointment.duration);
-				LocalDateTime datePickEnd = datePick.plusHours(fishingAppointment.duration);
-				if( (((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))		
-						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end))) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
-						&& adventure.fishingInstructor.id == fishingAppointment.fishingAdventure.fishingInstructor.id) {
+				LocalDateTime datePickEnd = datePick.plusHours(3);
+				if( ((((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))		
+						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end)) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
+						|| (start.isAfter(datePick) && start.isBefore(datePickEnd))
+						|| (end.isAfter(datePick) && end.isBefore(datePickEnd)))
+						&& adventure.fishingInstructor.id == fishingAppointment.fishingAdventure.fishingInstructor.id)
+						|| adventure.maxAmountOfPeople <= dateReservationDto.num) {
 					exist = true;
 					break;
 				}				

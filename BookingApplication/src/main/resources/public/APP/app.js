@@ -33,6 +33,8 @@ const Subscriptions = {  template: '<Subscriptions></Subscriptions>' }
 const BasicReservation = {  template: '<BasicReservation></BasicReservation>' }
 const FishingInstructorsReports = {  template: '<FishingInstructorsReports></FishingInstructorsReports>' }
 const PenaltyApproval = {  template: '<PenaltyApproval></PenaltyApproval>' }
+const LoyaltyProgramAdmin = {  template: '<LoyaltyProgramAdmin></LoyaltyProgramAdmin>' }
+
 
 
 
@@ -74,6 +76,8 @@ const router = new VueRouter({
         { path: '/basicReservation', component: BasicReservation },
 		{ path: '/fishingInstructorsReports', component: FishingInstructorsReports },
 		{ path: '/penaltyApproval', component: PenaltyApproval },
+		{ path: '/loyaltyProgramAdmin', component: LoyaltyProgramAdmin },
+
 		
 		
 

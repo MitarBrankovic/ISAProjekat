@@ -70,3 +70,6 @@ insert into subscribe_cottage (id, cottage_id, client_id) values (nextval('subs_
 insert into subscribe_boat (id, boat_id, client_id) values (nextval('subs_boat_seq_gen'), 1, 1);
 insert into subscribe_adventure (id, fishing_adventure_id, client_id) values (nextval('subs_adv_seq_gen'), 1, 1);
 
+insert into loyalty_program (id, bronze_points, silver_points, gold_points, bronze_client, silver_client, gold_client, bronze_profit, silver_profit, gold_profit, bronze_discount, silver_discount, gold_discount) values ( nextval('loyalty_seq_gen'), 2000, 4000, 6000, 400, 300, 200, 4, 8, 12, 5, 10, 15);
+
+

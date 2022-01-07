@@ -179,7 +179,8 @@ template: `
     
     mounted() {
         axios.all([axios.get('/cottages/getAllCottages'), axios.get('/boats/getAllBoats'),
-        axios.get('/fishingAdventures/getAllAdventures')]).then(axios.spread((...responses) => {
+        axios.get('/fishingAdventures/getAllAdventures'),
+        axios.get('/reports/deleteAllReportsFirstInMonth')]).then(axios.spread((...responses) => {
            this.cottages = responses[0].data
            this.boats = responses[1].data
            this.adventures = responses[2].data

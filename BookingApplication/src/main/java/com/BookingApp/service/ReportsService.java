@@ -85,6 +85,18 @@ public class ReportsService {
 		return new ReportsClientDto(cottageReportsRepository.findAllByClient(id), boatReportsRepository.findAllByClient(id), fishingReportsRepository.findAllByClient(id));
 	}
 	
+	@GetMapping(path = "/deleteAllReportsFirstInMonth")
+	public boolean deleteAllReportsFirstInMonth()
+	{
+		LocalDateTime date = LocalDateTime.now();
+		if(date.getDayOfMonth() == 1) {
+			cottageReportsRepository.deleteAll();
+			boatReportsRepository.deleteAll();
+			fishingReportsRepository.deleteAll();
+		}
+		return true;
+	}
+	
 	@PostMapping(path = "/sendFishingReport")
     public List<FishingAppointment> sendFishingReport(@RequestBody AppointmentReportDto reportDTO)
 	{	

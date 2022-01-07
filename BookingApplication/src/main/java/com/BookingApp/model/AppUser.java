@@ -100,6 +100,14 @@ public class AppUser implements UserDetails{
 		this.verificationCode = verificationCode;
 		this.verified = firstLogin;
 	}
+	
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+    
+    public List<Role> getRoles() {
+       return roles;
+    }
 
 
 	@Override

@@ -88,7 +88,7 @@ Vue.component("ProfileClient", {
                 <h3 style="text-align:center;">Obican</h3>
             </div>
             <div class="col-md-2 razmak-card card">
-                <h2><span class="bi bi-people"></span>Penali</h2>
+                <h2><span class="bi bi-people"></span><a style="color:black;" href="#/reportsOfClient">Penali</a></h2>
                 <h3 style="text-align:center;">{{numberOfPenals()}}</h3>
             </div>
         </div>
@@ -174,18 +174,7 @@ Vue.component("ProfileClient", {
             this.$router.push('/')
 
         userId = this.activeUser.id 
-        /*axios
-        .get('/appUser/requestExists/' + userId)
-        .then(response=>{
-            //window.location.reload()
-            this.sendCheck = response.data
-        })
-        .catch(error=>{
-            console.log("Greska.")	
-            alert("Podaci su lose uneti.")
-            window.location.reload()
 
-        })*/
         axios.all([axios.get('/appUser/requestExists/' + userId),
         axios.get('/reports/findAllReportsByClient/' + this.activeUser.id)])
         .then(axios.spread((...responses) => {

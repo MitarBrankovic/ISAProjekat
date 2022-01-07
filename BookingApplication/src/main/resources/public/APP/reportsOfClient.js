@@ -28,7 +28,7 @@ Vue.component("ReportsOfClient", {
                     <td><a class="linkSubscription" v-on:click="showCottageInformation(report.appointment.cottage.id)">{{report.appointment.cottage.name}}</a></td>
                     <td>{{report.appointment.appointmentStart}}</td>
                     <td>{{report.appointment.cottage.rating}}</td>
-                    <td>{{report.appointment.cottage.cottageOwner.name}} {{report.appointment.cottage.cottageOwner.surname}}</td>
+                    <td>{{report.owner.name}} {{report.owner.surname}}</td>
                     <td>{{report.appointment.price}} din.</td>
                     </tr>
                 </tbody>
@@ -54,7 +54,7 @@ Vue.component("ReportsOfClient", {
                     <td><a class="linkSubscription" v-on:click="showCottageInformation(report.appointment.boat.id)">{{report.appointment.boat.name}}</a></td>
                     <td>{{report.appointment.appointmentStart}}</td>
                     <td>{{report.appointment.boat.rating}}</td>
-                    <td>{{report.appointment.boat.shipOwner.name}} {{report.appointment.boat.shipOwner.surname}}</td>
+                    <td>{{report.owner.name}} {{report.owner.surname}}</td>
                     <td>{{report.appointment.price}} din.</td>
                     </tr>
                 </tbody>
@@ -79,7 +79,7 @@ Vue.component("ReportsOfClient", {
                     <td><a class="linkSubscription" v-on:click="showCottageInformation(report.appointment.fishingAdventure.id)">{{report.appointment.fishingAdventure.name}}</a></td>
                     <td>{{report.appointment.appointmentStart}}</td>
                     <td>{{report.appointment.fishingAdventure.rating}}</td>
-                    <td>{{report.appointment.fishingAdventure.fishingInstructor.name}} {{report.appointment.boat.fishingInstructor.surname}}</td>
+                    <td>{{report.owner.name}} {{report.owner.surname}}</td>
                     <td>{{report.appointment.price}} din.</td>
                     </tr>
                 </tbody>

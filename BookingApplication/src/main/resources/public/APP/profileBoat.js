@@ -47,7 +47,7 @@ Vue.component("ProfileBoat", {
             <td>{{a.maxAmountOfPeople}}</td>
             <td>{{a.extraNotes}}</td>
             <td>{{a.price}}</td>
-            <td v-if="a.client==null"><button v-if="activeUser.role == 'client'" type="button" class="btn btn-success" v-on:click="scheduleAppointment(a)">Zakazi</button> </td>
+            <td v-if="a.client==null"><button id="scheduleButton" v-if="checkUserandPenalties()" type="button" class="btn btn-success" v-on:click="scheduleAppointment(a)">Zakazi</button> </td>
             <td v-else><p style="color:red;">Zakazano</p> </td>
             </tr>
         </tbody>
@@ -69,6 +69,26 @@ Vue.component("ProfileBoat", {
                 window.location.reload()
 
             })
+        },
+        checkUserandPenalties(){
+            if(this.activeUser.role == 'client'){
+                let num = 0
+                axios
+                .get('/reports/findAllReportsByClient/' + this.activeUser.id)
+                .then(response=>{
+                    num = response.data.cottageReports.length + response.data.boatReports.length + response.data.fishingReports.length;
+                    if(num < 3)
+                        document.getElementById("scheduleButton").disabled = false
+                    else
+                        document.getElementById("scheduleButton").disabled = true
+                })
+                .catch(error=>{
+                    console.log("Greska.")	
+                    alert("Podaci su lose uneti.")
+                })
+                return true;
+            }else return false;
+
         },
         subscribe:function(){
             const subscibedBoat = {

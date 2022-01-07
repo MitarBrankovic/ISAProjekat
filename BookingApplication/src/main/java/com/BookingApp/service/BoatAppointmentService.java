@@ -31,8 +31,11 @@ import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.repository.BoatAppointmentRepository;
+import com.BookingApp.repository.BoatReportsRepository;
 import com.BookingApp.repository.BoatRepository;
 import com.BookingApp.repository.ClientRepository;
+import com.BookingApp.repository.CottageReportsRepository;
+import com.BookingApp.repository.FishingReportsRepository;
 
 
 @CrossOrigin
@@ -45,6 +48,12 @@ public class BoatAppointmentService {
 	private BoatRepository boatRepository;
 	@Autowired
 	private ClientRepository clientRepository;
+	@Autowired
+	private FishingReportsRepository fishingReportsRepository;
+	@Autowired
+	private BoatReportsRepository boatReportsRepository;
+	@Autowired
+	private CottageReportsRepository cottageReportsRepository;
 	
 	@GetMapping(path = "/getAllQuickAppointments/{boatId}")
 	public ResponseEntity<List<BoatAppointment>> getAllQuickAppointmentsForBoat(@PathVariable("boatId") long id)
@@ -71,14 +80,17 @@ public class BoatAppointmentService {
 				client = oldClient;
 			}
 		}
-		
-		if(oldAppointment.isPresent()) {
-			BoatAppointment appointment = oldAppointment.get();
-			appointment.client = client;
-			boatAppointmentRepository.save(appointment);
-			return true;
-		}
-		return false;
+		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
+				fishingReportsRepository.findAllByClient(userId).size();
+	
+		if(numOfPenalties < 3) {
+			if(oldAppointment.isPresent()) {
+				BoatAppointment appointment = oldAppointment.get();
+				appointment.client = client;
+				boatAppointmentRepository.save(appointment);
+				return true;
+			}else return false;
+		}else return false;
 	}
 	
 	@PutMapping(path = "/cancelBoatAppointment/{boatId}")
@@ -173,11 +185,16 @@ public class BoatAppointmentService {
 	@PostMapping(path = "/reserveBoat")
 	public boolean reserveAdventure(@RequestBody ReserveBoatDto reserveBoatDto)
 	{	
-		BoatAppointment appointment = new BoatAppointment(reserveBoatDto.datePick.atStartOfDay().plusHours(reserveBoatDto.time), 24*reserveBoatDto.day, reserveBoatDto.boat.maxAmountOfPeople, AppointmentType.regular, 
-				reserveBoatDto.additionalPricingText, reserveBoatDto.totalPrice, reserveBoatDto.boat, reserveBoatDto.client);
-
-		boatAppointmentRepository.save(appointment);
-		return true;
+		int numOfPenalties = cottageReportsRepository.findAllByClient(reserveBoatDto.client.id).size() +  boatReportsRepository.findAllByClient(reserveBoatDto.client.id).size() +
+				fishingReportsRepository.findAllByClient(reserveBoatDto.client.id).size();
+	
+		if(numOfPenalties < 3) {
+			BoatAppointment appointment = new BoatAppointment(reserveBoatDto.datePick.atStartOfDay().plusHours(reserveBoatDto.time), 24*reserveBoatDto.day, reserveBoatDto.boat.maxAmountOfPeople, AppointmentType.regular, 
+					reserveBoatDto.additionalPricingText, reserveBoatDto.totalPrice, reserveBoatDto.boat, reserveBoatDto.client);
+	
+			boatAppointmentRepository.save(appointment);
+			return true;
+		}else return false;
 	}
 	
 	@PostMapping(path = "/searchBoatAppointments")

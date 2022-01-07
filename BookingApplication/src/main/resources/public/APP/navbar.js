@@ -58,6 +58,7 @@ Vue.component("Navbar", {
 				<div v-if="(activeUser.role==='client')">
 					<a href="/#/profileClient">Moj profil</a>
 					<a href="#/subscriptions">Pretplate</a>
+					<a href="#/reportsOfClient">Penali</a>
 					<a href="/#/sendComplaint">Napisi zalbu</a>
 				</div>
 				<div v-if="(activeUser.role==='fishing_instructor')">

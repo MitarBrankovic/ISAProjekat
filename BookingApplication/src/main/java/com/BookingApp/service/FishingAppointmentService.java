@@ -38,7 +38,9 @@ import com.BookingApp.model.FishingAppointmentReport;
 import com.BookingApp.model.FishingInstructor;
 import com.BookingApp.model.RequestDeleteAcc;
 import com.BookingApp.model.SubscribeAdventure;
+import com.BookingApp.repository.BoatReportsRepository;
 import com.BookingApp.repository.ClientRepository;
+import com.BookingApp.repository.CottageReportsRepository;
 import com.BookingApp.repository.FishingAdventureRepository;
 import com.BookingApp.repository.FishingAppointmentRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
@@ -67,6 +69,10 @@ public class FishingAppointmentService {
 	private JavaMailSender javaMailSender;
 	@Autowired
 	private SubscribeAdvRepository subscribeFishingRepository;
+	@Autowired
+	private BoatReportsRepository boatReportsRepository;
+	@Autowired
+	private CottageReportsRepository cottageReportsRepository;
 
 	public ResponseEntity<List<FishingAppointment>> getAdventureQuickAppointments(long id)
 	{
@@ -198,14 +204,17 @@ public class FishingAppointmentService {
 				client = oldClient;
 			}
 		}
-		
-		if(oldAppointment.isPresent()) {
-			FishingAppointment appointment = oldAppointment.get();
-			appointment.client = client;
-			fishingAppointmentRepository.save(appointment);
-			return true;
-		}
-		return false;
+		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
+				fishingReportsRepository.findAllByClient(userId).size();
+	
+		if(numOfPenalties < 3) {
+			if(oldAppointment.isPresent()) {
+				FishingAppointment appointment = oldAppointment.get();
+				appointment.client = client;
+				fishingAppointmentRepository.save(appointment);
+				return true;
+			}else return false;
+		}else return false;
 	}
 	
 	@PutMapping(path = "/cancelAdventureAppointment/{adventureId}")
@@ -304,13 +313,18 @@ public class FishingAppointmentService {
 	@PostMapping(path = "/reserveAdventure")
 	public boolean reserveAdventure(@RequestBody ReserveAdventureDto reserveAdventureDto)
 	{	
-		FishingAppointment appointment = new FishingAppointment(reserveAdventureDto.datePick.atStartOfDay().plusHours(reserveAdventureDto.time), reserveAdventureDto.fishingAdventure.address, reserveAdventureDto.fishingAdventure.city, 
-				 3, 5, AppointmentType.regular, false, 0,reserveAdventureDto.additionalPricingText, reserveAdventureDto.totalPrice);
-		appointment.client = reserveAdventureDto.client;
-		appointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
+		int numOfPenalties = cottageReportsRepository.findAllByClient(reserveAdventureDto.client.id).size() +  boatReportsRepository.findAllByClient(reserveAdventureDto.client.id).size() +
+				fishingReportsRepository.findAllByClient(reserveAdventureDto.client.id).size();
+	
+		if(numOfPenalties < 3) {
+			FishingAppointment appointment = new FishingAppointment(reserveAdventureDto.datePick.atStartOfDay().plusHours(reserveAdventureDto.time), reserveAdventureDto.fishingAdventure.address, reserveAdventureDto.fishingAdventure.city, 
+					 3, reserveAdventureDto.fishingAdventure.maxAmountOfPeople, AppointmentType.regular, false, 0,reserveAdventureDto.additionalPricingText, reserveAdventureDto.totalPrice);
+			appointment.client = reserveAdventureDto.client;
+			appointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
 
-		fishingAppointmentRepository.save(appointment);
-		return true;
+			fishingAppointmentRepository.save(appointment);
+			return true;
+		}else return false;
 	}
 	
 	

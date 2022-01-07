@@ -33,10 +33,13 @@ import com.BookingApp.model.CottageOwner;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.FishingInstructor;
+import com.BookingApp.repository.BoatReportsRepository;
 import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.CottageAppointmentRepository;
 import com.BookingApp.repository.CottageOwnerRepository;
+import com.BookingApp.repository.CottageReportsRepository;
 import com.BookingApp.repository.CottageRepository;
+import com.BookingApp.repository.FishingReportsRepository;
 
 @CrossOrigin
 @RestController
@@ -48,6 +51,12 @@ public class CottageAppointmentService {
 	private CottageRepository cottageRepository;
 	@Autowired
 	private ClientRepository clientRepository;
+	@Autowired
+	private FishingReportsRepository fishingReportsRepository;
+	@Autowired
+	private BoatReportsRepository boatReportsRepository;
+	@Autowired
+	private CottageReportsRepository cottageReportsRepository;
 	
 	@GetMapping(path = "/getAllQuickAppointments/{cottageId}")
 	public ResponseEntity<List<CottageAppointment>> getAllQuickAppointmentsForCottage(@PathVariable("cottageId") long id)
@@ -73,14 +82,17 @@ public class CottageAppointmentService {
 				client = oldClient;
 			}
 		}
+		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
+					fishingReportsRepository.findAllByClient(userId).size();
 		
-		if(oldAppointment.isPresent()) {
-			CottageAppointment appointment = oldAppointment.get();
-			appointment.client = client;
-			cottageAppointmentRepository.save(appointment);
-			return true;
-		}
-		return false;
+		if(numOfPenalties < 3) {
+			if(oldAppointment.isPresent()) {
+				CottageAppointment appointment = oldAppointment.get();
+				appointment.client = client;
+				cottageAppointmentRepository.save(appointment);
+				return true;
+			}else return false;
+		}else return false;
 	}
 	
 	@PutMapping(path = "/cancelCottageAppointment/{cottageId}")
@@ -175,12 +187,16 @@ public class CottageAppointmentService {
 	@PostMapping(path = "/reserveCottage")
 	public boolean reserveCottage(@RequestBody ReserveCottageDto reserveCottageDto)
 	{	
-		CottageAppointment appointment = new CottageAppointment(reserveCottageDto.datePick.atStartOfDay().plusHours(reserveCottageDto.time), 24*reserveCottageDto.day, reserveCottageDto.cottage.maxAmountOfPeople,
-				AppointmentType.regular, reserveCottageDto.additionalPricingText, reserveCottageDto.totalPrice, reserveCottageDto.cottage, reserveCottageDto.client);
-
-		cottageAppointmentRepository.save(appointment);
-		
-		return true;
+		int numOfPenalties = cottageReportsRepository.findAllByClient(reserveCottageDto.client.id).size() +  boatReportsRepository.findAllByClient(reserveCottageDto.client.id).size() +
+				fishingReportsRepository.findAllByClient(reserveCottageDto.client.id).size();
+	
+		if(numOfPenalties < 3) {
+			CottageAppointment appointment = new CottageAppointment(reserveCottageDto.datePick.atStartOfDay().plusHours(reserveCottageDto.time), 24*reserveCottageDto.day, reserveCottageDto.cottage.maxAmountOfPeople,
+					AppointmentType.regular, reserveCottageDto.additionalPricingText, reserveCottageDto.totalPrice, reserveCottageDto.cottage, reserveCottageDto.client);
+			
+			cottageAppointmentRepository.save(appointment);
+			return true;
+		}else return false;
 	}
 	
 	

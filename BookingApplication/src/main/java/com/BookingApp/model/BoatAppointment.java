@@ -16,8 +16,8 @@ import javax.persistence.SequenceGenerator;
 @Entity
 public class BoatAppointment {
 	@Id
-	@SequenceGenerator(name = "cottageAppointmentSeqGen", sequenceName = "cottageAppointmentSeqGen", initialValue = 1, allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "cottageAppointmentSeqGen")
+	@SequenceGenerator(name = "boatAppointmentSeqGen", sequenceName = "boatAppointmentSeqGen", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "boatAppointmentSeqGen")
 	public long id;
 	@Column
 	public LocalDateTime appointmentStart;

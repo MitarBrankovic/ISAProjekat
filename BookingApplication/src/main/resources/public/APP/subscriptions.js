@@ -10,7 +10,7 @@ Vue.component("Subscriptions", {
     template:`  
         <div style="margin-top: 30px;">
 
-            <h2  class="flex title-div bigtitle">Pretplacene vikendice</h2>
+            <h2 style="margin-top: 1%; margin-bottom: 2%; color:#5cb85c" class="flex title-div bigtitle">Pretplacene vikendice</h2>
 
             <div class="container-fluid">
             <table class="table table-success table-striped table-sm table-bordered">
@@ -29,14 +29,14 @@ Vue.component("Subscriptions", {
                     <td>{{subscription.cottage.address}}</td>
                     <td>{{subscription.cottage.rating}}</td>
                     <td>{{subscription.cottage.cottageOwner.name}} {{subscription.cottage.cottageOwner.surname}}</td>
-                    <td>{{subscription.price}} din.</td>
+                    <td>{{subscription.cottage.pricePerHour}} din/h</td>
                     </tr>
                 </tbody>
             </table>
             </div>
 
 
-            <h2 class="flex title-div bigtitle" style="margin-top: 50px;">Pretplaceni brodovi</h2>
+            <h2 class="flex title-div bigtitle" style="margin-top: 50px; margin-bottom: 2%; color:#5cb85c">Pretplaceni brodovi</h2>
 
             <div class="container-fluid">
             <table class="table table-success table-striped table-sm table-bordered">
@@ -55,13 +55,13 @@ Vue.component("Subscriptions", {
                     <td>{{subscription.boat.address}}</td>
                     <td>{{subscription.boat.rating}}</td>
                     <td>{{subscription.boat.shipOwner.name}} {{subscription.boat.shipOwner.surname}}</td>
-                    <td>{{subscription.price}} din.</td>
+                    <td>{{subscription.boat.pricePerHour}} din/h</td>
                     </tr>
                 </tbody>
             </table>
             </div>
 
-            <h2 class="flex title-div bigtitle" style="margin-top: 50px;">Pretplacene avanture</h2>
+            <h2 class="flex title-div bigtitle" style="margin-top: 50px; margin-bottom: 2%; color:#5cb85c">Pretplacene avanture</h2>
 
             <div class="container-fluid">
             <table class="table table-success table-striped table-sm table-bordered">
@@ -80,7 +80,7 @@ Vue.component("Subscriptions", {
                     <td>{{subscription.fishingAdventure.address}}</td>
                     <td>{{subscription.fishingAdventure.rating}}</td>
                     <td>{{subscription.fishingAdventure.fishingInstructor.name}} {{subscription.fishingAdventure.fishingInstructor.surname}}</td>
-                    <td>{{subscription.price}} din.</td>
+                    <td>{{subscription.fishingAdventure.pricePerHour}} din/h</td>
                     </tr>
                 </tbody>
             </table>
@@ -93,9 +93,9 @@ Vue.component("Subscriptions", {
         if(this.activeUser.role != 'client')
         this.$router.push('/')
         
-        axios.all([axios.get('/subscribe//getAllSubscibedCottagesByClient/' + this.activeUser.id),
-        axios.get('/subscribe//getAllSubscibedBoatsByClient/' + this.activeUser.id),
-        axios.get('/subscribe//getAllSubscibedAdventuresByClient/' + this.activeUser.id)])
+        axios.all([axios.get('/subscribe/getAllSubscibedCottagesByClient/' + this.activeUser.id),
+        axios.get('/subscribe/getAllSubscibedBoatsByClient/' + this.activeUser.id),
+        axios.get('/subscribe/getAllSubscibedAdventuresByClient/' + this.activeUser.id)])
         .then(axios.spread((...responses) => {
            this.cottages = responses[0].data
            this.boats = responses[1].data

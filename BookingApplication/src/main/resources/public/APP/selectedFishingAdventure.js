@@ -50,7 +50,7 @@ Vue.component("SelectedFishingAdventure", {
             <td>{{appointment.maxAmountOfPeople}}</td>
             <td>{{appointment.extraNotes}}</td>
             <td>{{appointment.price}} din.</td>
-            <td v-if="appointment.client==null && activeUser.role == 'client'"><button type="button" class="btn btn-success" v-on:click="scheduleAppointment(appointment)">Zakazi</button> </td>
+            <td v-if="appointment.client==null && activeUser.role == 'client'"><button id="scheduleButton" v-if="checkUserandPenalties()" type="button" class="btn btn-success" v-on:click="scheduleAppointment(appointment)">Zakazi</button> </td>
             <td v-else-if="appointment.client == null && activeUser.role == 'fishing_instructor'"><p style="color:green;">Slobodno</p></td>
             <td v-else><p style="color:red;">Zakazano</p> </td>
             </tr>
@@ -186,7 +186,26 @@ Vue.component("SelectedFishingAdventure", {
 
           })
         },
-        
+        checkUserandPenalties(){
+          if(this.activeUser.role == 'client'){
+              let num = 0
+              axios
+              .get('/reports/findAllReportsByClient/' + this.activeUser.id)
+              .then(response=>{
+                  num = response.data.cottageReports.length + response.data.boatReports.length + response.data.fishingReports.length;
+                  if(num < 3)
+                      document.getElementById("scheduleButton").disabled = false
+                  else
+                      document.getElementById("scheduleButton").disabled = true
+              })
+              .catch(error=>{
+                  console.log("Greska.")	
+                  alert("Podaci su lose uneti.")
+              })
+              return true;
+          }else return false;
+
+        },
         addPricelistItem(){
         this.newPricelistItem.instructorsId = this.activeUser.id
         if (this.checkNewPricelistItem()){
@@ -297,8 +316,6 @@ Vue.component("SelectedFishingAdventure", {
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
-        if(this.activeUser.role != 'fishing_instructor')
-            this.$router.push('/')
             
         axios.all([
                 axios.get("fishingAdventures/getSelectedAdventure/" + this.$route.query.id), 

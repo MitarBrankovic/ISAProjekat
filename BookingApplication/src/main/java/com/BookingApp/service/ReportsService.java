@@ -10,12 +10,14 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.dto.AppointmentReportDto;
+import com.BookingApp.dto.ReportsClientDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentRatingOptions;
 import com.BookingApp.model.Boat;
@@ -75,6 +77,24 @@ public class ReportsService {
 	public Set<CottageAppointmentReport> getCottageReports()
 	{
 		return cottageReportsRepository.findUnapprovedPenalties(false);
+	}
+	
+	@GetMapping(path = "/findAllReportsByClient/{clientId}")
+	public ReportsClientDto findAllReportsByClient(@PathVariable("clientId") long id)
+	{
+		return new ReportsClientDto(cottageReportsRepository.findAllByClient(id), boatReportsRepository.findAllByClient(id), fishingReportsRepository.findAllByClient(id));
+	}
+	
+	@GetMapping(path = "/deleteAllReportsFirstInMonth")
+	public boolean deleteAllReportsFirstInMonth()
+	{
+		LocalDateTime date = LocalDateTime.now();
+		if(date.getDayOfMonth() == 1) {
+			cottageReportsRepository.deleteAll();
+			boatReportsRepository.deleteAll();
+			fishingReportsRepository.deleteAll();
+		}
+		return true;
 	}
 	
 	@PostMapping(path = "/sendFishingReport")

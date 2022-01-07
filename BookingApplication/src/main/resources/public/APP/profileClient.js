@@ -6,7 +6,10 @@ Vue.component("ProfileClient", {
             editClick:false,
             requestDelete:false,
             sendCheck:false,
-            textAreaDelete:""
+            textAreaDelete:"",
+            cottageReports:[],
+            boatReports:[],
+            fishingReports:[]
         }
     },
     template : ` 
@@ -64,7 +67,7 @@ Vue.component("ProfileClient", {
         </div><br><br>
 
         <div class="row">
-            <div class= "col-md-4 container">
+            <div class= "col-md-4 container" style="height:30px;">
                 <h4 v-if="sendCheck==false">Zahtev za brisanje naloga</h4>
                 <button type="button" class="button" v-if="requestDelete==false && sendCheck==false" v-on:click="requestDelete=true">Otvori zahtev</button> 
                 <h4 v-if="sendCheck==true">Zahtev je uspesno poslat!</h4>
@@ -85,8 +88,8 @@ Vue.component("ProfileClient", {
                 <h3 style="text-align:center;">Obican</h3>
             </div>
             <div class="col-md-2 razmak-card card">
-                <h2><span class="bi bi-people"></span>Vrsta korisnika</h2>
-                <h3 style="text-align:center;">Klijent</h3>
+                <h2><span class="bi bi-people"></span><a style="color:black;" href="#/reportsOfClient">Penali</a></h2>
+                <h3 style="text-align:center;">{{numberOfPenals()}}</h3>
             </div>
         </div>
 
@@ -159,6 +162,9 @@ Vue.component("ProfileClient", {
             } else {
                 document.getElementById('submit').disabled = true;
             }
+        },
+        numberOfPenals(){
+            return this.cottageReports.length + this.boatReports.length + this.fishingReports.length;
         }
     },
     mounted(){
@@ -168,18 +174,15 @@ Vue.component("ProfileClient", {
             this.$router.push('/')
 
         userId = this.activeUser.id 
-        axios
-        .get('/appUser/requestExists/' + userId)
-        .then(response=>{
-            //window.location.reload()
-            this.sendCheck = response.data
-        })
-        .catch(error=>{
-            console.log("Greska.")	
-            alert("Podaci su lose uneti.")
-            window.location.reload()
 
-        })
+        axios.all([axios.get('/appUser/requestExists/' + userId),
+        axios.get('/reports/findAllReportsByClient/' + this.activeUser.id)])
+        .then(axios.spread((...responses) => {
+           this.sendCheck = responses[0].data
+           this.cottageReports = responses[1].data.cottageReports
+           this.boatReports = responses[1].data.boatReports
+           this.fishingReports = responses[1].data.fishingReports
+       }))
     },
 
 });

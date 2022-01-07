@@ -35,6 +35,8 @@ const FishingInstructorsReports = {  template: '<FishingInstructorsReports></Fis
 const PenaltyApproval = {  template: '<PenaltyApproval></PenaltyApproval>' }
 const ProfileCottageOwner = { template: '<ProfileCottageOwner></ProfileCottageOwner>'}
 const CottageOwnerHome = {template : '<CottageOwnerHome></CottageOwnerHome>'}
+const ReportsOfClient = {  template: '<ReportsOfClient></ReportsOfClient>' }
+
 
 
 const router = new VueRouter({
@@ -76,7 +78,9 @@ const router = new VueRouter({
 		{ path: '/fishingInstructorsReports', component: FishingInstructorsReports },
 		{ path: '/penaltyApproval', component: PenaltyApproval },
 		{ path: '/profileCottageOwner', component: ProfileCottageOwner },
-		{path: '/cottageOwnerHome' , component : CottageOwnerHome},
+		{ path: '/cottageOwnerHome' , component : CottageOwnerHome},
+        { path: '/reportsOfClient', component: ReportsOfClient },	
+		
 
     ]
 

@@ -23,6 +23,7 @@ import com.BookingApp.dto.SearchAppointmentDto;
 import com.BookingApp.dto.AppointmentReportDto;
 import com.BookingApp.dto.DateReservationDto;
 import com.BookingApp.dto.FishingAppointmentDto;
+import com.BookingApp.dto.InstructorsAppointmentForClientDto;
 import com.BookingApp.dto.ReserveAdventureDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
@@ -116,6 +117,18 @@ public class FishingAppointmentService {
 		}
 		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
 	}
+	
+	@GetMapping(path = "/getCurrentAppointments/{instructorsId}")
+	public ResponseEntity<List<FishingAppointment>> getCurrentAppointments(@PathVariable("instructorsId") long id)
+	{
+		List<FishingAppointment> appointments = new ArrayList<FishingAppointment>();
+		for(FishingAppointment appointment : fishingAppointmentRepository.findInstructorsReservationHistory(id))
+		{
+			if (appointment.client != null && LocalDateTime.now().isAfter(appointment.appointmentStart) && LocalDateTime.now().isBefore(appointment.appointmentStart.plusHours(appointment.duration)))
+				appointments.add(appointment);
+		}
+		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
+	}
 
 	@PostMapping(path = "/addQuickAppointment")
     public ResponseEntity<List<FishingAppointment>> addAppointment(@RequestBody FishingAppointmentDto appointmentDTO)
@@ -131,6 +144,88 @@ public class FishingAppointmentService {
 			return getAdventureQuickAppointments(appointmentDTO.adventureId);
 		}
 		return null;
+	}
+	
+	@PostMapping(path = "/addInstructorsAppointmentForClient")
+    public ResponseEntity<List<FishingAppointment>> addClientAppointment(@RequestBody InstructorsAppointmentForClientDto appointmentDTO)
+	{	
+		FishingAdventure adventure = fishingAdventureRepository.findById(appointmentDTO.adventureId).get();
+		if(appointmentDTO != null) {
+			FishingAppointment appointment = new FishingAppointment(appointmentDTO.formatDateFrom(), adventure.address, adventure.city, 
+											 appointmentDTO.durationInHours(), adventure.maxAmountOfPeople, AppointmentType.regular, false, 0,
+											 appointmentDTO.extraNotes, appointmentDTO.price);
+			appointment.fishingAdventure = getAdventureById(appointmentDTO.adventureId);
+			appointment.client = clientRepository.findById(appointmentDTO.clientId).get();
+			appointment.price = calculateDiscountedPrice(appointment.price, appointment.client);
+			double ownerCut = getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
+			appointment.instructorProfit = appointment.price*ownerCut/100;
+			appointment.systemProfit = appointment.price - appointment.instructorProfit;
+			fishingAppointmentRepository.save(appointment);
+			sendEmailToClient(appointment);
+			return getAdventureQuickAppointments(appointmentDTO.adventureId);
+		}
+		return null;
+	}
+	
+	public boolean sendEmailToClient(FishingAppointment app)
+	{	
+		FishingAdventure adventure = fishingAdventureRepository.findById(app.fishingAdventure.id).get();
+		String title = "New reservation notification";
+		String body = "Hello,\nYour reservation requested from the instructor has been successful - " + adventure.name + " - " + adventure.address + ", " + adventure.city + " . \n"
+					+ "\nAction information:\n"
+					+	"\nStart : " + app.appointmentStart + "\n"
+					+	"\nDuration : " + app.duration + " hours \n"
+					+	"\nCapacity : " + adventure.maxAmountOfPeople +" people \n"
+					+	"\nPrice : " + app.price +" din\n"
+					+	"\nExtras : " + app.extraNotes +"\n"
+				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+			try 
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmail(app.client.email,body,title);	
+					}
+				};
+				t.start();
+				return true;
+			} 
+			catch (Exception e) 
+			{
+				return false;
+			}
+	}
+	
+	public boolean sendEmailToSubscribers(InstructorsAppointmentForClientDto appDto)
+	{	
+		FishingAdventure adventure = fishingAdventureRepository.findById(appDto.adventureId).get();
+		String title = "New reservation notification";
+		String body = "Hello,\nYour reservation requested from the instructor has been successful - " + adventure.name + " - " + adventure.address + ", " + adventure.city + " . \n"
+					+ "\nAction information:\n"
+					+	"\nStart :" + appDto.dateFrom + " - " + appDto.timeFrom + "\n"
+					+	"\nDuration : " + appDto.durationInHours() + " hours \n"
+					+	"\nCapacity : " + adventure.maxAmountOfPeople +" people \n"
+					+	"\nPrice : " + appDto.price +"\n"
+					+	"\nExtras : " + appDto.extraNotes +"\n"
+				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+		List <SubscribeAdventure> subs =  subscribeFishingRepository.findAllByAdventure(appDto.adventureId);
+		for (SubscribeAdventure sa : subs) {
+			try 
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmail(sa.client.email,body,title);	
+					}
+				};
+				t.start();
+			} 
+			catch (Exception e) 
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public boolean sendEmailToSubscribers(FishingAppointmentDto appDto)
@@ -246,6 +341,18 @@ public class FishingAppointmentService {
 			return true;
 		}
 		return false;
+	}
+	
+	private double calculateDiscountedPrice(double price, Client client) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (client.loyaltyStatus == LoyaltyStatus.regular)
+			return price;
+		else if (client.loyaltyStatus == LoyaltyStatus.bronze)
+			return price*(100 - loyalty.bronzeDiscount)/100;
+		else if (client.loyaltyStatus == LoyaltyStatus.silver)
+			return price*(100 - loyalty.silverDiscount)/100;
+		else
+			return price*(100 - loyalty.goldDiscount)/100;
 	}
 	
 	private void addLoyaltyPoints(Client client, FishingInstructor instructor) {

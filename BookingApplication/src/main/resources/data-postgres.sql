@@ -12,8 +12,8 @@ insert into client (id, text, penalties) values ( 1, 'neki tekst', 0);
 insert into client (id, text, penalties) values ( 2, 'neki tekst', 0);
 insert into cottage_owner (id, cottage_text) values ( 3, 'neki tekst');
 insert into ship_owner (id, text) values ( 4, 'neki tekst');
-insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 5, 'neki tekst', 'biografija', '2021-12-12 12:00:00', '2021-12-27 12:00:00');
-insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 6, 'neki tekst', 'biografija coveka','2021-12-12 12:00:00', '2021-12-27 12:00:00');
+insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 5, 'neki tekst', 'biografija', '2021-12-12 08:00:00', '2022-04-27 20:00:00');
+insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 6, 'neki tekst', 'biografija coveka','2021-12-12 08:00:00', '2022-04-27 20:00:00');
 insert into admin (id, text, admin_type) values ( 7, 'neki tekst', 'main');
 
 

@@ -257,7 +257,10 @@ Vue.component("HistoryReservations", {
                     }
         
                     axios
-                    .post('/rating/rateAdventure', ratingAdvDto)
+                    .post('/rating/rateAdventure', ratingAdvDto,{
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                        },})
                     .then(response=>{
                         window.location.reload()
                     })
@@ -332,7 +335,10 @@ Vue.component("HistoryReservations", {
                     }
         
                     axios
-                    .post('/rating/rateCottage', ratingCottDto)
+                    .post('/rating/rateCottage', ratingCottDto,{
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                        },})
                     .then(response=>{
                         window.location.reload()
                     })
@@ -407,7 +413,10 @@ Vue.component("HistoryReservations", {
                     }
         
                     axios
-                    .post('/rating/rateBoat', ratingBoatDto)
+                    .post('/rating/rateBoat', ratingBoatDto,{
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                        },})
                     .then(response=>{
                         window.location.reload()
                     })

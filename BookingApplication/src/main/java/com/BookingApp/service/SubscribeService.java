@@ -35,7 +35,7 @@ public class SubscribeService {
 	private SubscribeAdvRepository subscribeAdvRepository;
 	
 	@PostMapping(path = "/subscribeCottage")
-	@PreAuthorize("hasRole('CLIENT')")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean getSelectedCottage(@RequestBody SubscribeCottage sub)
 	{
 		SubscribeCottage subscribeCottage = new SubscribeCottage(sub.cottage, sub.client);
@@ -49,6 +49,7 @@ public class SubscribeService {
 	}
 	
 	@PostMapping(path = "/unsubscribeCottage")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean unsubscribeCottage(@RequestBody SubscribeCottage sub)
 	{
 		SubscribeCottage exist = subscribeCottageRepository.findByCottage(sub.cottage.id);
@@ -72,6 +73,7 @@ public class SubscribeService {
 	
 	
 	@PostMapping(path = "/subscribeBoat")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean subscribeBoat(@RequestBody SubscribeBoat sub)
 	{
 		SubscribeBoat subscribeBoat = new SubscribeBoat(sub.boat, sub.client);
@@ -85,6 +87,7 @@ public class SubscribeService {
 	}
 	
 	@PostMapping(path = "/unsubscribeBoat")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean unsubscribeBoat(@RequestBody SubscribeBoat sub)
 	{
 		SubscribeBoat exist = subscribeBoatRepository.findByBoat(sub.boat.id);
@@ -108,6 +111,7 @@ public class SubscribeService {
 	
 	
 	@PostMapping(path = "/subscribeAdventure")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean subscribeAdventure(@RequestBody SubscribeAdventure sub)
 	{
 		SubscribeAdventure subscribeBoat = new SubscribeAdventure(sub.fishingAdventure, sub.client);
@@ -121,6 +125,7 @@ public class SubscribeService {
 	}
 	
 	@PostMapping(path = "/unsubscribeAdventure")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean unsubscribeAdventure(@RequestBody SubscribeAdventure sub)
 	{
 		SubscribeAdventure exist = subscribeAdvRepository.findByAdventure(sub.fishingAdventure.id);

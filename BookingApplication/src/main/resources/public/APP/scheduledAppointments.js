@@ -145,7 +145,10 @@ Vue.component("ScheduledAppointments", {
         },
         cancelCottAppointment: function(dto){
             axios
-            .put('/cottageAppointments/cancelCottageAppointment/' + dto.appointment.id)
+            .put('/cottageAppointments/cancelCottageAppointment/' + dto.appointment.id, {},{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })
@@ -158,7 +161,10 @@ Vue.component("ScheduledAppointments", {
         },
         cancelBoatAppointment: function(dto){
             axios
-            .put('/boatAppointments/cancelBoatAppointment/' + dto.appointment.id)
+            .put('/boatAppointments/cancelBoatAppointment/' + dto.appointment.id, {},{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })
@@ -171,7 +177,10 @@ Vue.component("ScheduledAppointments", {
         },
         cancelAdvAppointment: function(dto){
             axios
-            .put('/fishingAppointments/cancelAdventureAppointment/' + dto.appointment.id)
+            .put('/fishingAppointments/cancelAdventureAppointment/' + dto.appointment.id, {},{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })

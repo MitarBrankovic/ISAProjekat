@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,6 +65,7 @@ public class AppUserService {
 	
 	
 	@PostMapping(path = "/sendRequest/{textArea}/{userId}")
+	@PreAuthorize("hasAuthority('CLIENT')")
     public boolean sendRequest(@PathVariable("textArea") String textArea, @PathVariable("userId") long userId)
 	{	
 		Optional<RequestDeleteAcc> oldRequest = Optional.ofNullable(requestDeleteAccRepository.findByAppUserId(userId));

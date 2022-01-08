@@ -16,32 +16,32 @@ Vue.component("SendComplaint", {
         }
     },
     template : ` 
-    <div>
-        <h1>Send complaint</h1><br><hr>
+    <div class="container" style="margin-top:30px">
+        <h1>Posaljite zalbu</h1><br><br>
         
         <div>
-            <h5><b>Izaberite za sta pisete zalbu:</b></h5>
-            <label class="col-sm-1 col-form-label"><b>Cottages</b></label>
+            <h5><b>Izaberite za koji tip usluge pisete zalbu:</b></h5>
+            <label class="col-sm-1 col-form-label"><b>Vikendice</b></label>
             <input checked type="radio" v-on:click="cottagesFun()" name="group1" style="margin-right:15px;">
-            <label class="col-sm-1 col-form-label"><b>Boats</b></label>
+            <label class="col-sm-1 col-form-label"><b>Brodovi</b></label>
             <input type="radio" v-on:click="boatsFun()" name="group1" style="margin-right:15px;">
-            <label class="col-sm-1 col-form-label"><b>Adventures</b></label>
+            <label class="col-sm-1 col-form-label"><b>Avanture</b></label>
             <input type="radio" v-on:click="adventuresFun()" name="group1" style="margin-right:15px;">
-        </div><hr><br><br>
+        </div><br><br>
 
         <div class="forma container" v-if="cottagesButton">
             <form id="editForm" method ="POST" @submit.prevent = "submitFormCott">
 
-                <label class="col-sm-2 col-form-label" for="name"><b>Cottages</b></label>
+                <label class="col-sm-2 col-form-label" for="name"><b>Vikendice</b></label>
                 <select class="col-sm-2 col-form-select" v-model="oneCottage" requiered>
-                    <option disabled value="">Please select one</option>
+                    <option disabled value="">Izaberite vikendicu</option>
                     <option v-for="c in cottages" :value="c">{{c.name}} ({{c.cottageOwner.name}} {{c.cottageOwner.surname}})</option>
                 </select><br><br>
 
-			    <textarea class="col-sm-4 col-form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Write complaint text here..." rows="4" cols="50" required></textarea><br>
+			    <textarea class="col-sm-4 col-form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Napisite zalbu ovde..." rows="4" cols="50" required></textarea><br>
 				<br>
 
-                <button id="button1" type="submit" class="button">Send</button>
+                <button id="button1" type="submit" class="button">Posalji</button>
             </form>
         </div>
 
@@ -49,16 +49,16 @@ Vue.component("SendComplaint", {
         <div class="forma container" v-if="boatsButton">
             <form id="editForm" method ="POST" @submit.prevent = "submitFormBoat">
 
-                <label class="col-sm-2 col-form-label" for="name"><b>Boats</b></label>
+                <label class="col-sm-2 col-form-label" for="name"><b>Brodovi</b></label>
                 <select class="col-sm-2 col-form-select" v-model="oneBoat" requiered>
-                    <option disabled value="">Please select one</option>
+                    <option disabled value="">Izaberite brod</option>
                     <option v-for="c in boats" :value="c">{{c.name}} ({{c.shipOwner.name}} {{c.shipOwner.surname}})</option>
                 </select><br><br>
 
-                <textarea class="col-sm-4 col-form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Write complaint text here..." rows="4" cols="50" required></textarea><br>
+                <textarea class="col-sm-4 col-form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Napisite zalbu ovde..." rows="4" cols="50" required></textarea><br>
                 <br>
 
-                <button id="button1" type="submit" class="button">Send</button>
+                <button id="button1" type="submit" class="button">Posalji</button>
             </form>
         </div>
         
@@ -68,16 +68,16 @@ Vue.component("SendComplaint", {
         <div class="forma container" v-if="adventuresButton">
             <form id="editForm" method ="POST" @submit.prevent = "submitFormAdv">
 
-                <label class="col-sm-2 col-form-label" for="name"><b>Adventures</b></label>
+                <label class="col-sm-2 col-form-label" for="name"><b>Avanture</b></label>
                 <select class="col-sm-2 col-form-select" v-model="oneAdventure" requiered>
-                    <option disabled value="">Please select one</option>
+                    <option disabled value="">Izaberite avanturu</option>
                     <option v-for="c in adventures" :value="c">{{c.name}} ({{c.fishingInstructor.name}} {{c.fishingInstructor.surname}})</option>
                 </select><br><br>
 
-			    <textarea class="col-sm-4 col-form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Write complaint text here..." rows="4" cols="50" required></textarea><br>
+			    <textarea class="col-sm-4 col-form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Napisite zalbu ovde..." rows="4" cols="50" required></textarea><br>
 				<br>
 
-                <button id="button1" type="submit" class="button">Send</button>
+                <button id="button1" type="submit" class="button">Posalji</button>
             </form>
         </div>
 
@@ -110,7 +110,10 @@ Vue.component("SendComplaint", {
                 }
     
                 axios
-                .post('/client/sendComplaint', complaintDto)
+                .post('/client/sendComplaint', complaintDto, {
+                    headers: {
+                      'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                    },})
                 .then(response=>{
                     this.$router.push('/')
                     const Toast = Swal.mixin({

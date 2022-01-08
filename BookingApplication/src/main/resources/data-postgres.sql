@@ -1,11 +1,20 @@
 
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified) values ( nextval('my_user_seq'), 'Mirko', 'Mrkva', 'mrki@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'client', true);
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified) values ( nextval('my_user_seq'), 'Dare', 'Dare', 'dare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'client', true);
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified) values ( nextval('my_user_seq'), 'Kale', 'Kale', 'kale@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'cottage_owner', true);
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified) values ( nextval('my_user_seq'), 'Rale', 'Rale', 'rale@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'ship_owner', true);
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified) values ( nextval('my_user_seq'), 'Zare', 'Zare', 'zare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'fishing_instructor', true);
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified) values ( nextval('my_user_seq'), 'Mare', 'Mare', 'mare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'fishing_instructor', true);
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified) values ( nextval('my_user_seq'), 'Admin', 'Admin', 'admin@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '1212312', 'admin', true);
+INSERT INTO ROLES (id, name) VALUES (1, 'USER');
+INSERT INTO ROLES (id, name) VALUES (2, 'ADMIN');
+INSERT INTO ROLES (id, name) VALUES (3, 'BOATOWNER');
+INSERT INTO ROLES (id, name) VALUES (4, 'COTTAGEOWNER');
+INSERT INTO ROLES (id, name) VALUES (5, 'CLIENT');
+INSERT INTO ROLES (id, name) VALUES (6, 'FISHINGINSTRUCTOR');
+
+
+
+insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, ROLES_id) values ( nextval('my_user_seq'), 'Mirko', 'Mrkva', 'mrki@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'client', true, 5);
+insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, ROLES_id) values ( nextval('my_user_seq'), 'Dare', 'Dare', 'dare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'client', true, 5);
+insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, ROLES_id) values ( nextval('my_user_seq'), 'Kale', 'Kale', 'kale@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'cottage_owner', true, 4);
+insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, ROLES_id) values ( nextval('my_user_seq'), 'Rale', 'Rale', 'rale@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'ship_owner', true, 3);
+insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, ROLES_id) values ( nextval('my_user_seq'), 'Zare', 'Zare', 'zare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'fishing_instructor', true, 6);
+insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, ROLES_id) values ( nextval('my_user_seq'), 'Mare', 'Mare', 'mare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'fishing_instructor', true, 6);
+insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, ROLES_id) values ( nextval('my_user_seq'), 'Admin', 'Admin', 'admin@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '1212312', 'admin', true, 2);
 
 
 
@@ -17,21 +26,15 @@ insert into fishing_instructor (id, text, biography, available_from, available_u
 insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 6, 'neki tekst', 'biografija coveka','2021-12-12 12:00:00', '2021-12-27 12:00:00');
 insert into admin (id, text, admin_type) values ( 7, 'neki tekst', 'main');
 
-INSERT INTO ROLE (name) VALUES ('ROLE_USER');
-INSERT INTO ROLE (name) VALUES ('ROLE_ADMIN');
-INSERT INTO ROLE (name) VALUES ('ROLE_BOATOWNER');
-INSERT INTO ROLE (name) VALUES ('ROLE_COTTAGEOWNER');
-INSERT INTO ROLE (name) VALUES ('ROLE_CLIENT');
-INSERT INTO ROLE (name) VALUES ('ROLE_FISHINGINSTRUCTOR');
 
-INSERT INTO USER_ROLE (user_id, role_id) VALUES (1, 5);
+/*INSERT INTO USER_ROLE (user_id, role_id) VALUES (1, 5);
 INSERT INTO USER_ROLE (user_id, role_id) VALUES (2, 5);
 INSERT INTO USER_ROLE (user_id, role_id) VALUES (3, 4);
 INSERT INTO USER_ROLE (user_id, role_id) VALUES (4, 3);
 INSERT INTO USER_ROLE (user_id, role_id) VALUES (5, 6);
 INSERT INTO USER_ROLE (user_id, role_id) VALUES (6, 6);
 INSERT INTO USER_ROLE (user_id, role_id) VALUES (7, 2);
-
+*/
 insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating, max_amount_of_people) values ( nextval('cottage_seq_gen'), 'Zuta vikendica', 'Popovica', 'Wow kako je dobro', 3, 6, 'Nema pravila','10 dinala', 500, 3, 2, 6);
 insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating, max_amount_of_people) values ( nextval('cottage_seq_gen'), 'Crvena vikendica', 'Ledinci', 'Wow wow wow', 4, 4, 'Nema pravila','Parking 100 din', 450, 3, 3, 11);
 insert into cottage (id, name, address, description, rooms_num, beds_num, rules, price_list, price_per_hour, cottage_owner_id, rating, max_amount_of_people) values ( nextval('cottage_seq_gen'), 'Zelena vikendica', 'Ledinci', 'Wow wow wow', 2, 12, 'Nema pravila','Wifi dan - 100 din', 600, 3, 3.2, 12);

@@ -54,7 +54,10 @@ Vue.component("ProfileCottage", {
     methods: {
         scheduleAppointment:function(appointment){
             axios
-            .put('/cottageAppointments/scheduleCottageAppointment/' + appointment.id + "/" + this.activeUser.id)
+            .put('/cottageAppointments/scheduleCottageAppointment/' + appointment.id + "/" + this.activeUser.id, {},{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })
@@ -97,7 +100,7 @@ Vue.component("ProfileCottage", {
                   'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
                 },})
             .then(response=>{
-                //window.location.reload()
+                window.location.reload()
             })
             .catch(error=>{
                 console.log("Greska.")	
@@ -112,7 +115,10 @@ Vue.component("ProfileCottage", {
                 client: this.activeUser
             }
             axios
-            .post('/subscribe/unsubscribeCottage', subscribeCottage)
+            .post('/subscribe/unsubscribeCottage', subscribeCottage,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })

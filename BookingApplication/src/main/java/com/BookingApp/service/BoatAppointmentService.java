@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,6 +72,7 @@ public class BoatAppointmentService {
 	
 	
 	@PutMapping(path = "/scheduleBoatAppointment/{boatId}/{userId}")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean scheduleAdventureAppointment(@PathVariable("boatId") long id, @PathVariable("userId") long userId)
 	{
 		Optional<BoatAppointment> oldAppointment = boatAppointmentRepository.findById(id);
@@ -94,6 +96,7 @@ public class BoatAppointmentService {
 	}
 	
 	@PutMapping(path = "/cancelBoatAppointment/{boatId}")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean cancelBoatAppointment(@PathVariable("boatId") long id)
 	{
 		Optional<BoatAppointment> oldAppointment = boatAppointmentRepository.findById(id);
@@ -183,6 +186,7 @@ public class BoatAppointmentService {
 	}
 	
 	@PostMapping(path = "/reserveBoat")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean reserveAdventure(@RequestBody ReserveBoatDto reserveBoatDto)
 	{	
 		int numOfPenalties = cottageReportsRepository.findAllByClient(reserveBoatDto.client.id).size() +  boatReportsRepository.findAllByClient(reserveBoatDto.client.id).size() +

@@ -584,7 +584,10 @@ Vue.component("BasicReservation", {
                 additionalPricingText: text,
             }
             axios
-            .post('/cottageAppointments/reserveCottage',dto)
+            .post('/cottageAppointments/reserveCottage',dto,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.sweetAnimation()
                 this.$router.push('/scheduledAppointments')
@@ -607,7 +610,10 @@ Vue.component("BasicReservation", {
                 additionalPricingText: text,
             }
             axios
-            .post('/boatAppointments/reserveBoat',dto)
+            .post('/boatAppointments/reserveBoat',dto,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.sweetAnimation()
                 this.$router.push('/scheduledAppointments')
@@ -629,7 +635,10 @@ Vue.component("BasicReservation", {
                 additionalPricingText: text,
             }
             axios
-            .post('/fishingAppointments/reserveAdventure',dto)
+            .post('/fishingAppointments/reserveAdventure',dto,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.sweetAnimation()
                 this.$router.push('/scheduledAppointments')

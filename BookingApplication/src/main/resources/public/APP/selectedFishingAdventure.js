@@ -175,14 +175,17 @@ Vue.component("SelectedFishingAdventure", {
         
         scheduleAppointment:function(appointment){
           axios
-          .put('/fishingAppointments/scheduleAdventureAppointment/' + appointment.id + "/" + this.activeUser.id)
+          .put('/fishingAppointments/scheduleAdventureAppointment/' + appointment.id + "/" + this.activeUser.id, {},{
+            headers: {
+              'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+            },})
           .then(response=>{
               window.location.reload()
           })
           .catch(error=>{
               console.log("Greska.")	
               alert("Podaci su lose uneti.")
-              window.location.reload()
+              //window.location.reload()
 
           })
         },
@@ -276,7 +279,10 @@ Vue.component("SelectedFishingAdventure", {
                 client: this.activeUser
             }
             axios
-            .post('/subscribe/subscribeAdventure', subscribeAdventure)
+            .post('/subscribe/subscribeAdventure', subscribeAdventure,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })
@@ -293,7 +299,10 @@ Vue.component("SelectedFishingAdventure", {
                 client: this.activeUser
             }
             axios
-            .post('/subscribe/unsubscribeAdventure', subscribeAdventure)
+            .post('/subscribe/unsubscribeAdventure', subscribeAdventure,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })

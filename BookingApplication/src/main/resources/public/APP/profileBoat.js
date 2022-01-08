@@ -59,7 +59,10 @@ Vue.component("ProfileBoat", {
     methods: {
         scheduleAppointment:function(appointment){
             axios
-            .put('/boatAppointments/scheduleBoatAppointment/' + appointment.id + "/" + this.activeUser.id)
+            .put('/boatAppointments/scheduleBoatAppointment/' + appointment.id + "/" + this.activeUser.id, {},{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })
@@ -97,7 +100,10 @@ Vue.component("ProfileBoat", {
                 client: this.activeUser
             }
             axios
-            .post('/subscribe/subscribeBoat', subscibedBoat)
+            .post('/subscribe/subscribeBoat', subscibedBoat,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })
@@ -114,7 +120,10 @@ Vue.component("ProfileBoat", {
                 client: this.activeUser
             }
             axios
-            .post('/subscribe/unsubscribeBoat', subscibedBoat)
+            .post('/subscribe/unsubscribeBoat', subscibedBoat,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 window.location.reload()
             })

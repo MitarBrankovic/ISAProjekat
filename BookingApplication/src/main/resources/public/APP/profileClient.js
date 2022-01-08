@@ -70,13 +70,14 @@ Vue.component("ProfileClient", {
             <div class= "col-md-4 container" style="height:30px;">
                 <h4 v-if="sendCheck==false">Zahtev za brisanje naloga</h4>
                 <button type="button" class="button" v-if="requestDelete==false && sendCheck==false" v-on:click="requestDelete=true">Otvori zahtev</button> 
-                <h4 v-if="sendCheck==true">Zahtev je uspesno poslat!</h4>
+                <h4 v-if="sendCheck==true" style="margin-top:50px;">Zahtev je uspesno poslat!</h4>
                 
                 <div  v-if="requestDelete==true && sendCheck==false">
-                    <textarea v-model="textAreaDelete" id="deleteArea" placeholder="Razlog zbog kojeg zelite da obrisete nalog." rows="4" cols="50"></textarea><br>
-                    <button type="button" class="btn btn-success" v-on:click="sendRequest()">Posalji zahtev</button> 
-                    <button type="button" class="btn btn-secondary" v-on:click="requestDelete=false">Otkazi</button> 
-                
+                    <form id="sendRequest" method ="POST" @submit.prevent = "sendRequest">
+                        <textarea v-model="textAreaDelete" id="deleteArea" placeholder="Razlog zbog kojeg zelite da obrisete nalog." rows="4" cols="50" required></textarea><br>
+                        <button type="submit" class="btn btn-success" >Posalji zahtev</button> 
+                        <button type="button" class="btn btn-secondary" v-on:click="requestDelete=false">Otkazi</button>
+                    </form>
                 </div>
             </div>
             <div class="col-md-2 razmak-card card">
@@ -141,7 +142,10 @@ Vue.component("ProfileClient", {
         sendRequest:function(){
             userId = this.activeUser.id
             axios
-            .post('/appUser/sendRequest/' + this.textAreaDelete + "/" + userId)
+            .post('/appUser/sendRequest/' + this.textAreaDelete + "/" + userId, {},{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 //window.location.reload()
                 this.editClick = false

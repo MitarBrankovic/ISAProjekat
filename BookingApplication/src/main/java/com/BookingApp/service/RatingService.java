@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,6 +64,7 @@ public class RatingService {
 	
 	
 	@PostMapping(path="/rateAdventure")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean rateAdventure(@RequestBody RatingAdvDto dto)
 	{
 		for(RatingFishingAdventure r: ratingFishingAdventureRepository.findAll()) {	//optimizovati
@@ -117,8 +119,8 @@ public class RatingService {
 	}
 	
 	
-	
 	@PostMapping(path="/rateCottage")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean rateCottage(@RequestBody RatingCottDto dto)
 	{
 		for(RatingCottage r: ratingCottageRepository.findAll()) {	//optimizovati
@@ -174,8 +176,8 @@ public class RatingService {
 		
 	}
 	
-	
 	@PostMapping(path="/rateBoat")
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean rateBoat(@RequestBody RatingBoatDto dto)
 	{
 		for(RatingBoat r: ratingBoatRepository.findAll()) {	//optimizovati

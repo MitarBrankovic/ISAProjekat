@@ -86,6 +86,9 @@ public class CottageAppointmentService {
 		if(oldAppointment.isPresent()) {
 			CottageAppointment appointment = oldAppointment.get();
 			appointment.client = client;
+			double ownerCut = getOwnerProfit(appointment.cottage.cottageOwner);
+			appointment.ownerProfit = appointment.price*ownerCut/100;
+			appointment.systemProfit = appointment.price - appointment.ownerProfit;
 			cottageAppointmentRepository.save(appointment);
 			addLoyaltyPoints(client, appointment.cottage.cottageOwner);
 			return true;
@@ -106,6 +109,18 @@ public class CottageAppointmentService {
 			return true;
 		}
 		return false;
+	}
+	
+	private double getOwnerProfit(CottageOwner owner) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (owner.loyaltyStatus == LoyaltyStatus.regular)
+			return 80;
+		else if (owner.loyaltyStatus == LoyaltyStatus.bronze)
+			return loyalty.bronzePrecentage;
+		else if (owner.loyaltyStatus == LoyaltyStatus.silver)
+			return loyalty.silverPrecentage;
+		else
+			return loyalty.goldPrecentage;
 	}
 	
 	private void addLoyaltyPoints(Client client, CottageOwner owner) {
@@ -244,7 +259,9 @@ public class CottageAppointmentService {
 	{	
 		CottageAppointment appointment = new CottageAppointment(reserveCottageDto.datePick.atStartOfDay().plusHours(reserveCottageDto.time), 24, 4, AppointmentType.regular, 
 				reserveCottageDto.additionalPricingText, reserveCottageDto.totalPrice, reserveCottageDto.cottage, reserveCottageDto.client);
-
+		double ownerCut = getOwnerProfit(appointment.cottage.cottageOwner);
+		appointment.ownerProfit = appointment.price*ownerCut/100;
+		appointment.systemProfit = appointment.price - appointment.ownerProfit;
 		cottageAppointmentRepository.save(appointment);
 		addLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
 		return true;

@@ -95,26 +95,26 @@ Vue.component("LoyaltyProgramAdmin", {
     </div>
     <div class="row my-row  justify-content-around">
         <div class="col-sm-6">
-        	<span class="input-group-text" style="color:#5cb85c">Bronzani vlasnik/instruktor - dodatni profit na rezervaciju (%)</span>
+        	<span class="input-group-text" style="color:#5cb85c">Bronzani vlasnik/instruktor - deo vlasnika/instruktora od ukupne cene (%)</span>
         </div>
         <div class="col-sm-6">
-			<input type="number" id="bronze_profit" min="0" max="99" step="1" disabled class="form-control" v-model="loyalty.bronzeProfit" placeholder="Unesite profit...">
-        </div>
-    </div>
-    <div class="row my-row  justify-content-around">
-        <div class="col-sm-6">
-        	<span class="input-group-text" style="color:#5cb85c">Srebrni vlasnik/instruktor - dodatni profit na rezervaciju (%)</span>
-        </div>
-        <div class="col-sm-6">
-			<input type="number" id="silver_profit" min="0" max="99" step="1" disabled class="form-control" v-model="loyalty.silverProfit" placeholder="Unesite profit...">
+			<input type="number" id="bronze_precentage" min="0" max="99" step="1" disabled class="form-control" v-model="loyalty.bronzePrecentage" placeholder="Unesite koliki je procentualno vlasnikov/instruktorov deo...">
         </div>
     </div>
     <div class="row my-row  justify-content-around">
         <div class="col-sm-6">
-        	<span class="input-group-text" style="color:#5cb85c">Zlatni vlasnik/instruktor - dodatni profit na rezervaciju (%)</span>
+        	<span class="input-group-text" style="color:#5cb85c">Srebrni vlasnik/instruktor - deo vlasnika/instruktora od ukupne cene (%)</span>
         </div>
         <div class="col-sm-6">
-			<input type="number" id="gold_profit" min="0" max="99" step="1" disabled class="form-control" v-model="loyalty.goldProfit" placeholder="Unesite profit...">
+			<input type="number" id="silver_precentage" min="0" max="99" step="1" disabled class="form-control" v-model="loyalty.silverPrecentage" placeholder="Unesite koliki je procentualno vlasnikov/instruktorov deo...">
+        </div>
+    </div>
+    <div class="row my-row  justify-content-around">
+        <div class="col-sm-6">
+        	<span class="input-group-text" style="color:#5cb85c">Zlatni vlasnik/instruktor - deo vlasnika/instruktora od ukupne cene (%)</span>
+        </div>
+        <div class="col-sm-6">
+			<input type="number" id="gold_precentage" min="0" max="99" step="1" disabled class="form-control" v-model="loyalty.goldPrecentage" placeholder="Unesite koliki je procentualno vlasnikov/instruktorov deo...">
         </div>
     </div>
 	</div>
@@ -150,8 +150,8 @@ Vue.component("LoyaltyProgramAdmin", {
 	    		this.loyalty.bronzeClient >= 0 && this.loyalty.silverClient >= 0 && this.loyalty.goldClient >= 0 && 
 	    		this.loyalty.goldDiscount >= 0 && this.loyalty.goldDiscount < 100 && this.loyalty.silverDiscount >= 0 && 
 	    		this.loyalty.silverDiscount < 100 && this.loyalty.bronzeDiscount >= 0 && this.loyalty.bronzeDiscount < 100 && 
-	    		this.loyalty.goldProfit >= 0 && this.loyalty.goldProfit < 100 && this.loyalty.silverProfit >= 0 && 
-	    		this.loyalty.silverProfit < 100 && this.loyalty.bronzeProfit >= 0 && this.loyalty.bronzeProfit < 100)
+	    		this.loyalty.goldPrecentage >= 0 && this.loyalty.goldPrecentage < 100 && this.loyalty.silverPrecentage >= 0 && 
+	    		this.loyalty.silverPrecentage < 100 && this.loyalty.bronzePrecentage >= 0 && this.loyalty.bronzePrecentage < 100)
     		return true;
     		return false;
     	},
@@ -159,30 +159,30 @@ Vue.component("LoyaltyProgramAdmin", {
     	enableLoyaltyEdit() {
     		document.getElementById("bronze_client").disabled = false 
 			document.getElementById("bronze_discount").disabled = false 
-			document.getElementById("bronze_profit").disabled = false 
+			document.getElementById("bronze_precentage").disabled = false 
 			document.getElementById("bronze_points").disabled = false 
 			document.getElementById("silver_client").disabled = false 
 			document.getElementById("silver_discount").disabled = false 
-			document.getElementById("silver_profit").disabled = false 
+			document.getElementById("silver_precentage").disabled = false 
 			document.getElementById("silver_points").disabled = false 
 			document.getElementById("gold_client").disabled = false 
 			document.getElementById("gold_discount").disabled = false 
-			document.getElementById("gold_profit").disabled = false 
+			document.getElementById("gold_precentage").disabled = false 
 			document.getElementById("gold_points").disabled = false 
     	}, 
     	
     	disableLoyaltyEdit() {
     		document.getElementById("bronze_client").disabled = true 
 			document.getElementById("bronze_discount").disabled = true 
-			document.getElementById("bronze_profit").disabled = true 
+			document.getElementById("bronze_precentage").disabled = true 
 			document.getElementById("bronze_points").disabled = true 
 			document.getElementById("silver_client").disabled = true 
 			document.getElementById("silver_discount").disabled = true 
-			document.getElementById("silver_profit").disabled = true 
+			document.getElementById("silver_precentage").disabled = true 
 			document.getElementById("silver_points").disabled = true 
 			document.getElementById("gold_client").disabled = true 
 			document.getElementById("gold_discount").disabled = true 
-			document.getElementById("gold_profit").disabled = true 
+			document.getElementById("gold_precentage").disabled = true 
 			document.getElementById("gold_points").disabled = true 
     	}    	
     },

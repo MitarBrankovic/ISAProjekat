@@ -41,6 +41,10 @@ public class FishingAppointment {
 	public String extraNotes;
 	@Column
 	public double price;
+	@Column
+	public double instructorProfit;
+	@Column
+	public double systemProfit;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public FishingAdventure fishingAdventure;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -62,6 +66,8 @@ public class FishingAppointment {
 		this.rating = rating;
 		this.extraNotes = extraNotes;
 		this.price = price;
+		this.instructorProfit = price* 0.8;
+		this.systemProfit = price* 0.2;
 	}
 	
 	public FishingAppointment(LocalDateTime appointmentStart, String address, String city, long duration,
@@ -77,6 +83,8 @@ public class FishingAppointment {
 		this.rating = rating;
 		this.extraNotes = extraNotes;
 		this.price = price;
+		this.instructorProfit = price* 0.8;
+		this.systemProfit = price* 0.2;
 	}
 	
 	

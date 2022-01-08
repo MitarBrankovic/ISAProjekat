@@ -207,11 +207,26 @@ public class FishingAppointmentService {
 		if(oldAppointment.isPresent()) {
 			FishingAppointment appointment = oldAppointment.get();
 			appointment.client = client;
+			double ownerCut = getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
+			appointment.instructorProfit = appointment.price*ownerCut/100;
+			appointment.systemProfit = appointment.price - appointment.instructorProfit;
 			fishingAppointmentRepository.save(appointment);
 			addLoyaltyPoints(client, appointment.fishingAdventure.fishingInstructor);
 			return true;
 		}
 		return false;
+	}
+	
+	private double getOwnerProfit(FishingInstructor instructor) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (instructor.loyaltyStatus == LoyaltyStatus.regular)
+			return 80;
+		else if (instructor.loyaltyStatus == LoyaltyStatus.bronze)
+			return loyalty.bronzePrecentage;
+		else if (instructor.loyaltyStatus == LoyaltyStatus.silver)
+			return loyalty.silverPrecentage;
+		else
+			return loyalty.goldPrecentage;
 	}
 	
 	@PutMapping(path = "/cancelAdventureAppointment/{adventureId}")
@@ -371,7 +386,9 @@ public class FishingAppointmentService {
 				 3, 5, AppointmentType.regular, false, 0,reserveAdventureDto.additionalPricingText, reserveAdventureDto.totalPrice);
 		appointment.client = reserveAdventureDto.client;
 		appointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
-
+		double ownerCut = getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
+		appointment.instructorProfit = appointment.price*ownerCut/100;
+		appointment.systemProfit = appointment.price - appointment.instructorProfit;
 		fishingAppointmentRepository.save(appointment);
 		addLoyaltyPoints(appointment.client, appointment.fishingAdventure.fishingInstructor);
 		return true;

@@ -33,6 +33,10 @@ public class CottageAppointment {
 	public String extraNotes;
 	@Column
 	public double price;
+	@Column
+	public double ownerProfit;
+	@Column
+	public double systemProfit;
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Cottage cottage;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -51,6 +55,8 @@ public class CottageAppointment {
 		this.appointmentType = appointmentType;
 		this.extraNotes = extraNotes;
 		this.price = price;
+		this.ownerProfit = price* 0.8;
+		this.systemProfit = price* 0.2;
 		this.cottage = cottage;
 		this.client = client;
 	}
@@ -64,6 +70,8 @@ public class CottageAppointment {
 		this.appointmentType = appointmentType;
 		this.extraNotes = extraNotes;
 		this.price = price;
+		this.ownerProfit = price* 0.8;
+		this.systemProfit = price* 0.2;
 		this.cottage = cottage;
 		this.client = client;
 	}

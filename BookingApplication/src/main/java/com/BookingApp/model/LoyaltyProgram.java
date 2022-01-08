@@ -27,11 +27,11 @@ public class LoyaltyProgram {
 	@Column
 	public double goldClient;
 	@Column
-	public double bronzeProfit;
+	public double bronzePrecentage;
 	@Column
-	public double silverProfit;
+	public double silverPrecentage;
 	@Column
-	public double goldProfit;
+	public double goldPrecentage;
 	@Column
 	public double bronzeDiscount;
 	@Column
@@ -40,7 +40,7 @@ public class LoyaltyProgram {
 	public double goldDiscount;
 	
 	public LoyaltyProgram(long id, double bronzePoints, double silverPoints, double goldPoints, double bronzeClient,
-			double silverClient, double goldClient, double bronzeProfit, double silverProfit, double goldProfit,
+			double silverClient, double goldClient, double bronzePrecentage, double silverPrecentage, double goldPrecentage,
 			double bronzeDiscount, double silverDiscount, double goldDiscount) {
 		super();
 		this.id = id;
@@ -50,16 +50,16 @@ public class LoyaltyProgram {
 		this.bronzeClient = bronzeClient;
 		this.silverClient = silverClient;
 		this.goldClient = goldClient;
-		this.bronzeProfit = bronzeProfit;
-		this.silverProfit = silverProfit;
-		this.goldProfit = goldProfit;
+		this.bronzePrecentage = bronzePrecentage;
+		this.silverPrecentage = silverPrecentage;
+		this.goldPrecentage = goldPrecentage;
 		this.bronzeDiscount = bronzeDiscount;
 		this.silverDiscount = silverDiscount;
 		this.goldDiscount = goldDiscount;
 	}
 	
 	public LoyaltyProgram(double bronzePoints, double silverPoints, double goldPoints, double bronzeClient,
-			double silverClient, double goldClient, double bronzeProfit, double silverProfit, double goldProfit,
+			double silverClient, double goldClient, double bronzePrecentage, double silverPrecentage, double goldPrecentage,
 			double bronzeDiscount, double silverDiscount, double goldDiscount) {
 		super();
 		this.bronzePoints = bronzePoints;
@@ -68,9 +68,9 @@ public class LoyaltyProgram {
 		this.bronzeClient = bronzeClient;
 		this.silverClient = silverClient;
 		this.goldClient = goldClient;
-		this.bronzeProfit = bronzeProfit;
-		this.silverProfit = silverProfit;
-		this.goldProfit = goldProfit;
+		this.bronzePrecentage = bronzePrecentage;
+		this.silverPrecentage = silverPrecentage;
+		this.goldPrecentage = goldPrecentage;
 		this.bronzeDiscount = bronzeDiscount;
 		this.silverDiscount = silverDiscount;
 		this.goldDiscount = goldDiscount;

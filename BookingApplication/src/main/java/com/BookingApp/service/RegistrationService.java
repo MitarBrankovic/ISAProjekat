@@ -28,6 +28,7 @@ import com.BookingApp.model.UserType;
 import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
+import com.BookingApp.repository.RoleRepository;
 import com.BookingApp.repository.ShipOwnerRepository;
 import com.BookingApp.repository.UserRepository;
 import com.BookingApp.util.TokenUtils;
@@ -48,10 +49,11 @@ public class RegistrationService {
 	private ShipOwnerRepository shipOwnerRepository;
 	@Autowired
 	private JavaMailSender javaMailSender;
+	@Autowired
+	private RoleRepository roleRepository;
 	
 	@Autowired
 	private TokenUtils tokenUtils;
-
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	
@@ -94,18 +96,22 @@ public class RegistrationService {
 					
 				if(appUser.role == UserType.client) {
 					Client client = new Client(appUser, "");
+					client.setRoles(roleRepository.findByName("CLIENT"));
 					clientRepository.save(client);
 				}
 				else if(appUser.role == UserType.cottage_owner) {
 					CottageOwner cottageOwner = new CottageOwner(appUser, "");
+					cottageOwner.setRoles(roleRepository.findByName("COTTAGEOWNER"));
 					cottageOwnerRepository.save(cottageOwner);
 				}
 				else if(appUser.role == UserType.fishing_instructor) {
 					FishingInstructor fishingInstructor = new FishingInstructor(appUser, "", "Biografijica", LocalDateTime.now(), LocalDateTime.now().plusDays(14));
+					fishingInstructor.setRoles(roleRepository.findByName("FISHINGINSTRUCTOR"));
 					fishingInstructorRepository.save(fishingInstructor);
 				}
 				else if(appUser.role == UserType.ship_owner) {
 					ShipOwner shipOwner = new ShipOwner(appUser, "");
+					shipOwner.setRoles(roleRepository.findByName("BOATOWNER"));
 					shipOwnerRepository.save(shipOwner);
 				}				
 				return true;
@@ -204,16 +210,19 @@ public class RegistrationService {
 				if(appUser.role == UserType.cottage_owner) {
 					CottageOwner cottageOwner = new CottageOwner(appUser, "");
 					cottageOwner.verified = false;
+					cottageOwner.setRoles(roleRepository.findByName("COTTAGEOWNER"));
 					cottageOwnerRepository.save(cottageOwner);
 				}
 				else if(appUser.role == UserType.fishing_instructor) {
 					FishingInstructor fishingInstructor = new FishingInstructor(appUser, "", "Biografijica", LocalDateTime.now(), LocalDateTime.now().plusDays(14));
 					fishingInstructor.verified = false;
+					fishingInstructor.setRoles(roleRepository.findByName("FISHINGINSTRUCTOR"));
 					fishingInstructorRepository.save(fishingInstructor);
 				}
 				else if(appUser.role == UserType.ship_owner) {
 					ShipOwner shipOwner = new ShipOwner(appUser, "");
 					shipOwner.verified = false;
+					shipOwner.setRoles(roleRepository.findByName("BOATOWNER"));
 					shipOwnerRepository.save(shipOwner);
 				}				
 				return true;

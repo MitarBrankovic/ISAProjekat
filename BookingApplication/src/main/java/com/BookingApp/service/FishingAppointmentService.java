@@ -35,6 +35,8 @@ import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.FishingAppointmentReport;
 import com.BookingApp.model.FishingInstructor;
+import com.BookingApp.model.LoyaltyProgram;
+import com.BookingApp.model.LoyaltyStatus;
 import com.BookingApp.model.RequestDeleteAcc;
 import com.BookingApp.model.SubscribeAdventure;
 import com.BookingApp.repository.ClientRepository;
@@ -42,6 +44,7 @@ import com.BookingApp.repository.FishingAdventureRepository;
 import com.BookingApp.repository.FishingAppointmentRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
 import com.BookingApp.repository.FishingReportsRepository;
+import com.BookingApp.repository.LoyaltyProgramRepository;
 import com.BookingApp.repository.SubscribeAdvRepository;
 import com.BookingApp.repository.UserRepository;
 
@@ -64,6 +67,11 @@ public class FishingAppointmentService {
 	private JavaMailSender javaMailSender;
 	@Autowired
 	private SubscribeAdvRepository subscribeFishingRepository;
+	@Autowired
+	private LoyaltyProgramRepository loyaltyRepository;
+	@Autowired
+	private UserRepository userRepository;
+	
 
 	public ResponseEntity<List<FishingAppointment>> getAdventureQuickAppointments(long id)
 	{
@@ -200,6 +208,7 @@ public class FishingAppointmentService {
 			FishingAppointment appointment = oldAppointment.get();
 			appointment.client = client;
 			fishingAppointmentRepository.save(appointment);
+			addLoyaltyPoints(client, appointment.fishingAdventure.fishingInstructor);
 			return true;
 		}
 		return false;
@@ -218,9 +227,68 @@ public class FishingAppointmentService {
 			}else if(appointment.appointmentType == AppointmentType.regular) {
 				fishingAppointmentRepository.delete(appointment);
 			}
+			removeLoyaltyPoints(appointment.client, appointment.fishingAdventure.fishingInstructor);
 			return true;
 		}
 		return false;
+	}
+	
+	private void addLoyaltyPoints(Client client, FishingInstructor instructor) {
+		List <AppUser> users = new ArrayList<AppUser>();
+		for(AppUser au: userRepository.findAll()) {
+			if (au.id == client.id) {
+				au.loyaltyPoints += calculateClientLoyalty(client);
+			}
+			else if (au.id == instructor.id) {
+				au.loyaltyPoints += calculateInstructorLoyalty(instructor);
+			}
+			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
+		users.add(au);
+		}
+		userRepository.saveAll(users);
+	}
+	
+	private void removeLoyaltyPoints(Client client, FishingInstructor instructor) {
+		List <AppUser> users = new ArrayList<AppUser>();
+		for(AppUser au: userRepository.findAll()) {
+			if (au.id == client.id) {
+				au.loyaltyPoints -= calculateClientLoyalty(client);
+			}
+			else if (au.id == instructor.id) {
+				au.loyaltyPoints -= calculateInstructorLoyalty(instructor);
+			}
+			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
+		users.add(au);
+		}
+		userRepository.saveAll(users);
+	}
+	
+	private double calculateClientLoyalty(Client client) {
+		if (client.loyaltyStatus == LoyaltyStatus.silver)
+			return loyaltyRepository.getLoyalty().silverClient;
+		else if (client.loyaltyStatus == LoyaltyStatus.gold)
+			return loyaltyRepository.getLoyalty().goldClient;
+		else
+			return loyaltyRepository.getLoyalty().bronzeClient;
+	}
+	
+	private double calculateInstructorLoyalty(FishingInstructor instructor) {
+		if (instructor.loyaltyStatus == LoyaltyStatus.silver)
+			return loyaltyRepository.getLoyalty().silverClient;
+		else if (instructor.loyaltyStatus == LoyaltyStatus.gold)
+			return loyaltyRepository.getLoyalty().goldClient;
+		else
+			return loyaltyRepository.getLoyalty().bronzeClient;
+	}
+	
+	private LoyaltyStatus updateLoyaltyStatus(double loyaltyPoints) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (loyaltyPoints < loyalty.bronzePoints)
+			return LoyaltyStatus.bronze;
+		else if (loyaltyPoints < loyalty.silverPoints)
+			return LoyaltyStatus.silver;
+		else
+			return LoyaltyStatus.gold;
 	}
 	
 	@GetMapping(path = "/getReservedAdvAppointmentsByClient/{clientId}")
@@ -303,6 +371,7 @@ public class FishingAppointmentService {
 		appointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
 
 		fishingAppointmentRepository.save(appointment);
+		addLoyaltyPoints(appointment.client, appointment.fishingAdventure.fishingInstructor);
 		return true;
 	}
 	

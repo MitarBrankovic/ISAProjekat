@@ -22,6 +22,7 @@ import com.BookingApp.dto.ReserveAdventureDto;
 import com.BookingApp.dto.ReserveBoatDto;
 import com.BookingApp.dto.ReservedBoatAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
+import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.BoatAppointment;
@@ -29,9 +30,15 @@ import com.BookingApp.model.Client;
 import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
+import com.BookingApp.model.FishingInstructor;
+import com.BookingApp.model.LoyaltyProgram;
+import com.BookingApp.model.LoyaltyStatus;
+import com.BookingApp.model.ShipOwner;
 import com.BookingApp.repository.BoatAppointmentRepository;
 import com.BookingApp.repository.BoatRepository;
 import com.BookingApp.repository.ClientRepository;
+import com.BookingApp.repository.LoyaltyProgramRepository;
+import com.BookingApp.repository.UserRepository;
 
 @RestController
 @RequestMapping("/boatAppointments")
@@ -42,6 +49,10 @@ public class BoatAppointmentService {
 	private BoatRepository boatRepository;
 	@Autowired
 	private ClientRepository clientRepository;
+	@Autowired
+	private LoyaltyProgramRepository loyaltyRepository;
+	@Autowired
+	private UserRepository userRepository;
 	
 	@GetMapping(path = "/getAllQuickAppointments/{boatId}")
 	public ResponseEntity<List<BoatAppointment>> getAllQuickAppointmentsForBoat(@PathVariable("boatId") long id)
@@ -73,6 +84,7 @@ public class BoatAppointmentService {
 			BoatAppointment appointment = oldAppointment.get();
 			appointment.client = client;
 			boatAppointmentRepository.save(appointment);
+			addLoyaltyPoints(client, appointment.boat.shipOwner);
 			return true;
 		}
 		return false;
@@ -87,11 +99,69 @@ public class BoatAppointmentService {
 			BoatAppointment appointment = oldAppointment.get();
 			appointment.client = null;
 			boatAppointmentRepository.save(appointment);
+			removeLoyaltyPoints(appointment.client, appointment.boat.shipOwner);
 			return true;
 		}
 		return false;
 	}
 	
+	private void addLoyaltyPoints(Client client, ShipOwner owner) {
+		List <AppUser> users = new ArrayList<AppUser>();
+		for(AppUser au: userRepository.findAll()) {
+			if (au.id == client.id) {
+				au.loyaltyPoints += calculateClientLoyalty(client);
+			}
+			else if (au.id == owner.id) {
+				au.loyaltyPoints += calculateOwnerLoyalty(owner);
+			}
+			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
+		users.add(au);
+		}
+		userRepository.saveAll(users);
+	}
+	
+	private void removeLoyaltyPoints(Client client, ShipOwner owner) {
+		List <AppUser> users = new ArrayList<AppUser>();
+		for(AppUser au: userRepository.findAll()) {
+			if (au.id == client.id) {
+				au.loyaltyPoints -= calculateClientLoyalty(client);
+			}
+			else if (au.id == owner.id) {
+				au.loyaltyPoints -= calculateOwnerLoyalty(owner);
+			}
+			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
+		users.add(au);
+		}
+		userRepository.saveAll(users);
+	}
+	
+	private double calculateClientLoyalty(Client client) {
+		if (client.loyaltyStatus == LoyaltyStatus.silver)
+			return loyaltyRepository.getLoyalty().silverClient;
+		else if (client.loyaltyStatus == LoyaltyStatus.gold)
+			return loyaltyRepository.getLoyalty().goldClient;
+		else
+			return loyaltyRepository.getLoyalty().bronzeClient;
+	}
+	
+	private double calculateOwnerLoyalty(ShipOwner owner) {
+		if (owner.loyaltyStatus == LoyaltyStatus.silver)
+			return loyaltyRepository.getLoyalty().silverClient;
+		else if (owner.loyaltyStatus == LoyaltyStatus.gold)
+			return loyaltyRepository.getLoyalty().goldClient;
+		else
+			return loyaltyRepository.getLoyalty().bronzeClient;
+	}
+	
+	private LoyaltyStatus updateLoyaltyStatus(double loyaltyPoints) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (loyaltyPoints < loyalty.bronzePoints)
+			return LoyaltyStatus.bronze;
+		else if (loyaltyPoints < loyalty.silverPoints)
+			return LoyaltyStatus.silver;
+		else
+			return LoyaltyStatus.gold;
+	}
 	
 	@GetMapping(path = "/getReservedBoatAppointmentsByClient/{clientId}")
 	public ResponseEntity<List<ReservedBoatAppointmentDto>> getReservedBoatAppointmentsByClient(@PathVariable("clientId") long id)
@@ -170,6 +240,7 @@ public class BoatAppointmentService {
 				reserveBoatDto.additionalPricingText, reserveBoatDto.totalPrice, reserveBoatDto.boat, reserveBoatDto.client);
 
 		boatAppointmentRepository.save(appointment);
+		addLoyaltyPoints(appointment.client, appointment.boat.shipOwner);
 		return true;
 	}
 	

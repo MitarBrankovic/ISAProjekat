@@ -23,6 +23,7 @@ import com.BookingApp.dto.ReserveCottageDto;
 import com.BookingApp.dto.ReservedCottageAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
 import com.BookingApp.dto.SearchDto;
+import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.Client;
@@ -32,10 +33,15 @@ import com.BookingApp.model.CottageOwner;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.FishingInstructor;
+import com.BookingApp.model.LoyaltyProgram;
+import com.BookingApp.model.LoyaltyStatus;
+import com.BookingApp.model.ShipOwner;
 import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.CottageAppointmentRepository;
 import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.CottageRepository;
+import com.BookingApp.repository.LoyaltyProgramRepository;
+import com.BookingApp.repository.UserRepository;
 
 
 @RestController
@@ -47,6 +53,10 @@ public class CottageAppointmentService {
 	private CottageRepository cottageRepository;
 	@Autowired
 	private ClientRepository clientRepository;
+	@Autowired
+	private LoyaltyProgramRepository loyaltyRepository;
+	@Autowired
+	private UserRepository userRepository;
 	
 	@GetMapping(path = "/getAllQuickAppointments/{cottageId}")
 	public ResponseEntity<List<CottageAppointment>> getAllQuickAppointmentsForCottage(@PathVariable("cottageId") long id)
@@ -77,6 +87,7 @@ public class CottageAppointmentService {
 			CottageAppointment appointment = oldAppointment.get();
 			appointment.client = client;
 			cottageAppointmentRepository.save(appointment);
+			addLoyaltyPoints(client, appointment.cottage.cottageOwner);
 			return true;
 		}
 		return false;
@@ -91,9 +102,68 @@ public class CottageAppointmentService {
 			CottageAppointment appointment = oldAppointment.get();
 			appointment.client = null;
 			cottageAppointmentRepository.save(appointment);
+			removeLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
 			return true;
 		}
 		return false;
+	}
+	
+	private void addLoyaltyPoints(Client client, CottageOwner owner) {
+		List <AppUser> users = new ArrayList<AppUser>();
+		for(AppUser au: userRepository.findAll()) {
+			if (au.id == client.id) {
+				au.loyaltyPoints += calculateClientLoyalty(client);
+			}
+			else if (au.id == owner.id) {
+				au.loyaltyPoints += calculateOwnerLoyalty(owner);
+			}
+			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
+		users.add(au);
+		}
+		userRepository.saveAll(users);
+	}
+	
+	private void removeLoyaltyPoints(Client client, CottageOwner owner) {
+		List <AppUser> users = new ArrayList<AppUser>();
+		for(AppUser au: userRepository.findAll()) {
+			if (au.id == client.id) {
+				au.loyaltyPoints -= calculateClientLoyalty(client);
+			}
+			else if (au.id == owner.id) {
+				au.loyaltyPoints -= calculateOwnerLoyalty(owner);
+			}
+			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
+		users.add(au);
+		}
+		userRepository.saveAll(users);
+	}
+	
+	private double calculateClientLoyalty(Client client) {
+		if (client.loyaltyStatus == LoyaltyStatus.silver)
+			return loyaltyRepository.getLoyalty().silverClient;
+		else if (client.loyaltyStatus == LoyaltyStatus.gold)
+			return loyaltyRepository.getLoyalty().goldClient;
+		else
+			return loyaltyRepository.getLoyalty().bronzeClient;
+	}
+	
+	private double calculateOwnerLoyalty(CottageOwner owner) {
+		if (owner.loyaltyStatus == LoyaltyStatus.silver)
+			return loyaltyRepository.getLoyalty().silverClient;
+		else if (owner.loyaltyStatus == LoyaltyStatus.gold)
+			return loyaltyRepository.getLoyalty().goldClient;
+		else
+			return loyaltyRepository.getLoyalty().bronzeClient;
+	}
+	
+	private LoyaltyStatus updateLoyaltyStatus(double loyaltyPoints) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (loyaltyPoints < loyalty.bronzePoints)
+			return LoyaltyStatus.bronze;
+		else if (loyaltyPoints < loyalty.silverPoints)
+			return LoyaltyStatus.silver;
+		else
+			return LoyaltyStatus.gold;
 	}
 	
 	@GetMapping(path = "/getReservedCottAppointmentsByClient/{clientId}")
@@ -174,7 +244,7 @@ public class CottageAppointmentService {
 				reserveCottageDto.additionalPricingText, reserveCottageDto.totalPrice, reserveCottageDto.cottage, reserveCottageDto.client);
 
 		cottageAppointmentRepository.save(appointment);
-		
+		addLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
 		return true;
 	}
 	

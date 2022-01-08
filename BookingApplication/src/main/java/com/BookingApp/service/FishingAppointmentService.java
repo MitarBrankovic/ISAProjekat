@@ -284,8 +284,10 @@ public class FishingAppointmentService {
 	private LoyaltyStatus updateLoyaltyStatus(double loyaltyPoints) {
 		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
 		if (loyaltyPoints < loyalty.bronzePoints)
-			return LoyaltyStatus.bronze;
+			return LoyaltyStatus.regular;
 		else if (loyaltyPoints < loyalty.silverPoints)
+			return LoyaltyStatus.bronze;
+		else if (loyaltyPoints < loyalty.goldPoints)
 			return LoyaltyStatus.silver;
 		else
 			return LoyaltyStatus.gold;

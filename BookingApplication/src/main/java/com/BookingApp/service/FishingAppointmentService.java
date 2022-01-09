@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -413,6 +414,36 @@ public class FishingAppointmentService {
 			return LoyaltyStatus.silver;
 		else
 			return LoyaltyStatus.gold;
+	}
+	
+	@PostMapping(path = "/checkInstructorsAvailability")
+    public boolean checkInstructorsAvailability(@RequestBody InstructorsAppointmentForClientDto appointmentDTO)
+	{	
+		FishingInstructor instructor = fishingAdventureRepository.findById(appointmentDTO.adventureId).get().fishingInstructor;
+		LocalDateTime timeFrom = appointmentDTO.formatDateFrom();
+		if (timeFrom.isAfter(instructor.availableFrom) && timeFrom.isBefore(instructor.availableUntil) && timeFrom.plusHours(appointmentDTO.durationInHours()).isBefore(instructor.availableUntil))
+			return true;
+		return false;
+	}
+	
+	@PostMapping(path = "/checkOverlap")
+    public boolean checkOverlap(@RequestBody InstructorsAppointmentForClientDto appointmentDTO)
+	{	
+		LocalDateTime start = appointmentDTO.formatDateFrom();
+		LocalDateTime end = appointmentDTO.formatDateFrom().plusHours(appointmentDTO.durationInHours());
+		FishingAdventure adventure = fishingAdventureRepository.findById(appointmentDTO.adventureId).get();
+		Set <FishingAppointment> appointments = fishingAppointmentRepository.findInstructorsReservationHistory(adventure.fishingInstructor.id);
+		System.out.println(appointments.size());
+		for (FishingAppointment app : appointments) {
+			if ((app.appointmentStart.isBefore(start) && app.appointmentStart.plusHours(app.duration).isAfter(start)) ||
+					(app.appointmentStart.isBefore(end) && app.appointmentStart.plusHours(app.duration).isAfter(end)) ||
+					(app.appointmentStart.isAfter(start) && app.appointmentStart.plusHours(app.duration).isBefore(end)) ||
+					app.appointmentStart.isEqual(start) || app.appointmentStart.plusHours(app.duration).isEqual(end)) {
+				System.out.println("Fejkara");
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	@GetMapping(path = "/getReservedAdvAppointmentsByClient/{clientId}")

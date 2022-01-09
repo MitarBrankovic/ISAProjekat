@@ -129,40 +129,49 @@ Vue.component("CurrentFishingAppointments", {
     		this.newAppointment.clientId = id;
     	},
     	
+    	checkInstructorsAvailability() {
+        	axios
+               .post('/fishingAppointments/checkInstructorsAvailability', this.newAppointment)
+               .then(response=>{
+               		return response.data
+                })
+        },
+    	
     	addNewAppointment(){
             if (this.checkNewAppointment()) {
-            	if (this.checkInstructorAvailability()) {
             		if (this.checkOverlap()) {
-		         	axios
-		               .post('/fishingAppointments/addInstructorsAppointmentForClient', this.newAppointment)
-		               .then(response=>{
-		                  this.resetData();
-		                  })
-		               .catch(error=>{
-		                   console.log("Greska.")	
-		                   alert("Podaci su lose uneti.")
-		                   window.location.reload()
-		               })
+		         		setTimeout(() => { this.addAppointment }, 100);
            			}
            			 else{
-         	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li je validna cena (> 99)!'})
+         	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Termin se preklapa sa nekim drugim vašim terminom !'})
              		}
-             	}
-             	else {
-         	  		Swal.fire({icon: 'error', title: 'Greška', text: 'Niste dostupni u ovom vremenskom periodu !'})
-           		}
            }
            else {
          	  Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li je validna cena (> 99)!'})
            }
         },
         
-        checkInstructorAvailability() {
-        	return true;
-        },
+        addAppointment() {
+        	axios
+               .post('/fishingAppointments/addInstructorsAppointmentForClient', this.newAppointment)
+               .then(response=>{
+                  this.resetData();
+                  Swal.fire({ icon: 'success', title: 'Uspešno ste rezervisali termin za klijenta !', showConfirmButton: false, timer: 1500 })
+                  })
+               .catch(error=>{
+                   console.log("Greska.")	
+                   alert("Podaci su lose uneti.")
+                   window.location.reload()
+               })
+        } ,
         
         checkOverlap() {
-        	return true;
+        	axios
+               .post('/fishingAppointments/checkOverlap', this.newAppointment)
+               .then(response=>{
+               		console.log(response.data)
+               		return response.data
+                })
         },
         
         resetData() {
@@ -174,7 +183,7 @@ Vue.component("CurrentFishingAppointments", {
         },
         
         checkNewAppointment(){
-        	if (this.newAppointment.dateFrom !== "" && this.newAppointment.timeFrom !== "" &&  this.newAppointment.dateUntil !== "" && 
+        	if (this.newAppointment.adventureId != 0  && this.newAppointment.dateFrom !== "" && this.newAppointment.timeFrom !== "" &&  this.newAppointment.dateUntil !== "" && 
         	this.newAppointment.timeUntil !== "" && this.newAppointment.extraNotes !== "" && this.newAppointment.price !== "" &&
         	this.newAppointment.price > 99)
         		return true;

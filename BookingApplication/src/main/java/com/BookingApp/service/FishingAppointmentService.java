@@ -604,7 +604,7 @@ public class FishingAppointmentService {
 				for (int j = 1; j < (n - i); j++) {
 					if (appointments.get(j - 1).appointmentStart.isAfter(appointments.get(j).appointmentStart)) {
 						// swap elements
-						temp = appointments.get(j - 1);
+						temp = appointments.get(j - 1); 
 						appointments.set(j - 1, appointments.get(j));
 						appointments.set(j, temp);
 					}

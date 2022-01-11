@@ -9,6 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 public class Cottage {
 	@Id
@@ -32,6 +35,7 @@ public class Cottage {
 	public String priceList;
 	@Column
 	public double pricePerHour;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(fetch = FetchType.EAGER)
 	public CottageOwner cottageOwner;
 	@Column

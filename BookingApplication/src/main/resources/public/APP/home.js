@@ -6,7 +6,9 @@ Vue.component("Home", {
             adventuresButton:false,
             cottages:[],
             boats:[],
-            adventures:[]
+            adventures:[],
+            activeUser: null,
+            adventureIdRemove: ""
         }
     },
 
@@ -39,8 +41,7 @@ template: `
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showCottageInformation(c.id)" class="btn btn-secondary">Info</button>
-                                <button style="margin-left: 8%;" type="button" class="btn btn-primary">Izmeni</button>
-                                <button style="margin-left: 8%;" type="button" class="btn btn-danger">Obrisi</button>
+                                <button  style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || activeUser.role == 'cottage_owner')" type="button" class="btn btn-danger">Obrisi</button>
                             </div>
                         </div>
 
@@ -76,8 +77,7 @@ template: `
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showBoatInformation(b.id)" class="btn btn-secondary">Info</button>
-                                <button style="margin-left: 8%;" type="button" class="btn btn-primary">Izmeni</button>
-                                <button style="margin-left: 8%;" type="button" class="btn btn-danger">Obrisi</button>
+                                <button style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || activeUser.role == 'ship_owner')" type="button" class="btn btn-danger">Obrisi</button>
                             </div>
                         </div>
 
@@ -108,8 +108,7 @@ template: `
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showAdventureInformation(a.id)" class="btn btn-secondary">Info</button>
-                                <button style="margin-left: 8%;" type="button" class="btn btn-primary">Izmeni</button>
-                                <button style="margin-left: 8%;" type="button" class="btn btn-danger">Obrisi</button>
+                                <button style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || activeUser.role == 'fishing_instructor')" type="button" data-bs-toggle="modal" data-bs-target="#areYouSure" v-on:click="prepareAdventureToRemove(a.id)" class="btn btn-danger">Obriši</button>
                             </div>
                         </div>
 
@@ -120,6 +119,24 @@ template: `
             </div>
         </div>
 
+	<div class="modal fade" id="areYouSure" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Potvrda</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <h2>Da li ste sigurni da želite da obrišete ovu stavku ?</h2>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ne</button>
+	        <button type="button" class="btn btn-danger" v-on:click="removeAdventure()" data-bs-dismiss="modal" >Da</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
 	</div>
 `
@@ -173,11 +190,29 @@ template: `
 		},
         showAdventureInformation(id){
 			this.$router.push("/selectedFishingAdventure?id=" + id)
-		}
+		},
+		removeAdventure() {
+    		axios
+               .post('/fishingAdventures/checkAdventureRemoval/' + this.adventureIdRemove)
+               .then(response=>{
+                  if (response.data) {
+                  	 axios
+	                 .post('/fishingAdventures/removeAdventure/' + this.adventureIdRemove)
+	                 .then(response => { window.location.reload()})
+                  }
+                  else {
+                  	Swal.fire({icon: 'error', title: 'Ne možete obrisati ovu avanturu, jer postoje zakazani termini za nju !'})
+                  }
+               })
+    	},
+    	prepareAdventureToRemove(id){
+        	this.adventureIdRemove = id;		
+        },
 
     },
     
     mounted() {
+    	this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
         axios.all([axios.get('/cottages/getAllCottages'), axios.get('/boats/getAllBoats'),
         axios.get('/fishingAdventures/getAllAdventures')]).then(axios.spread((...responses) => {
            this.cottages = responses[0].data

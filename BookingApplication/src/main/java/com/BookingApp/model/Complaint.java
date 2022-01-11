@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 public class Complaint {
 	@Id
@@ -20,6 +23,7 @@ public class Complaint {
 	public long entityId;
 	@Column
 	public long owner;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public AppUser client;
 	

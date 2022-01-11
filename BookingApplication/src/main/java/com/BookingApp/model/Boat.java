@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 public class Boat {
 	@Id
@@ -49,6 +52,7 @@ public class Boat {
 	public double pricePerHour;
 	@Enumerated(value = EnumType.STRING)
 	public CancellationTerms cancellationTerms;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(fetch = FetchType.EAGER)
 	public ShipOwner shipOwner;
 	@Column

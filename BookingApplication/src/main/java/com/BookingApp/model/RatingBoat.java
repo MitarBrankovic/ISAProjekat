@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 public class RatingBoat {
 
@@ -17,12 +20,14 @@ public class RatingBoat {
 	@SequenceGenerator(name = "myRatingAdvSeqGen", sequenceName = "myRatingAdvSeqGen", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "myRatingAdvSeqGen")
 	public long id;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public Boat boat;
 	@Column
 	public double rating;
 	@Column
 	public LocalDateTime date;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public AppUser client;
 	@Column

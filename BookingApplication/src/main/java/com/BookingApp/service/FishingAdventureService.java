@@ -127,20 +127,15 @@ public class FishingAdventureService {
 	@PostMapping(path = "/removeAdventure/{adventureId}")
     public Set<FishingAdventure> removeAdventure(@PathVariable("adventureId") long id)
 	{	
+		FishingAdventure adv = fishingAdventureRepository.findById(id).get();
 		long instructorsId = fishingAdventureRepository.findById(id).get().fishingInstructor.id;
-		System.out.println(instructorsId + " " + id);
-		List<FishingAdventure> list = fishingAdventureRepository.findAll();
-		List<FishingAdventure> list2 = new ArrayList<FishingAdventure>();
-		for (FishingAdventure a : list) {
-			list2.add(a);
-		}
-		for(FishingAdventure a : list) {
-			if(a.id == id)
-				list2.remove(a);
-		}
-		System.out.println(list2);
-		System.out.println(list);
-		fishingAdventureRepository.saveAll(list2);
+		System.out.println("ID AVANTURE");
+		System.out.println(id);
+		System.out.println("ID INSTRUKTORA");
+		System.out.println(instructorsId);
+		System.out.println(fishingAdventureRepository.findAll().size());
+		fishingAdventureRepository.save(adv);
+		System.out.println(fishingAdventureRepository.findAll().size());
 		return fishingAdventureRepository.findInstructorsAdventures(instructorsId);
 	}
 	

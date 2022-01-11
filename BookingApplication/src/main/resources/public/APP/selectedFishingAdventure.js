@@ -1,7 +1,7 @@
 Vue.component("SelectedFishingAdventure", {
     data: function() {
         return {
-            activeUser:"",
+            activeUser:null,
             adventure: "",
             pricelistIdRemove: "",
             adventureIdRemove: "",
@@ -78,11 +78,11 @@ Vue.component("SelectedFishingAdventure", {
      </div>
 	    
 </div>
-    <button v-if="activeUser.role == 'client' && !exist()" type="submit" class="button" v-on:click="subscribe()">Pretplati se</button>
-    <button v-if="activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
+    <button v-if="activeUser != null && activeUser.role == 'client' && !exist()" type="submit" class="button" v-on:click="subscribe()">Pretplati se</button>
+    <button v-if="activeUser != null && activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
 
     <br><br><hr>
-    <h2>Brze rezervacije</h2>
+    <h2 style="color: #5cb85c;">Brze rezervacije</h2>
     <div class="container-fluid" style="margin-top: 3%">
     <table class="table">
         <thead>
@@ -102,17 +102,18 @@ Vue.component("SelectedFishingAdventure", {
             <td>{{appointment.maxAmountOfPeople}}</td>
             <td>{{appointment.extraNotes}}</td>
             <td>{{appointment.price}} din.</td>
-            <td v-if="appointment.client==null && activeUser.role == 'client'"><button type="button" class="btn btn-success" v-on:click="scheduleAppointment(appointment)">Zakazi</button> </td>
-            <td v-else-if="appointment.client == null && activeUser.role == 'fishing_instructor'"><p style="color:green;">Slobodno</p></td>
+            <td v-if="activeUser != null && appointment.client==null && activeUser.role == 'client'"><button type="button" class="btn btn-success" v-on:click="scheduleAppointment(appointment)">Zakazi</button> </td>
+            <td v-else-if="activeUser != null && appointment.client == null && activeUser.role == 'fishing_instructor'"><p style="color:green;">Slobodno</p></td>
+            <td v-else-if="activeUser == null && appointment.client == null"><p style="color:green;">Slobodno</p></td>
             <td v-else><p style="color:red;">Zakazano</p> </td>
             </tr>
         </tbody>
     </table>
     </div>
-    <button type="button" style="margin-top: 3%; margin-bottom: 3%;" v-if="activeUser.role == 'fishing_instructor'" data-bs-toggle="modal" data-bs-target="#newAppointment" class="btn btn-danger btn-lg">Dodaj brzu rezervaciju</button>
-	<h2 v-if="activeUser.role == 'fishing_instructor'">Cenovnik dodatnih usluga</h2>
+    <button type="button" style="margin-top: 3%; margin-bottom: 3%;" v-if="activeUser != null && activeUser.role == 'fishing_instructor'" data-bs-toggle="modal" data-bs-target="#newAppointment" class="btn btn-danger btn-lg">Dodaj brzu rezervaciju</button>
+	<h2 v-if="activeUser != null && activeUser.role == 'fishing_instructor'">Cenovnik dodatnih usluga</h2>
 	
-	<div v-if="activeUser.role == 'fishing_instructor'" class="container-fluid" style="margin-top: 3%">
+	<div v-if="activeUser != null && activeUser.role == 'fishing_instructor'" class="container-fluid" style="margin-top: 3%">
 		<table class="table">
 	        <thead>
 	        	<tr>
@@ -392,9 +393,10 @@ Vue.component("SelectedFishingAdventure", {
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
-        if(this.activeUser.role != 'fishing_instructor' && this.activeUser.role != 'client' && this.activeUser.role != 'admin')
-            this.$router.push('/')
-            
+        if(this.activeUser != null)
+        	if (this.activeUser.role != 'fishing_instructor' && this.activeUser.role != 'client' && this.activeUser.role != 'admin')
+            	this.$router.push('/')
+        if(this.activeUser != null) {
         axios.all([
                 axios.get("fishingAdventures/getSelectedAdventure/" + this.$route.query.id), 
                 axios.get("fishingAppointments/getQuickFishingAppointments/" + this.$route.query.id),
@@ -405,6 +407,15 @@ Vue.component("SelectedFishingAdventure", {
             this.pricelist = responses[2].data
             this.subscibedAdventures = responses[3].data
         }))
+        }
+        else{
+        	axios.all([
+                axios.get("fishingAdventures/getSelectedAdventure/" + this.$route.query.id), 
+                axios.get("fishingAppointments/getQuickFishingAppointments/" + this.$route.query.id)]).then(axios.spread((...responses) => {
+            this.adventure = responses[0].data
+            this.appointments = responses[1].data
+        }))
+        }
     },
 
 });

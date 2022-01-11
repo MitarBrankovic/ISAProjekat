@@ -129,22 +129,46 @@ Vue.component("CurrentFishingAppointments", {
     		this.newAppointment.clientId = id;
     	},
     	
-    	checkInstructorsAvailability() {
-        	axios
-               .post('/fishingAppointments/checkInstructorsAvailability', this.newAppointment)
-               .then(response=>{
+    	async checkOverlap() {
+        	var bool = false;
+        	await axios
+               .post('/fishingAppointments/checkOverlap', this.newAppointment)
+               .then((response)=>{
+               		bool = response.data
+               		console.log(bool)
                		return response.data
                 })
+          return bool
         },
     	
-    	addNewAppointment(){
+    	async checkInstructorsAvailability() {
+        	var bool = false;
+        	await axios
+               .post('/fishingAppointments/checkInstructorsAvailability', this.newAppointment)
+               .then((response)=>{
+               		bool = response.data
+               		console.log(bool)
+               		return response.data
+                })
+          return bool
+        },
+    	
+    	async addNewAppointment(){
+    	console.log(this.checkNewAppointment())
+    	var overlap = await this.checkOverlap()
+    	var instrAvail = await this.checkInstructorsAvailability()
             if (this.checkNewAppointment()) {
-            		if (this.checkOverlap()) {
-		         		setTimeout(() => { this.addAppointment }, 100);
+            	if (overlap) {
+            		if (instrAvail) {
+            			this.addAppointment();
            			}
-           			 else{
-         	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Termin se preklapa sa nekim drugim vašim terminom !'})
+           			else{
+         	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Niste dostupni u željeno vreme !'})
              		}
+         		}
+       			else{
+     	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Termin se preklapa sa nekim drugim vašim terminom !'})
+         	    }
            }
            else {
          	  Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li je validna cena (> 99)!'})
@@ -165,13 +189,16 @@ Vue.component("CurrentFishingAppointments", {
                })
         } ,
         
-        checkOverlap() {
-        	axios
+        async checkOverlap() {
+        	var bool = false;
+        	await axios
                .post('/fishingAppointments/checkOverlap', this.newAppointment)
-               .then(response=>{
-               		console.log(response.data)
+               .then((response)=>{
+               		bool = response.data
+               		console.log(bool)
                		return response.data
                 })
+          return bool
         },
         
         resetData() {

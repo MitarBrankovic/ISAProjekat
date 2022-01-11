@@ -6,7 +6,7 @@ Vue.component("SelectedFishingAdventure", {
             pricelistIdRemove: "",
             adventureIdRemove: "",
             userId:"",
-            quickAppointment: {dateFrom: "", timeFrom: "", dateUntil: "", timeUntil: "", extraNotes: "", price: 100, adventureId: 0 },
+            quickAppointment: {dateFrom: "", timeFrom: "8:00", dateUntil: "", timeUntil: "12:00", extraNotes: "", price: 100, adventureId: 0 },
             appointments: "",
             pricelist: "",
             newPricelistItem: {instructorsId: "", description: "", price: 50},
@@ -19,7 +19,7 @@ Vue.component("SelectedFishingAdventure", {
     <div class="container-fluid" style="margin-top: 3%">
     <div class="row my-row" style="margin-top: 2%;">
     					<div class="col col-sm-4">
-                        <img src="../images/fishing.jpg" class="d-block w-100" alt="...">
+                        <img src="images/fishing.jpg" class="d-block w-100" alt="...">
                       </div>
                       <div class="col col-sm-4">
                         <h1 style="color: #5cb85c;">{{adventure.name}}</h1>
@@ -55,14 +55,14 @@ Vue.component("SelectedFishingAdventure", {
      				  <div class="col col-sm-4">
                         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
 						  <div class="carousel-inner">
+						    <div class="carousel-item">
+						      <img src="images/fishing.jpg" class="item">
+						    </div>
 						    <div class="carousel-item active">
-						      <img src="../images/fishing_hangout1.jpg" class="item" alt="...">
+						      <img src="images/fishing.jpg" class="item">
 						    </div>
 						    <div class="carousel-item">
-						      <img src="../images/fishing.jpg" class="item" alt="...">
-						    </div>
-						    <div class="carousel-item">
-						      <img src="../images/myInfo.png" class="item" alt="...">
+						      <img src="images/myinfo.png" class="item">
 						    </div>
 						  </div>
 						  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
@@ -232,25 +232,40 @@ Vue.component("SelectedFishingAdventure", {
         addNewAppointment(){
             this.quickAppointment.adventureId = this.adventure.id
             if (this.checkNewAppointment()){
-	         	axios
-	               .post('/fishingAppointments/addQuickAppointment', this.quickAppointment)
-	               .then(response=>{
-	                  this.appointments = response.data
-	                  this.quickAppointment.dateFrom = ""
-	                  this.quickAppointment.timeFrom = ""
-	                  this.quickAppointment.dateUntil = ""
-	                  this.quickAppointment.timeUntil = ""
-	                  this.quickAppointment.extraNotes = ""
-	               })
-	               .catch(error=>{
-	                   console.log("Greska.")	
-	                   alert("Podaci su lose uneti.")
-	                   window.location.reload()
-	               })
+            	if (this.checkDate()){
+		         	axios
+		               .post('/fishingAppointments/addQuickAppointment', this.quickAppointment)
+		               .then(response=>{
+		                  this.appointments = response.data
+		                  this.quickAppointment.dateFrom = ""
+		                  this.quickAppointment.timeFrom = ""
+		                  this.quickAppointment.dateUntil = ""
+		                  this.quickAppointment.timeUntil = ""
+		                  this.quickAppointment.extraNotes = ""
+		               })
+		               .catch(error=>{
+		                   console.log("Greska.")	
+		                   alert("Podaci su lose uneti.")
+		                   window.location.reload()
+		               })
+		           }
+		           else {
+		               Swal.fire({icon: 'error', title: 'Greška', text: 'Datum i vreme nisu validni !'})
+		           }
            }
            else{
            	  Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li je validna cena (> 99)!'})
            }
+        },
+        
+        checkDate() {
+        	var timeFrom = this.quickAppointment.timeFrom.split(":")[0]
+        	var timeUntil = this.quickAppointment.timeUntil.split(":")[0]
+        	var DateFrom = new Date(this.quickAppointment.dateFrom.substring(0,4), this.quickAppointment.dateFrom.substring(5,7), this.quickAppointment.dateFrom.substring(8,10), timeFrom, 0)
+			var DateUntil = new Date(this.quickAppointment.dateUntil.substring(0,4), this.quickAppointment.dateUntil.substring(5,7), this.quickAppointment.dateUntil.substring(8,10), timeUntil, 0)
+        	console.log(DateFrom)
+        	console.log(DateUntil)
+        	return DateUntil > DateFrom       	
         },
         
         scheduleAppointment:function(appointment){

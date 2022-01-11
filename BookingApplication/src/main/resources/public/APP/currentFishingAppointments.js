@@ -152,23 +152,38 @@ Vue.component("CurrentFishingAppointments", {
                 })
           return bool
         },
+        
+        checkDate() {
+        	var timeFrom = this.newAppointment.timeFrom.split(":")[0]
+        	var timeUntil = this.newAppointment.timeUntil.split(":")[0]
+        	var DateFrom = new Date(this.newAppointment.dateFrom.substring(0,4), this.newAppointment.dateFrom.substring(5,7), this.newAppointment.dateFrom.substring(8,10), timeFrom, 0)
+			var DateUntil = new Date(this.newAppointment.dateUntil.substring(0,4), this.newAppointment.dateUntil.substring(5,7), this.newAppointment.dateUntil.substring(8,10), timeUntil, 0)
+        	console.log(DateFrom)
+        	console.log(DateUntil)
+        	return DateUntil > DateFrom       	
+        },
     	
     	async addNewAppointment(){
     	console.log(this.checkNewAppointment())
     	var overlap = await this.checkOverlap()
     	var instrAvail = await this.checkInstructorsAvailability()
             if (this.checkNewAppointment()) {
-            	if (overlap) {
-            		if (instrAvail) {
-            			this.addAppointment();
-           			}
-           			else{
-         	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Niste dostupni u željeno vreme !'})
-             		}
-         		}
-       			else{
-     	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Termin se preklapa sa nekim drugim vašim terminom !'})
-         	    }
+            	if (this.checkDate()){
+	            	if (overlap) {
+	            		if (instrAvail) {
+	            			this.addAppointment();
+	           			}
+	           			else{
+	         	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Niste dostupni u željeno vreme !'})
+	             		}
+	         		}
+	       			else{
+	     	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Termin se preklapa sa nekim drugim vašim terminom !'})
+	         	    }
+	         	}
+	         	else {
+	         		Swal.fire({icon: 'error', title: 'Greška', text: 'Datum i vreme nisu validni !'})
+	         	}
            }
            else {
          	  Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li je validna cena (> 99)!'})

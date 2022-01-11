@@ -217,4 +217,15 @@ html{
     .razmak-card{
       margin:14px;
     }
+    
+    .carousel .item {
+  	height: 335px;
+	}
+
+	.item img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-height: 335px;
+	}
 

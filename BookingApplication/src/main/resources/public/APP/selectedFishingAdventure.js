@@ -16,22 +16,74 @@ Vue.component("SelectedFishingAdventure", {
     },
     template :`
     <div>
-    
-    <h1>{{adventure.name}}</h1>
-    <p>Adresa: {{adventure.address}}, {{ adventure.city}}
-    <br> Opis : {{adventure.description}}
-    <br> Kapacitet :{{adventure.maxAmountOfPeople}} osoba
-    <br> Pravila : {{adventure.behaviourRules}}
-    <br> Oprema : {{adventure.equipment}}
-    <br> Cena po satu : {{adventure.pricePerHour}} din/h
-    <br> Procenat za otkazivanje : {{adventure.cancellingPrecentage}} %
-    <br> Ocena : {{adventure.rating}}/5
-    </p><br>
+    <div class="container-fluid" style="margin-top: 3%">
+    <div class="row my-row" style="margin-top: 2%;">
+    					<div class="col col-sm-4">
+                        <img src="../images/fishing.jpg" class="d-block w-100" alt="...">
+                      </div>
+                      <div class="col col-sm-4">
+                        <h1 style="color: #5cb85c;">{{adventure.name}}</h1>
+                        <table class="table">
+					        <tbody>
+					        <tr>
+					            <td> Adresa: {{adventure.address}}, {{ adventure.city}}</td>
+					        </tr>
+					        <tr>
+					            <td> Opis : {{adventure.description}}</td>
+					        </tr>
+					        <tr>
+					            <td> Kapacitet : {{adventure.maxAmountOfPeople}} osoba</td>
+					        </tr>
+					        <tr>
+					            <td> Pravila : {{adventure.behaviourRules}}</td>
+					        </tr>
+					        <tr>
+					            <td> Oprema : {{adventure.equipment}}</td>
+					        </tr>
+					        <tr>
+					            <td> Cena po satu : {{adventure.pricePerHour}} din/h</td>
+					        </tr>
+					        <tr>
+					            <td> Procenat za otkazivanje : {{adventure.cancellingPrecentage}} %</td>
+					        </tr>
+					        <tr>
+					            <td> Ocena : {{adventure.rating}}/5</td>
+					        </tr>
+					        </tbody>
+					    </table>
+                      </div>
+     				  <div class="col col-sm-4">
+                        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+						  <div class="carousel-inner">
+						    <div class="carousel-item active">
+						      <img src="../images/fishing_hangout1.jpg" class="item" alt="...">
+						    </div>
+						    <div class="carousel-item">
+						      <img src="../images/fishing.jpg" class="item" alt="...">
+						    </div>
+						    <div class="carousel-item">
+						      <img src="../images/myInfo.png" class="item" alt="...">
+						    </div>
+						  </div>
+						  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+						    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						    <span class="visually-hidden">Previous</span>
+						  </button>
+						  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+						    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+						    <span class="visually-hidden">Next</span>
+						  </button>
+						</div>
+                      </div>                 
+     </div>
+	    
+</div>
     <button v-if="activeUser.role == 'client' && !exist()" type="submit" class="button" v-on:click="subscribe()">Pretplati se</button>
     <button v-if="activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
 
     <br><br><hr>
-    <div class="container-fluid">
+    <h2>Brze rezervacije</h2>
+    <div class="container-fluid" style="margin-top: 3%">
     <table class="table">
         <thead>
         <tr>
@@ -57,10 +109,10 @@ Vue.component("SelectedFishingAdventure", {
         </tbody>
     </table>
     </div>
-    <button type="button" style="margin-top: 3%; margin-bottom: 3%;"   data-bs-toggle="modal" data-bs-target="#newAppointment" class="btn btn-danger btn-lg">Dodaj brzu rezervaciju</button>
-	<h2>Cenovnik dodatnih usluga</h2>
+    <button type="button" style="margin-top: 3%; margin-bottom: 3%;" v-if="activeUser.role == 'fishing_instructor'" data-bs-toggle="modal" data-bs-target="#newAppointment" class="btn btn-danger btn-lg">Dodaj brzu rezervaciju</button>
+	<h2 v-if="activeUser.role == 'fishing_instructor'">Cenovnik dodatnih usluga</h2>
 	
-	<div class="container-fluid" style="margin-top: 3%">
+	<div v-if="activeUser.role == 'fishing_instructor'" class="container-fluid" style="margin-top: 3%">
 		<table class="table">
 	        <thead>
 	        	<tr>
@@ -118,7 +170,21 @@ Vue.component("SelectedFishingAdventure", {
                           <span class="input-group-text" id="basic-addon1">Datum-od</span>
                       </div>
                       <div class="col col-sm-6">
-                        <input type="time" class="form-control" v-model="quickAppointment.timeFrom"  placeholder="Datum-od">
+                          <select class="form-select" v-model="quickAppointment.timeFrom" aria-label="Example select with button addon">
+			                  <option value="8:00">8:00</option>
+			                  <option value="9:00">9:00</option>
+			                  <option value="10:00">10:00</option>
+			                  <option value="11:00">11:00</option>
+			                  <option value="12:00">12:00</option>
+			                  <option value="13:00">13:00</option>
+			                  <option value="14:00">14:00</option>
+			                  <option value="15:00">15:00</option>
+			                  <option value="16:00">16:00</option>
+			                  <option value="17:00">17:00</option>
+			                  <option value="18:00">18:00</option>
+			                  <option value="19:00">19:00</option>
+			                  <option value="20:00">20:00</option>
+			                </select>
                           <span class="input-group-text" id="basic-addon1">Vreme-od</span> 
                       </div>
                 </div>
@@ -128,7 +194,21 @@ Vue.component("SelectedFishingAdventure", {
                           <span class="input-group-text" id="basic-addon1">Datum-do</span>
                       </div>
                       <div class="col col-sm-6">
-                        <input type="time" class="form-control" v-model="quickAppointment.timeUntil" placeholder="Datum-od">
+                          <select class="form-select" v-model="quickAppointment.timeUntil" aria-label="Example select with button addon">
+			                  <option value="8:00">8:00</option>
+			                  <option value="9:00">9:00</option>
+			                  <option value="10:00">10:00</option>
+			                  <option value="11:00">11:00</option>
+			                  <option value="12:00">12:00</option>
+			                  <option value="13:00">13:00</option>
+			                  <option value="14:00">14:00</option>
+			                  <option value="15:00">15:00</option>
+			                  <option value="16:00">16:00</option>
+			                  <option value="17:00">17:00</option>
+			                  <option value="18:00">18:00</option>
+			                  <option value="19:00">19:00</option>
+			                  <option value="20:00">20:00</option>
+			                </select>
                           <span class="input-group-text" id="basic-addon1">Vreme-do</span> 
                       </div>
                 </div>
@@ -297,7 +377,7 @@ Vue.component("SelectedFishingAdventure", {
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
-        if(this.activeUser.role != 'fishing_instructor')
+        if(this.activeUser.role != 'fishing_instructor' && this.activeUser.role != 'client' && this.activeUser.role != 'admin')
             this.$router.push('/')
             
         axios.all([

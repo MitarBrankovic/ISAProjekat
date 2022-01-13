@@ -22,15 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.BookingApp.dto.EditAdventureDto;
 import com.BookingApp.dto.FishingAppointmentDto;
 import com.BookingApp.dto.NewAdventureDto;
+import com.BookingApp.dto.NewPhotoDto;
 import com.BookingApp.dto.PricelistItemRemoveDto;
 import com.BookingApp.dto.SearchAdventureDto;
 import com.BookingApp.dto.SearchInstructorsAdventuresDto;
+import com.BookingApp.model.AdventurePhoto;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.PricelistItem;
 import com.BookingApp.model.RequestDeleteAcc;
+import com.BookingApp.repository.AdventurePhotoRepository;
 import com.BookingApp.repository.FishingAdventureRepository;
 import com.BookingApp.repository.FishingAppointmentRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
@@ -45,6 +48,8 @@ public class FishingAdventureService {
 	private FishingInstructorRepository fishingInstructorRepository;
 	@Autowired
 	private FishingAppointmentRepository fishingAppointmentRepository;
+	@Autowired
+	private AdventurePhotoRepository adventurePhotoRepository;
 	
 	@GetMapping(path = "/getAllAdventures")
 	public ResponseEntity<List<FishingAdventure>> getAllAdventures()
@@ -73,13 +78,42 @@ public class FishingAdventureService {
 		return new ResponseEntity<FishingAdventure>(adventureNew ,HttpStatus.OK);
 	}
 	
+	@GetMapping(path = "/getAdventuresPhotos/{adventureId}")
+	public Set<AdventurePhoto> getAdventuresPhotos(@PathVariable("adventureId") long id)
+	{	
+		return adventurePhotoRepository.findAdventuresPhotos(id);
+	}
+	
+	@PostMapping(path = "/addPhoto")
+    public Set<AdventurePhoto> addPhoto(@RequestBody NewPhotoDto photoDTO)
+	{	
+		if(photoDTO != null) {
+			adventurePhotoRepository.save(new AdventurePhoto(photoDTO.photo, fishingAdventureRepository.findById(photoDTO.entityId).get()));
+			return adventurePhotoRepository.findAdventuresPhotos(photoDTO.entityId);
+		}
+		return null;
+	}
+	
+	@PostMapping(path = "/removePhoto/{adventureId}")
+    public Set<AdventurePhoto> removePhoto(@PathVariable("adventureId") long id)
+	{	
+		long maxId = 0;
+		Set<AdventurePhoto> photos = adventurePhotoRepository.findAdventuresPhotos(id);
+		for (AdventurePhoto ap : photos)
+			if (ap.id > maxId)
+					maxId = ap.id;
+		if (maxId != 0)
+			adventurePhotoRepository.deleteById(maxId);
+		return adventurePhotoRepository.findAdventuresPhotos(id);
+	}
+	
 	@PostMapping(path = "/addNewAdventure")
     public Set<FishingAdventure> addAdventure(@RequestBody NewAdventureDto adventureDTO)
 	{	
-		byte[] decodedPhoto = Base64.getMimeDecoder().decode(adventureDTO.photo);
+		//byte[] decodedPhoto = Base64.getMimeDecoder().decode(adventureDTO.photo);
 		if(adventureDTO != null) {
 			FishingAdventure adventure = new FishingAdventure(adventureDTO.name, adventureDTO.address, adventureDTO.city, adventureDTO.description, 
-					decodedPhoto, adventureDTO.maxAmountOfPeople, adventureDTO.behaviourRules, adventureDTO.equipment, 
+					adventureDTO.photo, adventureDTO.maxAmountOfPeople, adventureDTO.behaviourRules, adventureDTO.equipment, 
 					adventureDTO.pricePerHour, 0, adventureDTO.cancellingPrecentage);
 			adventure.fishingInstructor = fishingInstructorRepository.findById(adventureDTO.instructorsId).get();
 			fishingAdventureRepository.save(adventure);
@@ -91,7 +125,7 @@ public class FishingAdventureService {
 	@PostMapping(path = "/editAdventure")
     public Set<FishingAdventure> editAdventure(@RequestBody EditAdventureDto adventureDTO)
 	{	
-		byte[] decodedPhoto = Base64.getMimeDecoder().decode(adventureDTO.photo);
+		//byte[] decodedPhoto = Base64.getMimeDecoder().decode(adventureDTO.photo);
 		if(adventureDTO != null) {
 			long instructorsId = fishingAdventureRepository.findById(adventureDTO.adventureId).get().fishingInstructor.id;
 			List<FishingAdventure> allAdventures = fishingAdventureRepository.findAll();
@@ -101,14 +135,14 @@ public class FishingAdventureService {
 					adventure.address = adventureDTO.address;
 					adventure.city = adventureDTO.city;
 					adventure.description = adventureDTO.description;
-					adventure.photo = decodedPhoto;
+					adventure.photo = adventureDTO.photo;
 					adventure.maxAmountOfPeople = adventureDTO.maxAmountOfPeople;
 					adventure.behaviourRules = adventureDTO.behaviourRules;
 					adventure.equipment = adventureDTO.equipment;
 					adventure.pricePerHour = adventureDTO.pricePerHour;
 					adventure.cancellingPrecentage = adventureDTO.cancellingPrecentage;
 				}
-			fishingAdventureRepository.saveAll(allAdventures);
+			fishingAdventureRepository.saveAll(allAdventures); 
 			return fishingAdventureRepository.findInstructorsAdventures(instructorsId);
 		}
 		return null;

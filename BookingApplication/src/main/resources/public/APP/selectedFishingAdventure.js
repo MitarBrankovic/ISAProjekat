@@ -3,6 +3,7 @@ Vue.component("SelectedFishingAdventure", {
         return {
             activeUser:null,
             adventure: "",
+            photos: "",
             pricelistIdRemove: "",
             adventureIdRemove: "",
             userId:"",
@@ -11,7 +12,8 @@ Vue.component("SelectedFishingAdventure", {
             pricelist: "",
             newPricelistItem: {instructorsId: "", description: "", price: 50},
             removeItemObject: {itemId: "", instructorId: ""},
-            subscibedAdventures:[]
+            subscibedAdventures:[],
+            newPhoto:{photo: null, entityId: 0}
         }
     },
     template :`
@@ -19,7 +21,7 @@ Vue.component("SelectedFishingAdventure", {
     <div class="container-fluid" style="margin-top: 3%">
     <div class="row my-row" style="margin-top: 2%;">
     					<div class="col col-sm-4">
-                        <img src="images/fishing.jpg" class="d-block w-100" alt="...">
+                        <img :src="adventure.photo" class="entityPhoto" alt="...">
                       </div>
                       <div class="col col-sm-4">
                         <h1 style="color: #5cb85c;">{{adventure.name}}</h1>
@@ -55,14 +57,8 @@ Vue.component("SelectedFishingAdventure", {
      				  <div class="col col-sm-4">
                         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
 						  <div class="carousel-inner">
-						    <div class="carousel-item">
-						      <img src="images/fishing.jpg" class="item">
-						    </div>
-						    <div class="carousel-item active">
-						      <img src="images/fishing.jpg" class="item">
-						    </div>
-						    <div class="carousel-item">
-						      <img src="images/myinfo.png" class="item">
+						    <div v-for="p in photos" class="carousel-item">
+						      <img :src="adventure.photo" class="item" alt="...">
 						    </div>
 						  </div>
 						  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
@@ -74,10 +70,30 @@ Vue.component("SelectedFishingAdventure", {
 						    <span class="visually-hidden">Next</span>
 						  </button>
 						</div>
-                      </div>                 
+                      </div>       
      </div>
-	    
-</div>
+ 		<div class="row my-row">
+    					<div class="col col-sm-4">
+    					</div> 
+                     	<div class="col col-sm-4">
+                     	</div>
+                      	<div class="col col-sm-4">
+	                      	<div class="row my-row">
+		                      	<div class="col col-sm-6">
+		                      		<label class="input-group-text" for="inputGroupFile01">Dodavanje slike:</label>
+				                	<input id="uploadImage" v-if="activeUser != null && activeUser.role == 'fishing_instructor'" name="myPhoto" required @change=imageAddedNew type="file" accept="image/png, image/jpeg" class="form-control">
+		                      	</div>
+		                      	<div class="col col-sm-3">
+		                      		<button type="button" v-if="activeUser != null && activeUser.role == 'fishing_instructor'" style="margin-top: 15%" v-on:click="addPhoto()" class="btn btn-success">Dodaj sliku</button>
+		                      	</div>
+		                      	<div class="col col-sm-3">
+		                      		<button type="button" v-if="activeUser != null && activeUser.role == 'fishing_instructor'" style="margin-top: 15%" v-on:click="removePhoto()" class="btn btn-danger">Obriši sliku</button>
+		                      	</div>
+	                      	</div>
+                      	</div>   
+                      	</div>    
+	    				</div>
+
     <button v-if="activeUser != null && activeUser.role == 'client' && !exist()" type="submit" class="button" v-on:click="subscribe()">Pretplati se</button>
     <button v-if="activeUser != null && activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
 
@@ -259,6 +275,25 @@ Vue.component("SelectedFishingAdventure", {
            }
         },
         
+        imageAddedNew(e){
+            var files = e.target.files;
+			if(!files.length)
+				return;
+			
+				this.createImageNew(files[0]);
+        },
+        createImageNew(file){
+			var image = new Image();
+            var reader = new FileReader();
+			var vm = this;
+
+			reader.onload = (e) =>{
+				this.newPhoto.photo = e.target.result;
+
+			};
+			reader.readAsDataURL(file);
+        },
+        
         checkDate() {
         	var timeFrom = this.quickAppointment.timeFrom.split(":")[0]
         	var timeUntil = this.quickAppointment.timeUntil.split(":")[0]
@@ -281,6 +316,41 @@ Vue.component("SelectedFishingAdventure", {
               window.location.reload()
 
           })
+        },
+        
+        addPhoto(){
+        this.newPhoto.entityId = this.adventure.id;
+        if (this.newPhoto.photo != null){
+         	axios
+               .post('/fishingAdventures/addPhoto', this.newPhoto)
+               .then(response=>{
+                  this.photos = response.data
+                  console.log(this.photos)
+               })
+               .catch(error=>{
+                   console.log("Greska.")	
+                   alert("Podaci su lose uneti.")
+                   window.location.reload()
+               })
+           }
+           else {
+           	   Swal.fire({icon: 'error', title: 'Greška', text: 'Niste selektovali koju sliku zelite da dodate !'})
+           }
+        },
+        
+        removePhoto(){
+         	axios
+               .post('/fishingAdventure/removePhoto/' + this.adventure.id)
+               .then(response=>{
+                  this.photos = response.data
+                  console.log(this.photos)
+               })
+               .catch(error=>{
+                   console.log("Greska.")	
+                   alert("Podaci su lose uneti.")
+                   window.location.reload()
+               })
+
         },
         
         addPricelistItem(){
@@ -399,23 +469,31 @@ Vue.component("SelectedFishingAdventure", {
         if(this.activeUser != null) {
         axios.all([
                 axios.get("fishingAdventures/getSelectedAdventure/" + this.$route.query.id), 
+                axios.get("fishingAdventures/getAdventuresPhotos/" + this.$route.query.id),
                 axios.get("fishingAppointments/getQuickFishingAppointments/" + this.$route.query.id),
                 axios.get("pricelist/getInstructorsPricelist/" + this.activeUser.id),
                 axios.get('/subscribe/getAllSubscibedAdventures')]).then(axios.spread((...responses) => {
             this.adventure = responses[0].data
-            this.appointments = responses[1].data
-            this.pricelist = responses[2].data
-            this.subscibedAdventures = responses[3].data
+            this.photos = responses[1].data
+            console.log(this.photos)
+            this.appointments = responses[2].data
+            this.pricelist = responses[3].data
+            this.subscibedAdventures = responses[4].data
         }))
         }
         else{
         	axios.all([
                 axios.get("fishingAdventures/getSelectedAdventure/" + this.$route.query.id), 
+                axios.get("fishingAdventures/getAdventuresPhotos/" + this.$route.query.id),
                 axios.get("fishingAppointments/getQuickFishingAppointments/" + this.$route.query.id)]).then(axios.spread((...responses) => {
             this.adventure = responses[0].data
-            this.appointments = responses[1].data
+            this.photos = responses[1].data
+            console.log(this.photos)
+            this.appointments = responses[2].data
         }))
         }
     },
 
+	
 });
+

@@ -228,4 +228,9 @@ html{
     left: 0;
     min-height: 335px;
 	}
+	
+	.entityPhoto {
+    max-height: 300px;
+    max-width: 480px;
+	}
 

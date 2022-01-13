@@ -10,7 +10,7 @@ Vue.component("CurrentFishingAppointments", {
     template :`
     <div>
     <div class="container-fluid">
-    <h2 style="margin-top: 1%; margin-bottom: 2%; color:#5cb85c">Zakazane rezervacije</h2>
+    <h2 style="margin-top: 1%; margin-bottom: 2%; color:#5cb85c">Rezervacije u toku</h2>
     <table class="table">
         <thead>
         <tr>

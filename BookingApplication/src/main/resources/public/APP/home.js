@@ -95,7 +95,7 @@ template: `
                 <div class="row row-cols-1 row-cols-md-4 g-4">
                     <div class="col"  v-for = "a in adventures">
                         <div class="card" style="width: 93%">
-                            <img src="../images/fishing.jpg" width="300" height="220" class="card-img-top" alt="...">
+                            <img :src="a.photo" width="300" height="220" class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title">{{a.name}}</h5>
                             </div>

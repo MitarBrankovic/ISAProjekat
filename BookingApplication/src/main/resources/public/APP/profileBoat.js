@@ -29,7 +29,7 @@ Vue.component("ProfileBoat", {
 
     <br><br><hr>
 
-    <table class="table table-success table-striped table-sm table-bordered">
+    <table id="tabela" class="table table-success table-striped table-sm table-bordered">
         <thead>
         <tr>
             <td>Datum i vreme pocetka rezervacije</td>
@@ -81,9 +81,9 @@ Vue.component("ProfileBoat", {
                 .then(response=>{
                     num = response.data.cottageReports.length + response.data.boatReports.length + response.data.fishingReports.length;
                     if(num < 3)
-                        document.getElementById("scheduleButton").disabled = false
+                        $("#tabela").find("button").prop('disabled', false);
                     else
-                        document.getElementById("scheduleButton").disabled = true
+                        $("#tabela").find("button").prop('disabled', true);
                 })
                 .catch(error=>{
                     console.log("Greska.")	

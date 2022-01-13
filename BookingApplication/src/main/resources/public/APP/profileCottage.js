@@ -4,7 +4,7 @@ Vue.component("ProfileCottage", {
             activeUser: "",
             cottage : "",
 			appointments : [],
-            subscibedCottages:[]
+            subscibedCottages:[],
         }
     },
     template : ` 
@@ -23,7 +23,7 @@ Vue.component("ProfileCottage", {
 
     <br><br><hr>
     <div class="container-fluid">
-    <table class="table table-success table-striped table-sm table-bordered">
+    <table id="tabela" class="table table-success table-striped table-sm table-bordered">
         <thead>
         <tr>
             <td>Datum i vreme pocetka rezervacije</td>
@@ -75,10 +75,10 @@ Vue.component("ProfileCottage", {
                 .get('/reports/findAllReportsByClient/' + this.activeUser.id)
                 .then(response=>{
                     num = response.data.cottageReports.length + response.data.boatReports.length + response.data.fishingReports.length;
-                    if(num < 3)
-                        document.getElementById("scheduleButton").disabled = false
+                    if(num < 3)  
+                        $("#tabela").find("button").prop('disabled', false);
                     else
-                        document.getElementById("scheduleButton").disabled = true
+                        $("#tabela").find("button").prop('disabled', true);
                 })
                 .catch(error=>{
                     console.log("Greska.")	

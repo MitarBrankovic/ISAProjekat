@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +53,7 @@ import com.BookingApp.repository.UserRepository;
 
 @CrossOrigin
 @RestController
+@Controller
 @RequestMapping("/cottageAppointments")
 public class CottageAppointmentService {
 	@Autowired
@@ -64,6 +68,7 @@ public class CottageAppointmentService {
 	private BoatReportsRepository boatReportsRepository;
 	@Autowired
 	private CottageReportsRepository cottageReportsRepository;
+	@Autowired
 	private LoyaltyProgramRepository loyaltyRepository;
 	@Autowired
 	private UserRepository userRepository;
@@ -83,6 +88,7 @@ public class CottageAppointmentService {
 	}
 	
 	@PutMapping(path = "/scheduleCottageAppointment/{cottageId}/{userId}")
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean scheduleCottageAppointment(@PathVariable("cottageId") long id, @PathVariable("userId") long userId)
 	{
@@ -118,9 +124,9 @@ public class CottageAppointmentService {
 
 		if(oldAppointment.isPresent()) {
 			CottageAppointment appointment = oldAppointment.get();
+			removeLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
 			appointment.client = null;
 			cottageAppointmentRepository.save(appointment);
-			removeLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
 			return true;
 		}
 		return false;

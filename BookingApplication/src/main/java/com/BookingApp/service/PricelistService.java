@@ -48,7 +48,9 @@ public class PricelistService {
 	@PostMapping(path = "/deletePricelistItem")
     public Set<PricelistItem> deleteItem(@RequestBody PricelistItemRemoveDto itemDTO)
 	{	
+		System.out.println(pricelistRepository.findAll().size());
 		pricelistRepository.deleteById(itemDTO.itemId);
+		System.out.println(pricelistRepository.findAll().size());
 		return pricelistRepository.findAllItemsByInstructorsId(itemDTO.instructorId);
 	}
 }

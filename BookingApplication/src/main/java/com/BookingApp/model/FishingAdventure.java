@@ -1,9 +1,6 @@
 package com.BookingApp.model;
 
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,18 +9,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class FishingAdventure {
 	@Id
-	@SequenceGenerator(name = "fishingAdventureSeqGen", sequenceName = "fishingAdventureSeqGen", initialValue = 1, allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "fishingAdventureSeqGen")
+	@SequenceGenerator(name = "fishingadventureSeqGen", sequenceName = "fishingadventureSeqGen", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "fishingadventureSeqGen")
 	public long id;
 	@Column
 	public String name;
@@ -33,9 +30,8 @@ public class FishingAdventure {
 	public String city;
 	@Column
 	public String description;
-	@Lob
-	@Type(type = "org.hibernate.type.ImageType")
-	public byte[] photo;
+	@Column(length = 10000000)
+	public String photo;
 	@Column
 	public long maxAmountOfPeople;
 	@Column
@@ -48,6 +44,7 @@ public class FishingAdventure {
 	public double rating;
 	@Column
 	public long cancellingPrecentage;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(fetch = FetchType.EAGER)
 	public FishingInstructor fishingInstructor;
 	
@@ -56,7 +53,7 @@ public class FishingAdventure {
 	}
 	
 	public FishingAdventure(long id, String name, String address, String city, String description,
-			byte[] photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
+			String photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
 			long cancellingPrecentage) {
 		super();
 		this.id = id;
@@ -74,7 +71,7 @@ public class FishingAdventure {
 	}
 	
 	public FishingAdventure(String name, String address, String city, String description,
-			byte[] photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
+			String photo, long maxAmountOfPeople, String behaviourRules, String equipment, double pricePerHour, double rating,
 			long cancellingPrecentage) {
 		super();
 		this.name = name;

@@ -82,11 +82,14 @@ Vue.component("ProfileClient", {
             </div>
             <div class="col-md-2 razmak-card card">
                 <h2><span class="bi bi-star"></span>Broj bodova</h2>
-                <h3 style="text-align:center;">21</h3>
+                <h3 style="text-align:center;">{{activeUser.loyaltyPoints}}</h3>
             </div>
             <div class="col-md-2 razmak-card card">
                 <h2><span class="bi bi-person"></span>Status</h2>
-                <h3 style="text-align:center;">Obican</h3>
+                <h3 style="text-align:center;" v-if="activeUser.loyaltyStatus == 'regular'">Osnovni</h3>
+                <h3 style="text-align:center;" v-if="activeUser.loyaltyStatus == 'bronze'">Bronzani</h3>
+                <h3 style="text-align:center;" v-if="activeUser.loyaltyStatus == 'silver'">Srebrni</h3>
+                <h3 style="text-align:center;" v-if="activeUser.loyaltyStatus == 'gold'">Zlatni</h3>
             </div>
             <div class="col-md-2 razmak-card card">
                 <h2><span class="bi bi-people"></span><a style="color:black;" href="#/reportsOfClient">Penali</a></h2>

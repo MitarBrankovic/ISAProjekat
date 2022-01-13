@@ -10,6 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -23,6 +26,7 @@ public class FishingInstructor extends AppUser  {
 	@Column
 	public LocalDateTime availableUntil;
 	@JsonIgnore
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToMany
 	(mappedBy = "fishingInstructor", fetch = FetchType.EAGER, cascade= CascadeType.ALL)
 	public Set<FishingAdventure> fishingAdventures = new HashSet<FishingAdventure>();

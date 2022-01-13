@@ -7,14 +7,19 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 public class SubscribeAdventure {
 	@Id
 	@SequenceGenerator(name = "subsAdvSeqGen", sequenceName = "subsAdvSeqGen", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "subsAdvSeqGen")
 	public long id;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public FishingAdventure fishingAdventure;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public Client client;
 	

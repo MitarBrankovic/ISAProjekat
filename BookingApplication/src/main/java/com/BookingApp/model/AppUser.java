@@ -62,11 +62,15 @@ public class AppUser implements UserDetails{
 	public Boolean verified;
 	@OneToOne
     private Role roles;
+	@Column
+	public long loyaltyPoints;
+	@Enumerated(value = EnumType.STRING)
+	@Column
+	public LoyaltyStatus loyaltyStatus;
 	
 	public AppUser() {
 		super();
 	}
-
 	
 	public AppUser(long id, String name, String surname, String email, String password, String address, String city,
 			String country, String phoneNumber, UserType role, String verificationCode, Boolean firstLogin) {
@@ -83,6 +87,8 @@ public class AppUser implements UserDetails{
 		this.role = role;
 		this.verificationCode = verificationCode;
 		this.verified = firstLogin;
+		loyaltyPoints = 0;
+		loyaltyStatus = LoyaltyStatus.bronze;
 	}
 	
 	public AppUser(long id, String name, String surname, String email, String password, String address, String city,
@@ -117,7 +123,31 @@ public class AppUser implements UserDetails{
 		this.role = role;
 		this.verificationCode = verificationCode;
 		this.verified = firstLogin;
+		loyaltyPoints = 0;
+		loyaltyStatus = LoyaltyStatus.bronze;
 	}
+
+	public AppUser(long id, String name, String surname, String email, String password, String address, String city,
+			String country, String phoneNumber, UserType role, String verificationCode, Boolean verified,
+			long loyaltyPoints, LoyaltyStatus loyaltyStatus) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.surname = surname;
+		this.email = email;
+		this.password = password;
+		this.address = address;
+		this.city = city;
+		this.country = country;
+		this.phoneNumber = phoneNumber;
+		this.role = role;
+		this.verificationCode = verificationCode;
+		this.verified = verified;
+		this.loyaltyPoints = loyaltyPoints;
+		this.loyaltyStatus = loyaltyStatus;
+	}
+	
+	
 	
     public void setRoles(Role roles) {
         this.roles = roles;

@@ -71,7 +71,7 @@ Vue.component("FishingInstructorsAdventures", {
                 <div style="margin-top: 2%;" class="col-sm-12 my-col">
 	                  <div class="row">
 	                  <div class="col-sm-6" style="margin-left: -2.5%;">
-	                  <label class="input-group-text" for="inputGroupFile01">Izbor slike:</label>
+	                  <label class="input-group-text" for="inputGroupFile01">Dodavanje slike:</label>
 	                  <input id="uploadImage" name="myPhoto" required @change=imageAddedNew type="file" accept="image/png, image/jpeg" class="form-control">
 	                  </div>
 	                  </div>
@@ -156,8 +156,7 @@ Vue.component("FishingInstructorsAdventures", {
             <div class="row row-cols-1 row-cols-md-4 g-4">
               <div class="col" v-for="adventure in adventures">
                 <div class="card" style="width: 93%">
-                <!--<img :src="data:image/png;base64,{{adventure.photo.substring()}}" width = "100px" heigth = "200">-->
-                  <!--<img :src="_arrayBufferToBase64(adventure.photo)" height="220" class="card-img-top" alt="...">-->
+                  <img :src="adventure.photo" height="220" class="card-img-top" alt="...">
                   <div class="card-body">
                     <h5 class="card-title">{{ adventure.name }}</h5>
                   </div>
@@ -352,12 +351,17 @@ Vue.component("FishingInstructorsAdventures", {
         
         editSelectedAdventure() {
         	if (this.checkEditAdventure()){
-        	console.log(this.editAdventure)
-        		axios
-	               .post('/fishingAdventures/editAdventure', this.editAdventure)
-	               .then(response=>{
-	                  this.adventures = response.data
-	               })
+        		console.log(this.editAdventure.photo.length)
+        		if (this.editAdventure.photo.length < 1200000){
+	        		axios
+		               .post('/fishingAdventures/editAdventure', this.editAdventure)
+		               .then(response=>{
+		                  this.adventures = response.data
+		               })
+	            } 
+	            else {
+        		Swal.fire({icon: 'error', title: 'Greška', text: 'Slika je prevelika. Molimo Vas da odaberete sliku kapaciteta do 1MB!'})
+        		}
         	}
         	else {
         		Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li su validni maksimalni broj osoba (ceo broj > 0) i cena po satu (broj > 49)!'})

@@ -13,6 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 public class FishingAppointment {
 
@@ -41,8 +44,14 @@ public class FishingAppointment {
 	public String extraNotes;
 	@Column
 	public double price;
+	@Column
+	public double instructorProfit;
+	@Column
+	public double systemProfit;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(fetch = FetchType.EAGER)
 	public FishingAdventure fishingAdventure;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Client client;
 	
@@ -62,6 +71,8 @@ public class FishingAppointment {
 		this.rating = rating;
 		this.extraNotes = extraNotes;
 		this.price = price;
+		this.instructorProfit = price* 0.8;
+		this.systemProfit = price* 0.2;
 	}
 	
 	public FishingAppointment(LocalDateTime appointmentStart, String address, String city, long duration,
@@ -77,6 +88,8 @@ public class FishingAppointment {
 		this.rating = rating;
 		this.extraNotes = extraNotes;
 		this.price = price;
+		this.instructorProfit = price* 0.8;
+		this.systemProfit = price* 0.2;
 	}
 	
 	

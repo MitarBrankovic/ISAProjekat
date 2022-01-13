@@ -73,7 +73,8 @@ Vue.component("Navbar", {
 				<div v-if="(activeUser.role==='fishing_instructor')">
 					<a href="/#/fishingInstructorsAdventures">Avanture</a>
 					<a href="/#/profileFishingInstructor">Moj profil</a>
-					<a href="/#/historyOfFishingAppointments">Rezervacije</a>
+					<a href="/#/historyOfFishingAppointments">Sve rezervacije</a>
+					<a href="/#/currentFishingAppointments">Rezervacije u toku</a>
 				</div>
 				<div v-if="(activeUser.role==='cottage_owner')">
 					<a href="/#/profileCottageOwner">Moj profil</a>
@@ -105,6 +106,7 @@ Vue.component("Navbar", {
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin') && (activeUser.adminType ==='main')" href="#/addAdmin">Novi admin</a>
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/profileAdmin">Moj profil</a>
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/penaltyApproval">Penali</a>
+	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/loyaltyProgramAdmin">Loyalty</a>
 	<a v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')" href="#/fishingInstructorsReports">Izveštaji</a>
 	</nav>
     `       

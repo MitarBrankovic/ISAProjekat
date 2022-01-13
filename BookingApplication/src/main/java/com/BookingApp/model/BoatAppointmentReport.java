@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 public class BoatAppointmentReport {
 	@Id
@@ -22,9 +25,12 @@ public class BoatAppointmentReport {
 	@Column
 	public AppointmentRatingOptions ratingOption;
 	@OneToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	public AppUser client;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public AppUser owner;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public BoatAppointment appointment;
 	@Column

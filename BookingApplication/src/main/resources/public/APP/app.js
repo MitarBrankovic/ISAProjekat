@@ -36,6 +36,9 @@ const PenaltyApproval = {  template: '<PenaltyApproval></PenaltyApproval>' }
 const ProfileCottageOwner = { template: '<ProfileCottageOwner></ProfileCottageOwner>'}
 const CottageOwnerHome = {template : '<CottageOwnerHome></CottageOwnerHome>'}
 const ReportsOfClient = {  template: '<ReportsOfClient></ReportsOfClient>' }
+const LoyaltyProgramAdmin = {  template: '<LoyaltyProgramAdmin></LoyaltyProgramAdmin>' }
+const CurrentFishingAppointments = {  template: '<CurrentFishingAppointments></CurrentFishingAppointments>' }
+
 
 
 
@@ -80,6 +83,10 @@ const router = new VueRouter({
 		{ path: '/profileCottageOwner', component: ProfileCottageOwner },
 		{ path: '/cottageOwnerHome' , component : CottageOwnerHome},
         { path: '/reportsOfClient', component: ReportsOfClient },	
+		{ path: '/loyaltyProgramAdmin', component: LoyaltyProgramAdmin },
+        { path: '/currentFishingAppointments', component: CurrentFishingAppointments },
+
+		
 		
 
     ]

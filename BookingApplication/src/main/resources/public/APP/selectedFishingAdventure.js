@@ -80,7 +80,7 @@ Vue.component("SelectedFishingAdventure", {
                       	<div class="col col-sm-4">
 	                      	<div class="row my-row">
 		                      	<div class="col col-sm-6">
-		                      		<label class="input-group-text" for="inputGroupFile01">Dodavanje slike:</label>
+		                      		<label v-if="activeUser != null && activeUser.role == 'fishing_instructor'" class="input-group-text" for="inputGroupFile01">Dodavanje slike:</label>
 				                	<input id="uploadImage" v-if="activeUser != null && activeUser.role == 'fishing_instructor'" name="myPhoto" required @change=imageAddedNew type="file" accept="image/png, image/jpeg" class="form-control">
 		                      	</div>
 		                      	<div class="col col-sm-3">
@@ -118,7 +118,7 @@ Vue.component("SelectedFishingAdventure", {
             <td>{{appointment.maxAmountOfPeople}}</td>
             <td>{{appointment.extraNotes}}</td>
             <td>{{appointment.price}} din.</td>
-            <td v-if="activeUser != null && appointment.client==null && activeUser.role == 'client'" <button id="scheduleButton" v-if="checkUserandPenalties()" ><button type="button" class="btn btn-success" v-on:click="scheduleAppointment(appointment)">Zakazi</button> </td>
+            <td v-if="activeUser != null && appointment.client==null && activeUser.role == 'client'"><button id="scheduleButton" v-if="checkUserandPenalties()" type="button" class="btn btn-success" v-on:click="scheduleAppointment(appointment)">Zakazi</button></td>
             <td v-else-if="activeUser != null && appointment.client == null && activeUser.role == 'fishing_instructor'"><p style="color:green;">Slobodno</p></td>
             <td v-else-if="activeUser == null && appointment.client == null"><p style="color:green;">Slobodno</p></td>
             <td v-else><p style="color:red;">Zakazano</p> </td>
@@ -330,7 +330,7 @@ Vue.component("SelectedFishingAdventure", {
                   if(num < 3)
                         $("#tabela").find("button").prop('disabled', false);
                   else
-                        $("#tabela").find("button").prop('disabled', true);e
+                        $("#tabela").find("button").prop('disabled', true);
               })
               .catch(error=>{
                   console.log("Greska.")	

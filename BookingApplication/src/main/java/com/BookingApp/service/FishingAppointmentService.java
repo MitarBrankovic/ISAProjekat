@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,7 @@ import com.BookingApp.repository.FishingReportsRepository;
 import com.BookingApp.repository.LoyaltyProgramRepository;
 import com.BookingApp.repository.SubscribeAdvRepository;
 import com.BookingApp.repository.UserRepository;
+import com.BookingApp.service2.FishingAppointmentService2;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,9 +81,13 @@ public class FishingAppointmentService {
 	private BoatReportsRepository boatReportsRepository;
 	@Autowired
 	private CottageReportsRepository cottageReportsRepository;
+	@Autowired
 	private LoyaltyProgramRepository loyaltyRepository;
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private FishingAppointmentService2 fishingAppointmentService2;
 	
 
 	public ResponseEntity<List<FishingAppointment>> getAdventureQuickAppointments(long id)
@@ -166,8 +172,8 @@ public class FishingAppointmentService {
 											 appointmentDTO.extraNotes, appointmentDTO.price);
 			appointment.fishingAdventure = getAdventureById(appointmentDTO.adventureId);
 			appointment.client = clientRepository.findById(appointmentDTO.clientId).get();
-			appointment.price = calculateDiscountedPrice(appointment.price, appointment.client);
-			double ownerCut = getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
+			appointment.price = fishingAppointmentService2.calculateDiscountedPrice(appointment.price, appointment.client);
+			double ownerCut = fishingAppointmentService2.getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
 			appointment.instructorProfit = appointment.price*ownerCut/100;
 			appointment.systemProfit = appointment.price - appointment.instructorProfit;
 			fishingAppointmentRepository.save(appointment);
@@ -299,8 +305,9 @@ public class FishingAppointmentService {
 	}
 	
 	@PutMapping(path = "/scheduleAdventureAppointment/{adventureId}/{userId}")
+	@Transactional(readOnly = false)
 	@PreAuthorize("hasAuthority('CLIENT')") //jos neko sem klijenta?
-	public boolean scheduleAdventureAppointment(@PathVariable("adventureId") long id, @PathVariable("userId") long userId)
+	public boolean scheduleAdventureAppointment(@PathVariable("adventureId") long id, @PathVariable("userId") long userId) throws Exception
 	{
 		Optional<FishingAppointment> oldAppointment = fishingAppointmentRepository.findById(id);
 		Client client = new Client();
@@ -312,31 +319,24 @@ public class FishingAppointmentService {
 		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
 				fishingReportsRepository.findAllByClient(userId).size();
 	
+		if(oldAppointment.get().client !=null)
+			return false;
+		//Thread.sleep(5000);
+		
 		if(numOfPenalties < 3) {
 			if(oldAppointment.isPresent()) {
 				FishingAppointment appointment = oldAppointment.get();
 				appointment.client = client;
-				double ownerCut = getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
+				double ownerCut = fishingAppointmentService2.getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
 				appointment.instructorProfit = appointment.price*ownerCut/100;
 				appointment.systemProfit = appointment.price - appointment.instructorProfit;
 				fishingAppointmentRepository.save(appointment);
-				addLoyaltyPoints(client, appointment.fishingAdventure.fishingInstructor);
+				fishingAppointmentService2.addLoyaltyPoints(client, appointment.fishingAdventure.fishingInstructor);
 				return true;
 			}else return false;
 		}else return false;
 	}
 	
-	private double getOwnerProfit(FishingInstructor instructor) {
-		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
-		if (instructor.loyaltyStatus == LoyaltyStatus.regular)
-			return 80;
-		else if (instructor.loyaltyStatus == LoyaltyStatus.bronze)
-			return loyalty.bronzePrecentage;
-		else if (instructor.loyaltyStatus == LoyaltyStatus.silver)
-			return loyalty.silverPrecentage;
-		else
-			return loyalty.goldPrecentage;
-	}
 	
 	@PutMapping(path = "/cancelAdventureAppointment/{adventureId}")
 	@PreAuthorize("hasAuthority('CLIENT')")
@@ -352,83 +352,13 @@ public class FishingAppointmentService {
 			}else if(appointment.appointmentType == AppointmentType.regular) {
 				fishingAppointmentRepository.delete(appointment);
 			}
-			removeLoyaltyPoints(appointment.client, appointment.fishingAdventure.fishingInstructor);
+			fishingAppointmentService2.removeLoyaltyPoints(appointment.client, appointment.fishingAdventure.fishingInstructor);
 			return true;
 		}
 		return false;
 	}
 	
-	private double calculateDiscountedPrice(double price, Client client) {
-		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
-		if (client.loyaltyStatus == LoyaltyStatus.regular)
-			return price;
-		else if (client.loyaltyStatus == LoyaltyStatus.bronze)
-			return price*(100 - loyalty.bronzeDiscount)/100;
-		else if (client.loyaltyStatus == LoyaltyStatus.silver)
-			return price*(100 - loyalty.silverDiscount)/100;
-		else
-			return price*(100 - loyalty.goldDiscount)/100;
-	}
 	
-	private void addLoyaltyPoints(Client client, FishingInstructor instructor) {
-		List <AppUser> users = new ArrayList<AppUser>();
-		for(AppUser au: userRepository.findAll()) {
-			if (au.id == client.id) {
-				au.loyaltyPoints += calculateClientLoyalty(client);
-			}
-			else if (au.id == instructor.id) {
-				au.loyaltyPoints += calculateInstructorLoyalty(instructor);
-			}
-			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
-		users.add(au);
-		}
-		userRepository.saveAll(users);
-	}
-	
-	private void removeLoyaltyPoints(Client client, FishingInstructor instructor) {
-		List <AppUser> users = new ArrayList<AppUser>();
-		for(AppUser au: userRepository.findAll()) {
-			if (au.id == client.id) {
-				au.loyaltyPoints -= calculateClientLoyalty(client);
-			}
-			else if (au.id == instructor.id) {
-				au.loyaltyPoints -= calculateInstructorLoyalty(instructor);
-			}
-			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
-		users.add(au);
-		}
-		userRepository.saveAll(users);
-	}
-	
-	private double calculateClientLoyalty(Client client) {
-		if (client.loyaltyStatus == LoyaltyStatus.silver)
-			return loyaltyRepository.getLoyalty().silverClient;
-		else if (client.loyaltyStatus == LoyaltyStatus.gold)
-			return loyaltyRepository.getLoyalty().goldClient;
-		else
-			return loyaltyRepository.getLoyalty().bronzeClient;
-	}
-	
-	private double calculateInstructorLoyalty(FishingInstructor instructor) {
-		if (instructor.loyaltyStatus == LoyaltyStatus.silver)
-			return loyaltyRepository.getLoyalty().silverClient;
-		else if (instructor.loyaltyStatus == LoyaltyStatus.gold)
-			return loyaltyRepository.getLoyalty().goldClient;
-		else
-			return loyaltyRepository.getLoyalty().bronzeClient;
-	}
-	
-	private LoyaltyStatus updateLoyaltyStatus(double loyaltyPoints) {
-		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
-		if (loyaltyPoints < loyalty.bronzePoints)
-			return LoyaltyStatus.regular;
-		else if (loyaltyPoints < loyalty.silverPoints)
-			return LoyaltyStatus.bronze;
-		else if (loyaltyPoints < loyalty.goldPoints)
-			return LoyaltyStatus.silver;
-		else
-			return LoyaltyStatus.gold;
-	}
 	
 	@PostMapping(path = "/checkInstructorsAvailability")
     public boolean checkInstructorsAvailability(@RequestBody InstructorsAppointmentForClientDto appointmentDTO)
@@ -537,23 +467,9 @@ public class FishingAppointmentService {
 	
 	@PostMapping(path = "/reserveAdventure")
 	@PreAuthorize("hasAuthority('CLIENT')")
-	public boolean reserveAdventure(@RequestBody ReserveAdventureDto reserveAdventureDto)
+	public boolean reserveAdventure(@RequestBody ReserveAdventureDto reserveAdventureDto) throws Exception
 	{	
-		int numOfPenalties = cottageReportsRepository.findAllByClient(reserveAdventureDto.client.id).size() +  boatReportsRepository.findAllByClient(reserveAdventureDto.client.id).size() +
-				fishingReportsRepository.findAllByClient(reserveAdventureDto.client.id).size();
-	
-		if(numOfPenalties < 3) {
-			FishingAppointment appointment = new FishingAppointment(reserveAdventureDto.datePick.atStartOfDay().plusHours(reserveAdventureDto.time), reserveAdventureDto.fishingAdventure.address, reserveAdventureDto.fishingAdventure.city, 
-					 3, reserveAdventureDto.fishingAdventure.maxAmountOfPeople, AppointmentType.regular, false, 0,reserveAdventureDto.additionalPricingText, reserveAdventureDto.totalPrice);
-			appointment.client = reserveAdventureDto.client;
-			appointment.fishingAdventure = reserveAdventureDto.fishingAdventure;
-			double ownerCut = getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
-			appointment.instructorProfit = appointment.price*ownerCut/100;
-			appointment.systemProfit = appointment.price - appointment.instructorProfit;
-			fishingAppointmentRepository.save(appointment);
-			addLoyaltyPoints(appointment.client, appointment.fishingAdventure.fishingInstructor);
-			return true;
-		}else return false;
+		return fishingAppointmentService2.reserveAdventure(reserveAdventureDto);
 	}
 	
 	

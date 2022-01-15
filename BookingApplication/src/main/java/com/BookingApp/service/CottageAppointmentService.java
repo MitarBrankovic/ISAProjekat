@@ -50,6 +50,7 @@ import com.BookingApp.repository.CottageRepository;
 import com.BookingApp.repository.FishingReportsRepository;
 import com.BookingApp.repository.LoyaltyProgramRepository;
 import com.BookingApp.repository.UserRepository;
+import com.BookingApp.service2.CottageAppointmentService2;
 
 @CrossOrigin
 @RestController
@@ -72,6 +73,8 @@ public class CottageAppointmentService {
 	private LoyaltyProgramRepository loyaltyRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private CottageAppointmentService2 cottageAppointmentService2;
 	
 	@GetMapping(path = "/getAllQuickAppointments/{cottageId}")
 	public ResponseEntity<List<CottageAppointment>> getAllQuickAppointmentsForCottage(@PathVariable("cottageId") long id)
@@ -88,9 +91,9 @@ public class CottageAppointmentService {
 	}
 	
 	@PutMapping(path = "/scheduleCottageAppointment/{cottageId}/{userId}")
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	@Transactional(readOnly = false)
 	@PreAuthorize("hasAuthority('CLIENT')")
-	public boolean scheduleCottageAppointment(@PathVariable("cottageId") long id, @PathVariable("userId") long userId)
+	public boolean scheduleCottageAppointment(@PathVariable("cottageId") long id, @PathVariable("userId") long userId) throws Exception
 	{
 		Optional<CottageAppointment> oldAppointment = cottageAppointmentRepository.findById(id);
 		Client client = new Client();
@@ -102,18 +105,23 @@ public class CottageAppointmentService {
 		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
 					fishingReportsRepository.findAllByClient(userId).size();
 		
+		if(oldAppointment.get().client !=null)
+			return false;
+		//Thread.sleep(5000);
+		
 		if(numOfPenalties < 3) {
 			if(oldAppointment.isPresent()) {
 				CottageAppointment appointment = oldAppointment.get();
 				appointment.client = client;
-				double ownerCut = getOwnerProfit(appointment.cottage.cottageOwner);
+				double ownerCut = cottageAppointmentService2.getOwnerProfit(appointment.cottage.cottageOwner);
 				appointment.ownerProfit = appointment.price*ownerCut/100;
 				appointment.systemProfit = appointment.price - appointment.ownerProfit;
 				cottageAppointmentRepository.save(appointment);
-				addLoyaltyPoints(client, appointment.cottage.cottageOwner);
+				cottageAppointmentService2.addLoyaltyPoints(client, appointment.cottage.cottageOwner);
 				return true;
 			}else return false;
 		}else return false;
+		//return cottageAppointmentService2.scheduleIt(id, userId);
 	}
 	
 	@PutMapping(path = "/cancelCottageAppointment/{cottageId}")
@@ -124,7 +132,7 @@ public class CottageAppointmentService {
 
 		if(oldAppointment.isPresent()) {
 			CottageAppointment appointment = oldAppointment.get();
-			removeLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
+			cottageAppointmentService2.removeLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
 			appointment.client = null;
 			cottageAppointmentRepository.save(appointment);
 			return true;
@@ -132,77 +140,7 @@ public class CottageAppointmentService {
 		return false;
 	}
 	
-	private double getOwnerProfit(CottageOwner owner) {
-		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
-		if (owner.loyaltyStatus == LoyaltyStatus.regular)
-			return 80;
-		else if (owner.loyaltyStatus == LoyaltyStatus.bronze)
-			return loyalty.bronzePrecentage;
-		else if (owner.loyaltyStatus == LoyaltyStatus.silver)
-			return loyalty.silverPrecentage;
-		else
-			return loyalty.goldPrecentage;
-	}
-	
-	private void addLoyaltyPoints(Client client, CottageOwner owner) {
-		List <AppUser> users = new ArrayList<AppUser>();
-		for(AppUser au: userRepository.findAll()) {
-			if (au.id == client.id) {
-				au.loyaltyPoints += calculateClientLoyalty(client);
-			}
-			else if (au.id == owner.id) {
-				au.loyaltyPoints += calculateOwnerLoyalty(owner);
-			}
-			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
-		users.add(au);
-		}
-		userRepository.saveAll(users);
-	}
-	
-	private void removeLoyaltyPoints(Client client, CottageOwner owner) {
-		List <AppUser> users = new ArrayList<AppUser>();
-		for(AppUser au: userRepository.findAll()) {
-			if (au.id == client.id) {
-				au.loyaltyPoints -= calculateClientLoyalty(client);
-			}
-			else if (au.id == owner.id) {
-				au.loyaltyPoints -= calculateOwnerLoyalty(owner);
-			}
-			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
-		users.add(au);
-		}
-		userRepository.saveAll(users);
-	}
-	
-	private double calculateClientLoyalty(Client client) {
-		if (client.loyaltyStatus == LoyaltyStatus.silver)
-			return loyaltyRepository.getLoyalty().silverClient;
-		else if (client.loyaltyStatus == LoyaltyStatus.gold)
-			return loyaltyRepository.getLoyalty().goldClient;
-		else
-			return loyaltyRepository.getLoyalty().bronzeClient;
-	}
-	
-	private double calculateOwnerLoyalty(CottageOwner owner) {
-		if (owner.loyaltyStatus == LoyaltyStatus.silver)
-			return loyaltyRepository.getLoyalty().silverClient;
-		else if (owner.loyaltyStatus == LoyaltyStatus.gold)
-			return loyaltyRepository.getLoyalty().goldClient;
-		else
-			return loyaltyRepository.getLoyalty().bronzeClient;
-	}
-	
-	private LoyaltyStatus updateLoyaltyStatus(double loyaltyPoints) {
-		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
-		if (loyaltyPoints < loyalty.bronzePoints)
-			return LoyaltyStatus.regular;
-		else if (loyaltyPoints < loyalty.silverPoints)
-			return LoyaltyStatus.bronze;
-		else if (loyaltyPoints < loyalty.goldPoints)
-			return LoyaltyStatus.silver;
-		else
-			return LoyaltyStatus.gold;
-	}
+
 	
 	@GetMapping(path = "/getReservedCottAppointmentsByClient/{clientId}")
 	public ResponseEntity<List<ReservedCottageAppointmentDto>> getReservedCottAppointmentsByClient(@PathVariable("clientId") long id)
@@ -275,27 +213,15 @@ public class CottageAppointmentService {
 			if(!exist) {
 				cottages.add(cottage);
 			}	
-		}	
+		}
 		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
 	}
 	
 	@PostMapping(path = "/reserveCottage")
 	@PreAuthorize("hasAuthority('CLIENT')")
-	public boolean reserveCottage(@RequestBody ReserveCottageDto reserveCottageDto)
+	public boolean reserveCottage(@RequestBody ReserveCottageDto reserveCottageDto) throws Exception
 	{	
-		int numOfPenalties = cottageReportsRepository.findAllByClient(reserveCottageDto.client.id).size() +  boatReportsRepository.findAllByClient(reserveCottageDto.client.id).size() +
-				fishingReportsRepository.findAllByClient(reserveCottageDto.client.id).size();
-	
-		if(numOfPenalties < 3) {
-			CottageAppointment appointment = new CottageAppointment(reserveCottageDto.datePick.atStartOfDay().plusHours(reserveCottageDto.time), 24*reserveCottageDto.day, reserveCottageDto.cottage.maxAmountOfPeople,
-					AppointmentType.regular, reserveCottageDto.additionalPricingText, reserveCottageDto.totalPrice, reserveCottageDto.cottage, reserveCottageDto.client);
-			double ownerCut = getOwnerProfit(appointment.cottage.cottageOwner);
-			appointment.ownerProfit = appointment.price*ownerCut/100;
-			appointment.systemProfit = appointment.price - appointment.ownerProfit;
-			cottageAppointmentRepository.save(appointment);
-			addLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
-			return true;
-		}else return false;
+		return cottageAppointmentService2.reserveCottage(reserveCottageDto);
 	}
 	
 	

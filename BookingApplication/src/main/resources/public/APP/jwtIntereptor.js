@@ -1,4 +1,4 @@
-import axios from "axios";
+/*import axios from "axios";
 var jwt = require('jsonwebtoken');
 import App from "@/App";
 
@@ -22,4 +22,4 @@ export function isTokenExpired(token) {
     const exp = decoded.exp;
     const expired = (Date.now() >= exp * 1000)
     return expired
-}
+}*/

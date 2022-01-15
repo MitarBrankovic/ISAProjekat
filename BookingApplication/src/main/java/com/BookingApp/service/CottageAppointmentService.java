@@ -4,58 +4,37 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import javax.persistence.LockModeType;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import com.BookingApp.dto.DateReservationDto;
-import com.BookingApp.dto.ReserveAdventureDto;
 import com.BookingApp.dto.ReserveCottageDto;
-import com.BookingApp.dto.ReservedCottageAppointmentDto;
-import com.BookingApp.dto.SearchAppointmentDto;
-import com.BookingApp.dto.SearchDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
-import com.BookingApp.model.Boat;
 import com.BookingApp.model.Client;
 import com.BookingApp.model.Cottage;
 import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.CottageOwner;
-import com.BookingApp.model.FishingAdventure;
-import com.BookingApp.model.FishingAppointment;
-import com.BookingApp.model.FishingInstructor;
-import com.BookingApp.repository.BoatReportsRepository;
 import com.BookingApp.model.LoyaltyProgram;
 import com.BookingApp.model.LoyaltyStatus;
-import com.BookingApp.model.ShipOwner;
+import com.BookingApp.repository.BoatReportsRepository;
 import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.CottageAppointmentRepository;
-import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.CottageReportsRepository;
 import com.BookingApp.repository.CottageRepository;
 import com.BookingApp.repository.FishingReportsRepository;
 import com.BookingApp.repository.LoyaltyProgramRepository;
 import com.BookingApp.repository.UserRepository;
-import com.BookingApp.service2.CottageAppointmentService2;
 
-@CrossOrigin
-@RestController
-@Controller
-@RequestMapping("/cottageAppointments")
+@Service
+@Transactional(readOnly = true)
 public class CottageAppointmentService {
 	@Autowired
 	private CottageAppointmentRepository cottageAppointmentRepository;
@@ -73,289 +52,141 @@ public class CottageAppointmentService {
 	private LoyaltyProgramRepository loyaltyRepository;
 	@Autowired
 	private UserRepository userRepository;
-	@Autowired
-	private CottageAppointmentService2 cottageAppointmentService2;
 	
-	@GetMapping(path = "/getAllQuickAppointments/{cottageId}")
-	public ResponseEntity<List<CottageAppointment>> getAllQuickAppointmentsForCottage(@PathVariable("cottageId") long id)
-	{	
-		List<CottageAppointment> appointments = new ArrayList<CottageAppointment>();
-		for(CottageAppointment ca : cottageAppointmentRepository.findAll())
-		{
-			if(ca.cottage.id == id && ca.appointmentStart.isAfter(LocalDateTime.now()) && 
-					 ca.appointmentType == AppointmentType.quick) {
-				appointments.add(ca);
-			}
-		}
-		return new ResponseEntity<List<CottageAppointment>>(appointments,HttpStatus.OK);
-	}
 	
-	@PutMapping(path = "/scheduleCottageAppointment/{cottageId}/{userId}")
-	@PreAuthorize("hasAuthority('CLIENT')")
-	public boolean scheduleCottageAppointment(@PathVariable("cottageId") long id, @PathVariable("userId") long userId) throws Exception
-	{
-		return cottageAppointmentService2.scheduleIt(id, userId);
-	}
-	
-	@PutMapping(path = "/cancelCottageAppointment/{cottageId}")
-	@PreAuthorize("hasAuthority('CLIENT')")
-	public boolean cancelCottageAppointment(@PathVariable("cottageId") long id)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public boolean scheduleIt(long id, long userId) throws InterruptedException
 	{
 		Optional<CottageAppointment> oldAppointment = cottageAppointmentRepository.findById(id);
-
-		if(oldAppointment.isPresent()) {
-			CottageAppointment appointment = oldAppointment.get();
-			cottageAppointmentService2.removeLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
-			appointment.client = null;
-			cottageAppointmentRepository.save(appointment);
-			return true;
-		}
-		return false;
-	}
-	
-
-	
-	@GetMapping(path = "/getReservedCottAppointmentsByClient/{clientId}")
-	public ResponseEntity<List<ReservedCottageAppointmentDto>> getReservedCottAppointmentsByClient(@PathVariable("clientId") long id)
-	{	
-		List<ReservedCottageAppointmentDto> dtos = new ArrayList<ReservedCottageAppointmentDto>();
-		for(CottageAppointment cottageAppointment : cottageAppointmentRepository.findAll())
-		{
-			if(cottageAppointment.client != null && cottageAppointment.client.id == id && cottageAppointment.appointmentStart.isAfter(LocalDateTime.now())) {
-				ReservedCottageAppointmentDto dto = new ReservedCottageAppointmentDto();
-				dto.appointment = cottageAppointment;
-				dto.end = dto.appointment.appointmentStart.plusHours(dto.appointment.duration);
-				if(LocalDateTime.now().isBefore(cottageAppointment.appointmentStart.minusDays(3)))
-					dto.dateIsCorrect = true;
-				else
-					dto.dateIsCorrect = false;
-					
-				dtos.add(dto);
+		Client client = new Client();
+		for(Client oldClient : clientRepository.findAll()) {
+			if(oldClient.id == userId) {
+				client = oldClient;
 			}
 		}
-		return new ResponseEntity<List<ReservedCottageAppointmentDto>>(dtos,HttpStatus.OK);
-	}
-	
-	@GetMapping(path = "/getAllCottAppointmentsByClient/{clientId}")
-	public ResponseEntity<List<CottageAppointment>> getAllCottAppointmentsByClient(@PathVariable("clientId") long id)
-	{	
-		List<CottageAppointment> appointments = cottageAppointmentRepository.findAllAppointmentsByClient(id);
-
-		return new ResponseEntity<List<CottageAppointment>>(appointments,HttpStatus.OK);
-	}
-	
-	
-	@GetMapping(path = "/getFinishedCottagesByClient/{clientId}")
-	public ResponseEntity<List<Cottage>> getFinishedCottAppointmentsByClient(@PathVariable("clientId") long id)
-	{	
-		List<CottageAppointment> appointments = new ArrayList<CottageAppointment>();
-		List<Cottage> cottages = new ArrayList<Cottage>();
-		for(CottageAppointment cottageAppointment : cottageAppointmentRepository.findAll())
-		{
-			if(cottageAppointment.client != null && cottageAppointment.client.id == id && cottageAppointment.appointmentStart.isBefore(LocalDateTime.now())) {
-				appointments.add(cottageAppointment);
-				cottages.add(cottageAppointment.cottage);
-			}
-		}
-		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
-	}
-	
-	@PostMapping(path = "/getAllFreeCottages")
-	public ResponseEntity<List<Cottage>> getAllFreeCottages(@RequestBody DateReservationDto dateReservationDto)
-	{	
-		LocalDateTime datePick = dateReservationDto.datePick.atStartOfDay().plusHours(dateReservationDto.time);
+		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
+					fishingReportsRepository.findAllByClient(userId).size();
 		
-		boolean exist;
-		List<Cottage> cottages = new ArrayList<Cottage>();
-		for(Cottage cottage: cottageRepository.findAll()) {
-			exist = false;
+		if(oldAppointment.get().client !=null)
+			return false;
+		
+		//Thread.sleep(5000);
+		
+		if(numOfPenalties < 3) {
+			if(oldAppointment.isPresent()) {
+				CottageAppointment appointment = oldAppointment.get();
+				appointment.client = client;
+				cottageAppointmentRepository.save(appointment);
+				return true;
+			}else return false;
+		}else return false;
+	}
+    
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public boolean reserveCottage(ReserveCottageDto reserveCottageDto) throws Exception
+	{	
+		int numOfPenalties = cottageReportsRepository.findAllByClient(reserveCottageDto.client.id).size() +  boatReportsRepository.findAllByClient(reserveCottageDto.client.id).size() +
+				fishingReportsRepository.findAllByClient(reserveCottageDto.client.id).size();
+	
+		if(numOfPenalties < 3) {
+			Cottage cot = cottageRepository.findByIdPess(reserveCottageDto.cottage.id);
+			CottageAppointment appointment = new CottageAppointment(reserveCottageDto.datePick.atStartOfDay().plusHours(reserveCottageDto.time), 24*reserveCottageDto.day, reserveCottageDto.cottage.maxAmountOfPeople,
+					AppointmentType.regular, reserveCottageDto.additionalPricingText, reserveCottageDto.totalPrice, cot, reserveCottageDto.client);
+			
 			for(CottageAppointment cottageAppointment : cottageAppointmentRepository.findAll()) {
 				LocalDateTime start = cottageAppointment.appointmentStart;
 				LocalDateTime end = cottageAppointment.appointmentStart.plusHours(cottageAppointment.duration);
-				LocalDateTime datePickEnd = datePick.plusDays(dateReservationDto.day);
+				LocalDateTime datePick = appointment.appointmentStart;
+				LocalDateTime datePickEnd = datePick.plusHours(appointment.duration);
 				if( ((((datePick.isAfter(start) && datePick.isBefore(end)) || datePick.isEqual(start) || datePick.isEqual(end))	
 						|| ((datePickEnd.isAfter(start) && datePickEnd.isBefore(end)) || datePickEnd.isEqual(start) || datePickEnd.isEqual(end))
 						|| (start.isAfter(datePick) && start.isBefore(datePickEnd))
 						|| (end.isAfter(datePick) && end.isBefore(datePickEnd)))
-						&& cottage.id == cottageAppointment.cottage.id)
-						|| cottage.maxAmountOfPeople <= dateReservationDto.num) {
-					exist = true;
-					break;
+						&& appointment.cottage.id == cottageAppointment.cottage.id)) {
+					return false;
 				}				
 			}
-			if(!exist) {
-				cottages.add(cottage);
-			}	
-		}
-		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
-	}
-	
-	@PostMapping(path = "/reserveCottage")
-	@PreAuthorize("hasAuthority('CLIENT')")
-	public boolean reserveCottage(@RequestBody ReserveCottageDto reserveCottageDto) throws Exception
-	{	
-		return cottageAppointmentService2.reserveCottage(reserveCottageDto);
-	}
-	
-	
-	@PostMapping(path = "/searchCottAppointments")
-	public ResponseEntity<List<CottageAppointment>> searchCottAppointments(@RequestBody SearchAppointmentDto dto)
-	{
-		String name = dto.name;
-		String owner = dto.owner;
-	    boolean nameAsc = dto.nameAsc;
-	    boolean nameDesc = dto.nameAsc;
-	    boolean dateAsc = dto.dateAsc;
-	    boolean dateDesc = dto.dateDesc;
-	    boolean durationAsc = dto.durationAsc;
-	    boolean durationDesc = dto.durationDesc;
-	    boolean priceAsc = dto.priceAsc;
-	    boolean priceDesc = dto.priceDesc;
-	    long userId = dto.activeUserId;
-		
-
-		List<CottageAppointment> appointments = cottageAppointmentRepository.findAllAppointmentsByClient(userId);
-
-		if (name.equals("") && owner.equals(""))
-			appointments = cottageAppointmentRepository.findAllAppointmentsByClient(userId);
-		
-		if (!name.equals("")) {
-			appointments =  appointments.stream().filter(m -> m.cottage.name.toLowerCase().contains(name.toLowerCase()))
-					.collect(Collectors.toList()); }
-		
-		if (!owner.equals("")) {
-			appointments =  appointments.stream().filter(m -> (m.cottage.cottageOwner.name + " " + m.cottage.cottageOwner.surname).toLowerCase().contains(owner.toLowerCase()))
-					.collect(Collectors.toList()); }
 			
-		if (nameAsc) {
-			int n = appointments.size();
-			CottageAppointment temp = null;
-			for (int i = 0; i < n; i++) {
-				for (int j = 1; j < (n - i); j++) {
-					if (appointments.get(j - 1).cottage.name
-							.compareTo(appointments.get(j).cottage.name) > 0) {
-						// swap elements
-						temp = appointments.get(j - 1);
-						appointments.set(j - 1, appointments.get(j));
-						appointments.set(j, temp);
-					}
+			//Thread.sleep(5000);
 
-				}
+			double ownerCut = getOwnerProfit(appointment.cottage.cottageOwner);
+			appointment.ownerProfit = appointment.price*ownerCut/100;
+			appointment.systemProfit = appointment.price - appointment.ownerProfit;
+			cottageAppointmentRepository.save(appointment);
+			addLoyaltyPoints(appointment.client, appointment.cottage.cottageOwner);
+			return true;
+		}else return false;
+	}
+    
+    public double getOwnerProfit(CottageOwner owner) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (owner.loyaltyStatus == LoyaltyStatus.regular)
+			return 80;
+		else if (owner.loyaltyStatus == LoyaltyStatus.bronze)
+			return loyalty.bronzePrecentage;
+		else if (owner.loyaltyStatus == LoyaltyStatus.silver)
+			return loyalty.silverPrecentage;
+		else
+			return loyalty.goldPrecentage;
+	}
+	
+    public void addLoyaltyPoints(Client client, CottageOwner owner) {
+		List <AppUser> users = new ArrayList<AppUser>();
+		for(AppUser au: userRepository.findAll()) {
+			if (au.id == client.id) {
+				au.loyaltyPoints += calculateClientLoyalty(client);
 			}
+			else if (au.id == owner.id) {
+				au.loyaltyPoints += calculateOwnerLoyalty(owner);
+			}
+			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
+		users.add(au);
 		}
-		
-		
-		if (nameDesc) {
-			int n = appointments.size();
-			CottageAppointment temp = null;
-			for (int i = 0; i < n; i++) {
-				for (int j = 1; j < (n - i); j++) {
-					if (appointments.get(j - 1).cottage.name
-							.compareTo(appointments.get(j).cottage.name) < 0) {
-						// swap elements
-						temp = appointments.get(j - 1);
-						appointments.set(j - 1, appointments.get(j));
-						appointments.set(j, temp);
-					}
-
-				}
+		userRepository.saveAll(users);
+	}
+	
+    public void removeLoyaltyPoints(Client client, CottageOwner owner) {
+		List <AppUser> users = new ArrayList<AppUser>();
+		for(AppUser au: userRepository.findAll()) {
+			if (au.id == client.id) {
+				au.loyaltyPoints -= calculateClientLoyalty(client);
 			}
+			else if (au.id == owner.id) {
+				au.loyaltyPoints -= calculateOwnerLoyalty(owner);
+			}
+			au.loyaltyStatus = updateLoyaltyStatus(au.loyaltyPoints);
+		users.add(au);
 		}
-
-		if (dateAsc) {
-			int n = appointments.size();
-			CottageAppointment temp = null;
-			for (int i = 0; i < n; i++) {
-				for (int j = 1; j < (n - i); j++) {
-					if (appointments.get(j - 1).appointmentStart.isAfter(appointments.get(j).appointmentStart)) {
-						// swap elements
-						temp = appointments.get(j - 1);
-						appointments.set(j - 1, appointments.get(j));
-						appointments.set(j, temp);
-					}
-
-				}
-			}
-		}
-		if (dateDesc) {
-			int n = appointments.size();
-			CottageAppointment temp = null;
-			for (int i = 0; i < n; i++) {
-				for (int j = 1; j < (n - i); j++) {
-					if (appointments.get(j - 1).appointmentStart.isBefore(appointments.get(j).appointmentStart)) {
-						// swap elements
-						temp = appointments.get(j - 1);
-						appointments.set(j - 1, appointments.get(j));
-						appointments.set(j, temp);
-					}
-
-				}
-			}
-		}
-		
-		if (durationAsc) {
-			int n = appointments.size();
-			CottageAppointment temp = null;
-			for (int i = 0; i < n; i++) {
-				for (int j = 1; j < (n - i); j++) {
-					if (appointments.get(j - 1).duration > appointments.get(j).duration) {
-						// swap elements
-						temp = appointments.get(j - 1);
-						appointments.set(j - 1, appointments.get(j));
-						appointments.set(j, temp);
-					}
-
-				}
-			}
-		}			
-		if (durationDesc) {
-			int n = appointments.size();
-			CottageAppointment temp = null;
-			for (int i = 0; i < n; i++) {
-				for (int j = 1; j < (n - i); j++) {
-					if (appointments.get(j - 1).duration < appointments.get(j).duration) {
-						// swap elements
-						temp = appointments.get(j - 1);
-						appointments.set(j - 1, appointments.get(j));
-						appointments.set(j, temp);
-					}
-
-				}
-			}
-		}
-		
-		
-		if (priceAsc) {
-			int n = appointments.size();
-			CottageAppointment temp = null;
-			for (int i = 0; i < n; i++) {
-				for (int j = 1; j < (n - i); j++) {
-					if (appointments.get(j - 1).price > appointments.get(j).price) {
-						// swap elements
-						temp = appointments.get(j - 1);
-						appointments.set(j - 1, appointments.get(j));
-						appointments.set(j, temp);
-					}
-
-				}
-			}
-		}			
-		if (priceDesc) {
-			int n = appointments.size();
-			CottageAppointment temp = null;
-			for (int i = 0; i < n; i++) {
-				for (int j = 1; j < (n - i); j++) {
-					if (appointments.get(j - 1).price < appointments.get(j).price) {
-						// swap elements
-						temp = appointments.get(j - 1);
-						appointments.set(j - 1, appointments.get(j));
-						appointments.set(j, temp);
-					}
-
-				}
-			}
-		}
-		
-		return new ResponseEntity<List<CottageAppointment>>(appointments,HttpStatus.OK);
+		userRepository.saveAll(users);
+	}
+	
+    public double calculateClientLoyalty(Client client) {
+		if (client.loyaltyStatus == LoyaltyStatus.silver)
+			return loyaltyRepository.getLoyalty().silverClient;
+		else if (client.loyaltyStatus == LoyaltyStatus.gold)
+			return loyaltyRepository.getLoyalty().goldClient;
+		else
+			return loyaltyRepository.getLoyalty().bronzeClient;
+	}
+	
+    public double calculateOwnerLoyalty(CottageOwner owner) {
+		if (owner.loyaltyStatus == LoyaltyStatus.silver)
+			return loyaltyRepository.getLoyalty().silverClient;
+		else if (owner.loyaltyStatus == LoyaltyStatus.gold)
+			return loyaltyRepository.getLoyalty().goldClient;
+		else
+			return loyaltyRepository.getLoyalty().bronzeClient;
+	}
+	
+    public LoyaltyStatus updateLoyaltyStatus(double loyaltyPoints) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (loyaltyPoints < loyalty.bronzePoints)
+			return LoyaltyStatus.regular;
+		else if (loyaltyPoints < loyalty.silverPoints)
+			return LoyaltyStatus.bronze;
+		else if (loyaltyPoints < loyalty.goldPoints)
+			return LoyaltyStatus.silver;
+		else
+			return LoyaltyStatus.gold;
 	}
 }

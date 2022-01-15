@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import java.util.Optional;
 
@@ -22,7 +22,7 @@ import com.BookingApp.repository.UserRepository;
 @CrossOrigin
 @RestController
 @RequestMapping("/client")
-public class ClientService {
+public class ClientController {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired

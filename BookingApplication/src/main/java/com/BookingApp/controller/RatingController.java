@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,7 +43,7 @@ import com.BookingApp.repository.UserRepository;
 @CrossOrigin
 @RestController
 @RequestMapping("/rating")
-public class RatingService {
+public class RatingController {
 
 	@Autowired
 	RatingCottageRepository ratingCottageRepository;

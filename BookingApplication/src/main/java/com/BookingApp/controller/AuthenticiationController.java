@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import javax.servlet.http.HttpServletResponse;
 

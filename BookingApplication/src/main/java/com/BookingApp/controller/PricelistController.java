@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import java.util.Set;
 
@@ -21,7 +21,7 @@ import com.BookingApp.repository.UserRepository;
 @CrossOrigin
 @RestController
 @RequestMapping("/pricelist")
-public class PricelistService {
+public class PricelistController {
 
 	@Autowired
 	private PricelistRepository pricelistRepository;

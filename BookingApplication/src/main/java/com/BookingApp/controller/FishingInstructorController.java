@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import java.util.List;
 import java.util.Set;
@@ -19,7 +19,7 @@ import com.BookingApp.repository.FishingInstructorRepository;
 @CrossOrigin
 @RestController
 @RequestMapping("/fishingInstructor")
-public class FishingInstructorService {
+public class FishingInstructorController {
 
 	@Autowired
 	private FishingInstructorRepository fishingInstructorRepository;

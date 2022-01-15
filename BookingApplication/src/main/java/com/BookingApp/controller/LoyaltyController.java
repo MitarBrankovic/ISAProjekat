@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -19,7 +19,7 @@ import com.BookingApp.repository.LoyaltyProgramRepository;
 
 @RestController
 @RequestMapping("/loyalty")
-public class LoyaltyService {
+public class LoyaltyController {
 
 	@Autowired
 	private LoyaltyProgramRepository loyaltyProgramRepository;

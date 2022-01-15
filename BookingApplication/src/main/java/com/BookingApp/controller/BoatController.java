@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +26,7 @@ import com.BookingApp.repository.BoatRepository;
 @CrossOrigin
 @RestController
 @RequestMapping("/boats")
-public class BoatService {
+public class BoatController {
 
 		@Autowired
 		private BoatRepository boatRepository;

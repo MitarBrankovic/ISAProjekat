@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +25,7 @@ import com.BookingApp.repository.SubscribeCottageRepository;
 @CrossOrigin
 @RestController
 @RequestMapping("/subscribe")
-public class SubscribeService {
+public class SubscribeController {
 	
 	@Autowired
 	private SubscribeCottageRepository subscribeCottageRepository;

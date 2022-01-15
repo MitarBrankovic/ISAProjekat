@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -36,7 +36,7 @@ import com.BookingApp.util.TokenUtils;
 @CrossOrigin
 @RestController
 @RequestMapping("/registration")
-public class RegistrationService {
+public class RegistrationController {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired

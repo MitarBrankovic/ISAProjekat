@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import com.BookingApp.auth.RestAuthenticationEntryPoint;
 import com.BookingApp.auth.TokenAuthenticationFilter;
-import com.BookingApp.service2.CustomUserDetailsService;
+import com.BookingApp.service.CustomUserDetailsService;
 import com.BookingApp.util.TokenUtils;
 
 

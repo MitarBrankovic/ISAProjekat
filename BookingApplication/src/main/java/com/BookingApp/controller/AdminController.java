@@ -1,4 +1,4 @@
-package com.BookingApp.service;
+package com.BookingApp.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ import com.BookingApp.repository.UserRepository;
 @CrossOrigin
 @RestController
 @RequestMapping("/admin")
-public class AdminService {
+public class AdminController {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired

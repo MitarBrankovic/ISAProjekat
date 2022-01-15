@@ -3,12 +3,14 @@ package com.BookingApp.service2;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.BookingApp.dto.ReserveAdventureDto;
@@ -56,6 +58,38 @@ public class FishingAppointmentService2 {
 	@Autowired
 	private UserRepository userRepository;
 	
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public boolean scheduleAdventureAppointment(long id, long userId) throws Exception
+	{
+		Optional<FishingAppointment> oldAppointment = fishingAppointmentRepository.findById(id);
+		Client client = new Client();
+		for(Client oldClient : clientRepository.findAll()) {
+			if(oldClient.id == userId) {
+				client = oldClient;
+			}
+		}
+		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
+				fishingReportsRepository.findAllByClient(userId).size();
+	
+		if(oldAppointment.get().client !=null)
+			return false;
+		//Thread.sleep(5000);
+		
+		if(numOfPenalties < 3) {
+			if(oldAppointment.isPresent()) {
+				FishingAppointment appointment = oldAppointment.get();
+				appointment.client = client;
+				double ownerCut = getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
+				appointment.instructorProfit = appointment.price*ownerCut/100;
+				appointment.systemProfit = appointment.price - appointment.instructorProfit;
+				fishingAppointmentRepository.save(appointment);
+				addLoyaltyPoints(client, appointment.fishingAdventure.fishingInstructor);
+				return true;
+			}else return false;
+		}else return false;
+	}
+	
+	
 	
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public boolean reserveAdventure(ReserveAdventureDto reserveAdventureDto) throws Exception
@@ -85,7 +119,7 @@ public class FishingAppointmentService2 {
 				}				
 			}
 			
-			Thread.sleep(5000);
+			//Thread.sleep(5000);
 			
 			
 			double ownerCut = getOwnerProfit(appointment.fishingAdventure.fishingInstructor);

@@ -3,11 +3,13 @@ package com.BookingApp.service2;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.BookingApp.dto.ReserveBoatDto;
@@ -51,6 +53,39 @@ public class BoatAppointmentService2 {
 	
 	
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public boolean scheduleBoatAppointment(long id, long userId) throws Exception
+	{
+		Optional<BoatAppointment> oldAppointment = boatAppointmentRepository.findById(id);
+		Client client = new Client();
+		for(Client oldClient : clientRepository.findAll()) {
+			if(oldClient.id == userId) {
+				client = oldClient;
+			}
+		}
+		if(oldAppointment.get().client !=null)
+			return false;
+		
+		//Thread.sleep(5000);
+		
+		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
+				fishingReportsRepository.findAllByClient(userId).size();
+	
+		if(numOfPenalties < 3) {
+			if(oldAppointment.isPresent()) {
+				BoatAppointment appointment = oldAppointment.get();
+				appointment.client = client;
+				double ownerCut = getOwnerProfit(appointment.boat.shipOwner);
+				appointment.ownerProfit = appointment.price*ownerCut/100;
+				appointment.systemProfit = appointment.price - appointment.ownerProfit;
+				boatAppointmentRepository.save(appointment);
+				addLoyaltyPoints(client, appointment.boat.shipOwner);
+				return true;
+			}else return false;
+		}else return false;
+	}
+	
+	
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public boolean reserveBoat(@RequestBody ReserveBoatDto reserveBoatDto) throws Exception
 	{	
 		int numOfPenalties = cottageReportsRepository.findAllByClient(reserveBoatDto.client.id).size() +  boatReportsRepository.findAllByClient(reserveBoatDto.client.id).size() +
@@ -74,7 +109,7 @@ public class BoatAppointmentService2 {
 					return false;
 				}				
 			}
-			Thread.sleep(5000);
+			//Thread.sleep(5000);
 			
 			double ownerCut = getOwnerProfit(appointment.boat.shipOwner);
 			appointment.ownerProfit = appointment.price*ownerCut/100;

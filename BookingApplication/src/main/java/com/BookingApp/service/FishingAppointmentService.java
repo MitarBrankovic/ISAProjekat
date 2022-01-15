@@ -305,36 +305,10 @@ public class FishingAppointmentService {
 	}
 	
 	@PutMapping(path = "/scheduleAdventureAppointment/{adventureId}/{userId}")
-	@Transactional(readOnly = false)
-	@PreAuthorize("hasAuthority('CLIENT')") //jos neko sem klijenta?
+	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean scheduleAdventureAppointment(@PathVariable("adventureId") long id, @PathVariable("userId") long userId) throws Exception
 	{
-		Optional<FishingAppointment> oldAppointment = fishingAppointmentRepository.findById(id);
-		Client client = new Client();
-		for(Client oldClient : clientRepository.findAll()) {
-			if(oldClient.id == userId) {
-				client = oldClient;
-			}
-		}
-		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
-				fishingReportsRepository.findAllByClient(userId).size();
-	
-		if(oldAppointment.get().client !=null)
-			return false;
-		//Thread.sleep(5000);
-		
-		if(numOfPenalties < 3) {
-			if(oldAppointment.isPresent()) {
-				FishingAppointment appointment = oldAppointment.get();
-				appointment.client = client;
-				double ownerCut = fishingAppointmentService2.getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
-				appointment.instructorProfit = appointment.price*ownerCut/100;
-				appointment.systemProfit = appointment.price - appointment.instructorProfit;
-				fishingAppointmentRepository.save(appointment);
-				fishingAppointmentService2.addLoyaltyPoints(client, appointment.fishingAdventure.fishingInstructor);
-				return true;
-			}else return false;
-		}else return false;
+		return fishingAppointmentService2.scheduleAdventureAppointment(id, userId);
 	}
 	
 	

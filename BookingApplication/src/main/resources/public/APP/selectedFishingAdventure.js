@@ -314,10 +314,14 @@ Vue.component("SelectedFishingAdventure", {
               window.location.reload()
           })
           .catch(error=>{
-              console.log("Greska.")	
+              //console.log("Greska.")	
               alert("Podaci su lose uneti.")
-              //window.location.reload()
-
+              Swal.fire({
+                icon: 'error',
+                title: 'Greska...',
+                text: 'Neko je vec zakazao termin!',
+              })
+            setTimeout(location.reload.bind(location), 2000);
           })
         },
         checkUserandPenalties(){

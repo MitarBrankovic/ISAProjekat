@@ -91,37 +91,10 @@ public class CottageAppointmentService {
 	}
 	
 	@PutMapping(path = "/scheduleCottageAppointment/{cottageId}/{userId}")
-	@Transactional(readOnly = false)
 	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean scheduleCottageAppointment(@PathVariable("cottageId") long id, @PathVariable("userId") long userId) throws Exception
 	{
-		Optional<CottageAppointment> oldAppointment = cottageAppointmentRepository.findById(id);
-		Client client = new Client();
-		for(Client oldClient : clientRepository.findAll()) {
-			if(oldClient.id == userId) {
-				client = oldClient;
-			}
-		}
-		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
-					fishingReportsRepository.findAllByClient(userId).size();
-		
-		if(oldAppointment.get().client !=null)
-			return false;
-		//Thread.sleep(5000);
-		
-		if(numOfPenalties < 3) {
-			if(oldAppointment.isPresent()) {
-				CottageAppointment appointment = oldAppointment.get();
-				appointment.client = client;
-				double ownerCut = cottageAppointmentService2.getOwnerProfit(appointment.cottage.cottageOwner);
-				appointment.ownerProfit = appointment.price*ownerCut/100;
-				appointment.systemProfit = appointment.price - appointment.ownerProfit;
-				cottageAppointmentRepository.save(appointment);
-				cottageAppointmentService2.addLoyaltyPoints(client, appointment.cottage.cottageOwner);
-				return true;
-			}else return false;
-		}else return false;
-		//return cottageAppointmentService2.scheduleIt(id, userId);
+		return cottageAppointmentService2.scheduleIt(id, userId);
 	}
 	
 	@PutMapping(path = "/cancelCottageAppointment/{cottageId}")

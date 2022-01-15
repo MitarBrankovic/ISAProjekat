@@ -61,11 +61,14 @@ Vue.component("ProfileCottage", {
             .then(response=>{
                 window.location.reload()
             })
-            .catch(error=>{
-                console.log("Greska.")	
-                alert("Podaci su lose uneti.")
-                window.location.reload()
-
+            .catch(error=>{	
+                //alert("Podaci su lose uneti.")
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Greska...',
+                    text: 'Neko je vec zakazao termin!',
+                  })
+                setTimeout(location.reload.bind(location), 2000);
             })
         },
         checkUserandPenalties(){

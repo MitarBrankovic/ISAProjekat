@@ -67,9 +67,11 @@ public class CottageAppointmentService2 {
 		int numOfPenalties = cottageReportsRepository.findAllByClient(userId).size() +  boatReportsRepository.findAllByClient(userId).size() +
 					fishingReportsRepository.findAllByClient(userId).size();
 		
-		//if(oldAppointment.get().client !=null)
-			//return false;
-		Thread.sleep(5000);
+		if(oldAppointment.get().client !=null)
+			return false;
+		
+		//Thread.sleep(5000);
+		
 		if(numOfPenalties < 3) {
 			if(oldAppointment.isPresent()) {
 				CottageAppointment appointment = oldAppointment.get();
@@ -105,7 +107,7 @@ public class CottageAppointmentService2 {
 				}				
 			}
 			
-			Thread.sleep(5000);
+			//Thread.sleep(5000);
 
 			double ownerCut = getOwnerProfit(appointment.cottage.cottageOwner);
 			appointment.ownerProfit = appointment.price*ownerCut/100;

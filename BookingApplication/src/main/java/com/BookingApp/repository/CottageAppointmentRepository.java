@@ -19,7 +19,4 @@ public interface CottageAppointmentRepository extends JpaRepository<CottageAppoi
 	@Query("select c from CottageAppointment c where c.client.id = :appUserId")
 	public List<CottageAppointment> findAllAppointmentsByClient(@Param("appUserId") long appUserId);
 	
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select c from CottageAppointment c")
-    public List<CottageAppointment> findAllPls();
 }

@@ -38,6 +38,7 @@ import com.BookingApp.repository.RatingBoatRepository;
 import com.BookingApp.repository.RatingCottageRepository;
 import com.BookingApp.repository.RatingFishingAdventureRepository;
 import com.BookingApp.repository.UserRepository;
+import com.BookingApp.service.RatingService;
 
 
 @CrossOrigin
@@ -46,61 +47,36 @@ import com.BookingApp.repository.UserRepository;
 public class RatingController {
 
 	@Autowired
-	RatingCottageRepository ratingCottageRepository;
+	private RatingCottageRepository ratingCottageRepository;
 	@Autowired
-	RatingBoatRepository ratingBoatRepository;
+	private RatingBoatRepository ratingBoatRepository;
 	@Autowired
-	RatingFishingAdventureRepository ratingFishingAdventureRepository;
+	private RatingFishingAdventureRepository ratingFishingAdventureRepository;
 	@Autowired
-	CottageRepository cottageRepository;
+	private CottageRepository cottageRepository;
 	@Autowired
-	BoatRepository boatRepository;
+	private BoatRepository boatRepository;
 	@Autowired
-	FishingAdventureRepository fishingAdventureRepository;
+	private FishingAdventureRepository fishingAdventureRepository;
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	@Autowired
 	private JavaMailSender javaMailSender;
+	@Autowired
+	private RatingService ratingService;
 	
 	
 	@PostMapping(path="/rateAdventure")
 	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean rateAdventure(@RequestBody RatingAdvDto dto)
 	{
-		for(RatingFishingAdventure r: ratingFishingAdventureRepository.findAll()) {	//optimizovati
-			if(r.client.id == dto.client.id && r.fishingAdventure.id == dto.fishingAdventure.id)
-				return false;
-		}
-		
-		RatingFishingAdventure rate = new RatingFishingAdventure(); 
-		rate.fishingAdventure = dto.fishingAdventure;
-		rate.client = dto.client;
-		rate.rating = dto.rating;
-		rate.date = LocalDateTime.now();
-		rate.revision = dto.revision;
-		rate.isApproved = false;
-		ratingFishingAdventureRepository.save(rate);
-		formAdvRating();
-		return true;
+		return ratingService.rateAdventure(dto);
 	}
 	
 	@GetMapping(path="/formAdvRating")
 	public void formAdvRating()
 	{
-		for(FishingAdventure adventure : fishingAdventureRepository.findAll()){
-			int counter = 0;
-			int sum = 0;
-			for (RatingFishingAdventure ratingAdventure : ratingFishingAdventureRepository.findAll()) {
-				if(ratingAdventure.fishingAdventure.id == adventure.id){
-					counter ++;
-					sum += ratingAdventure.rating;
-				}
-			}
-			if(counter != 0){
-				adventure.rating = (double)sum/counter;
-				fishingAdventureRepository.save(adventure);
-			}
-		}
+		ratingService.formAdvRating();
 	}
 	
 	@GetMapping(path="/getMyRatedAdventures/{email}")
@@ -121,43 +97,16 @@ public class RatingController {
 	
 	@PostMapping(path="/rateCottage")
 	@PreAuthorize("hasAuthority('CLIENT')")
-	public boolean rateCottage(@RequestBody RatingCottDto dto)
+	public boolean rateCottage(@RequestBody RatingCottDto dto) throws Exception
 	{
-		for(RatingCottage r: ratingCottageRepository.findAll()) {	//optimizovati
-			if(r.client.id == dto.client.id && r.cottage.id == dto.cottage.id)
-				return false;
-		}
-		
-		RatingCottage rate = new RatingCottage(); 
-		rate.cottage = dto.cottage;
-		rate.client = dto.client;
-		rate.rating = dto.rating;
-		rate.date = LocalDateTime.now();
-		rate.revision = dto.revision;
-		rate.isApproved = false;
-		ratingCottageRepository.save(rate);
-		formCottRating();
-		return true;
+		return ratingService.rateCottage(dto);
 	}
 	
 	
 	@GetMapping(path="/formCottRating")
 	public void formCottRating()
 	{
-		for(Cottage cottage : cottageRepository.findAll()){
-			int counter = 0;
-			int sum = 0;
-			for (RatingCottage ratingAdventure : ratingCottageRepository.findAll()) {
-				if(ratingAdventure.cottage.id == cottage.id){
-					counter ++;
-					sum += ratingAdventure.rating;
-				}
-			}
-			if(counter != 0){
-				cottage.rating = (double)sum/counter;
-				cottageRepository.save(cottage);
-			}
-		}
+		ratingService.formCottRating();
 	}
 	
 	
@@ -180,40 +129,13 @@ public class RatingController {
 	@PreAuthorize("hasAuthority('CLIENT')")
 	public boolean rateBoat(@RequestBody RatingBoatDto dto)
 	{
-		for(RatingBoat r: ratingBoatRepository.findAll()) {	//optimizovati
-			if(r.client.id == dto.client.id && r.boat.id == dto.boat.id)
-				return false;
-		}
-		
-		RatingBoat rate = new RatingBoat(); 
-		rate.boat = dto.boat;
-		rate.client = dto.client;
-		rate.rating = dto.rating;
-		rate.date = LocalDateTime.now();
-		rate.revision = dto.revision;
-		rate.isApproved = false;
-		ratingBoatRepository.save(rate);
-		formBoatRating();
-		return true;
+		return ratingService.rateBoat(dto);
 	}
 	
 	@GetMapping(path="/formBoatRating")
 	public void formBoatRating()
 	{
-		for(Boat boat : boatRepository.findAll()){
-			int counter = 0;
-			int sum = 0;
-			for (RatingBoat ratingAdventure : ratingBoatRepository.findAll()) {
-				if(ratingAdventure.boat.id == boat.id){
-					counter ++;
-					sum += ratingAdventure.rating;
-				}
-			}
-			if(counter != 0){
-				boat.rating = (double)sum/counter;
-				boatRepository.save(boat);
-			}
-		}
+		ratingService.formBoatRating();
 	}
 	
 	@GetMapping(path="/getMyRatedBoats/{email}")

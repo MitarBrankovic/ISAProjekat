@@ -67,19 +67,6 @@ Vue.component("ProfileClient", {
         </div><br><br>
 
         <div class="row">
-            <div class= "col-md-4 container" style="height:30px;">
-                <h4 v-if="sendCheck==false">Zahtev za brisanje naloga</h4>
-                <button type="button" class="button" v-if="requestDelete==false && sendCheck==false" v-on:click="requestDelete=true">Otvori zahtev</button> 
-                <h4 v-if="sendCheck==true" style="margin-top:50px;">Zahtev je uspesno poslat!</h4>
-                
-                <div  v-if="requestDelete==true && sendCheck==false">
-                    <form id="sendRequest" method ="POST" @submit.prevent = "sendRequest">
-                        <textarea v-model="textAreaDelete" id="deleteArea" placeholder="Razlog zbog kojeg zelite da obrisete nalog." rows="4" cols="50" required></textarea><br>
-                        <button type="submit" class="btn btn-success" >Posalji zahtev</button> 
-                        <button type="button" class="btn btn-secondary" v-on:click="requestDelete=false">Otkazi</button>
-                    </form>
-                </div>
-            </div>
             <div class="col-md-2 razmak-card card">
                 <h2><span class="bi bi-star"></span>Broj bodova</h2>
                 <h3 style="text-align:center;">{{activeUser.loyaltyPoints}}</h3>
@@ -94,6 +81,20 @@ Vue.component("ProfileClient", {
             <div class="col-md-2 razmak-card card">
                 <h2><span class="bi bi-people"></span><a style="color:black;" href="#/reportsOfClient">Penali</a></h2>
                 <h3 style="text-align:center;">{{numberOfPenals()}}</h3>
+            </div>
+
+            <div class= "col-md-4 container" style="height:30px;">
+                <h4 v-if="sendCheck==false">Zahtev za brisanje naloga</h4>
+                <button type="button" class="button" v-if="requestDelete==false && sendCheck==false" v-on:click="requestDelete=true">Otvori zahtev</button> 
+                <h4 v-if="sendCheck==true" style="margin-top:50px;">Zahtev je uspesno poslat!</h4>
+                
+                <div  v-if="requestDelete==true && sendCheck==false">
+                    <form id="sendRequest" method ="POST" @submit.prevent = "sendRequest">
+                        <textarea v-model="textAreaDelete" id="deleteArea" placeholder="Razlog zbog kojeg zelite da obrisete nalog." rows="4" cols="50" required></textarea><br>
+                        <button type="submit" class="btn btn-success" >Posalji zahtev</button> 
+                        <button type="button" class="btn btn-secondary" v-on:click="requestDelete=false">Otkazi</button>
+                    </form>
+                </div>
             </div>
         </div>
 

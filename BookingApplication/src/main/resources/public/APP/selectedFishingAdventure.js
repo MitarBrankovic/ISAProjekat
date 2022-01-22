@@ -21,7 +21,7 @@ Vue.component("SelectedFishingAdventure", {
     <div class="container-fluid" style="margin-top: 3%">
     <div class="row my-row" style="margin-top: 2%;">
     					<div class="col col-sm-4">
-                        <img :src="adventure.photo" class="entityPhoto" alt="...">
+                        <!--<img :src="adventure.photo" class="entityPhoto" alt="...">-->
                       </div>
                       <div class="col col-sm-4">
                         <h1 style="color: #5cb85c;">{{adventure.name}}</h1>

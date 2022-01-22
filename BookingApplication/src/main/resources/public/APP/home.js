@@ -14,12 +14,52 @@ Vue.component("Home", {
 
 template: ` 
 	<div>
-        <div style="margin-top: 30px;" class="nav nav-tabs centerIt">
-            <button class="button-tab nav-item" type="button" v-on:click="cottagesFun()">Cottages</button>
-            <button class="button-tab nav-item" type="button" v-on:click="boatsFun()">Boats</button>
-            <button class="button-tab nav-item" type="button" v-on:click="adventuresFun()">Adventures</button>
+        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" style="height:400px; width:100%;">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner" style="height: 100%;">
+                <div class="carousel-item active">
+                    <img src="../images/carousel1.jpg" style="height:100%; max-height:500px" class="d-block h-100 w-100" alt="...">
+                    <div class="carousel-content" style="width: 25%;">
+                        <h2 class="centerIt">Welcome to</h2>
+                        <h1 class="centerIt">Booking App</h1>
+                        <div style="margin-top: 30px;" class="nav nav-tabs centerIt">
+                            <button class="button-tab nav-item" type="button" v-on:click="cottagesFun()">Cottages</button>
+                            <button style="margin-right: 8px; margin-left: 8px;" class="button-tab nav-item" type="button" v-on:click="boatsFun()">Boats</button>
+                            <button class="button-tab nav-item" type="button" v-on:click="adventuresFun()">Adventures</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="../images/carousel2.jpg" style="height:100%; max-height:500px" class="d-block w-100" alt="...">
+                    <div class="carousel-content" style="width: 25%;">
+                        <h2 class="centerIt">Welcome to</h2>
+                        <h1 class="centerIt">Booking App</h1>
+                        <div style="margin-top: 30px;" class="nav nav-tabs centerIt">
+                            <button class="button-tab nav-item" type="button" v-on:click="cottagesFun()">Cottages</button>
+                            <button style="margin-right: 8px; margin-left: 8px;" class="button-tab nav-item" type="button" v-on:click="boatsFun()">Boats</button>
+                            <button class="button-tab nav-item" type="button" v-on:click="adventuresFun()">Adventures</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="../images/carousel3.jpg" style="height:100%; max-height:500px" class="d-block w-100" alt="...">
+                    <div class="carousel-content" style="width: 25%;">
+                        <h2 class="centerIt">Welcome to</h2>
+                        <h1 class="centerIt">Booking App</h1>
+                        <div style="margin-top: 30px;" class="nav nav-tabs centerIt">
+                            <button class="button-tab nav-item" type="button" v-on:click="cottagesFun()">Cottages</button>
+                            <button style="margin-right: 8px; margin-left: 8px;" class="button-tab nav-item" type="button" v-on:click="boatsFun()">Boats</button>
+                            <button class="button-tab nav-item" type="button" v-on:click="adventuresFun()">Adventures</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
+        <br>
 
         <div v-if="cottagesButton">
             <SearchCottages id="search" @clicked="searchCottages"></SearchCottages>
@@ -33,11 +73,11 @@ template: `
                                 <h5 class="card-title">{{c.name}}</h5>
                             </div>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">{{c.description}}</li>
-                                <li class="list-group-item">{{c.address}}</li>
-                                <li class="list-group-item">Num of rooms: {{c.roomsNum}}</li>
-                                <li class="list-group-item">Num of beds: {{c.bedsNum}}</li>
-                                <li class="list-group-item">Rating: {{c.rating}}</li>
+                                <li class="list-group-item"><b>Opis:</b> {{c.description}}</li>
+                                <li class="list-group-item"><b>Adresa:</b> {{c.address}}</li>
+                                <li class="list-group-item"><b>Broj soba:</b> {{c.roomsNum}}</li>
+                                <li class="list-group-item"><b>Cena:</b> {{c.pricePerHour}}din/h</li>
+                                <li class="list-group-item"><b>Ocena:</b> {{c.rating}}</li>
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showCottageInformation(c.id)" class="btn btn-secondary">Info</button>
@@ -50,11 +90,7 @@ template: `
                     </div>
                 </div>
             </div>
-
-
         </div>
-
-
 
 
         <div v-else-if="boatsButton">
@@ -69,11 +105,11 @@ template: `
                                 <h5 class="card-title">{{b.name}}</h5>
                             </div>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">{{b.boatType}}</li>
-                                <li class="list-group-item">{{b.description}}</li>
-                                <li class="list-group-item">Engine: {{b.enginePower}}hp | {{b.maxSpeed}}km/h</li>
-                                <li class="list-group-item">{{b.address}}</li>
-                                <li class="list-group-item">Rating: {{b.rating}}</li>
+                                <li class="list-group-item"><b>Opis:</b> {{b.description}}</li>
+                                <li class="list-group-item"><b>Adresa:</b> {{b.address}}</li>
+                                <li class="list-group-item"><b>Tip camca:</b> {{b.boatType}}</li>
+                                <li class="list-group-item"><b>Cena:</b> {{b.pricePerHour}}din/h</li>
+                                <li class="list-group-item"><b>Ocena:</b> {{b.rating}}</li>
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showBoatInformation(b.id)" class="btn btn-secondary">Info</button>
@@ -95,16 +131,17 @@ template: `
                 <div class="row row-cols-1 row-cols-md-4 g-4">
                     <div class="col"  v-for = "a in adventures">
                         <div class="card" style="width: 93%">
-                            <img :src="a.photo" width="300" height="220" class="card-img-top" alt="...">
+                            <!--<img :src="a.photo" width="300" height="220" class="card-img-top" alt="...">-->
+                            <img src="../images/fishing.jpg" width="300" height="220" class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title">{{a.name}}</h5>
                             </div>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">{{a.description}}</li>
-                                <li class="list-group-item">{{a.city}} {{a.address}}</li>
-                                <li class="list-group-item">Instructor: {{a.fishingInstructor.name}} {{a.fishingInstructor.surname}}</li>
-                                <li class="list-group-item">{{a.priceAndInfo}}</li>
-                                <li class="list-group-item">Rating: {{a.rating}}</li>
+                                <li class="list-group-item"><b>Opis:</b> {{a.description}}</li>
+                                <li class="list-group-item"><b>Adresa:</b> {{a.city}} {{a.address}}</li>
+                                <li class="list-group-item"><b>Instruktor:</b> {{a.fishingInstructor.name}} {{a.fishingInstructor.surname}}</li>
+                                <li class="list-group-item"><b>Cena:</b> {{a.pricePerHour}}din/h</li>
+                                <li class="list-group-item"><b>Ocena:</b> {{a.rating}}</li>
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showAdventureInformation(a.id)" class="btn btn-secondary">Info</button>

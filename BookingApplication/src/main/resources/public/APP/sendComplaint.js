@@ -16,8 +16,11 @@ Vue.component("SendComplaint", {
         }
     },
     template : ` 
-    <div class="container" style="margin-top:30px">
-        <h1>Posaljite zalbu</h1><br><br>
+    <div style="margin-top:30px; width:50%;" class="container login-box" >
+        <div class="col-lg-12 login-key">
+            <i class="bi bi-megaphone-fill" aria-hidden="true"></i>
+        </div>
+        <h1 class="login-title">Posaljite zalbu</h1><br><br>
         
         <div>
             <h5><b>Izaberite za koji tip usluge pisete zalbu:</b></h5>
@@ -27,8 +30,7 @@ Vue.component("SendComplaint", {
             <input type="radio" v-on:click="boatsFun()" name="group1" style="margin-right:15px;">
             <label class="col-sm-1 col-form-label"><b>Avanture</b></label>
             <input type="radio" v-on:click="adventuresFun()" name="group1" style="margin-right:15px;">
-        </div><br><br>
-
+        </div><br>
         <div class="forma container" v-if="cottagesButton">
             <form id="editForm" method ="POST" @submit.prevent = "submitFormCott">
 
@@ -41,7 +43,7 @@ Vue.component("SendComplaint", {
 			    <textarea class="col-sm-4 col-form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Napisite zalbu ovde..." rows="4" cols="50" required></textarea><br>
 				<br>
 
-                <button id="button1" type="submit" class="button">Posalji</button>
+                <button id="button1" style="margin-bottom:30px;" type="submit" class="button">Posalji</button>
             </form>
         </div>
 
@@ -58,13 +60,10 @@ Vue.component("SendComplaint", {
                 <textarea class="col-sm-4 col-form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Napisite zalbu ovde..." rows="4" cols="50" required></textarea><br>
                 <br>
 
-                <button id="button1" type="submit" class="button">Posalji</button>
+                <button id="button1" style="margin-bottom:30px;" type="submit" class="button">Posalji</button>
             </form>
         </div>
         
-
-
-
         <div class="forma container" v-if="adventuresButton">
             <form id="editForm" method ="POST" @submit.prevent = "submitFormAdv">
 
@@ -77,7 +76,7 @@ Vue.component("SendComplaint", {
 			    <textarea class="col-sm-4 col-form-control" v-model="textAreaComplaint" id="deleteArea" placeholder="Napisite zalbu ovde..." rows="4" cols="50" required></textarea><br>
 				<br>
 
-                <button id="button1" type="submit" class="button">Posalji</button>
+                <button id="button1" style="margin-bottom:30px;" type="submit" class="button">Posalji</button>
             </form>
         </div>
 

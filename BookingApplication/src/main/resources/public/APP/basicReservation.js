@@ -51,7 +51,7 @@ Vue.component("BasicReservation", {
                     <label class="form-check-label" for="inlineRadio3">Avanture</label>
                 </div><br><br><br>
 
-                <input id="datePickerId" v-model="datePick" type="date" name="trip-start" min="0" ></input>
+                <input id="datePickerId" v-model="datePick" type="date" name="trip-start" ></input>
                 <select class="col-sm-2 col-form-select" v-model="time" requiered>
                     <option value="" selected disabled>Izaberite vreme</option>
                     <option v-for="c in times" :value="c">{{c}}:00</option>
@@ -328,7 +328,9 @@ Vue.component("BasicReservation", {
         if(this.activeUser.role != 'client')
             tthis.$router.push('/')
 
-        datePickerId.min = new Date().toISOString().slice(0, -14);
+        let myDate = new Date()
+        myDate.setDate(myDate.getDate() + 1);
+        datePickerId.min = myDate.toISOString().slice(0, -14);
 	},
     methods:{
         firstNext() {

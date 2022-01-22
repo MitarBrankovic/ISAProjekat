@@ -14,18 +14,9 @@ insert into app_user (id, name, surname, email, password, address, city, country
 insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, ROLES_id, loyalty_points, loyalty_status) values ( nextval('my_user_seq'), 'Mare', 'Mare', 'mare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'fishing_instructor', true, 6, 0, 'regular');
 insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, ROLES_id, loyalty_points, loyalty_status) values ( nextval('my_user_seq'), 'Admin', 'Admin', 'admin@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '1212312', 'admin', true, 2, 0, 'regular');
 
-/*insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, loyalty_points, loyalty_status) values ( nextval('my_user_seq'), 'Mirko', 'Mrkva', 'mrki@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'client', true, 0, 'regular');
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, loyalty_points, loyalty_status) values ( nextval('my_user_seq'), 'Dare', 'Dare', 'dare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'client', true, 0, 'regular');
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, loyalty_points, loyalty_status) values ( nextval('my_user_seq'), 'Kale', 'Kale', 'kale@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'cottage_owner', true, 0, 'regular');
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, loyalty_points, loyalty_status) values ( nextval('my_user_seq'), 'Rale', 'Rale', 'rale@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'ship_owner', true, 0, 'regular');
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, loyalty_points, loyalty_status) values ( nextval('my_user_seq'), 'Zare', 'Zare', 'zare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'fishing_instructor', true, 0, 'regular');
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, loyalty_points, loyalty_status) values ( nextval('my_user_seq'), 'Mare', 'Mare', 'mare@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '12312312', 'fishing_instructor', true, 0, 'regular');
-insert into app_user (id, name, surname, email, password, address, city, country, phone_number, role, verified, loyalty_points, loyalty_status) values ( nextval('my_user_seq'), 'Admin', 'Admin', 'admin@gmail.com', '111','Palih studenata 2', 'Novi Sad', 'Serbia', '1212312', 'admin', true, 0, 'regular');
-*/
-
 insert into client (id, text, penalties) values ( 1, 'neki tekst', 0);
 insert into client (id, text, penalties) values ( 2, 'neki tekst', 0);
-insert into cottage_owner (id, cottage_text) values ( 3, 'neki tekst');
+insert into cottage_owner (id, cottage_text, rating) values ( 3, 'neki tekst', 4.1);
 insert into ship_owner (id, text) values ( 4, 'neki tekst');
 insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 5, 'neki tekst', 'biografija', '2021-12-12 08:00:00', '2022-04-27 20:00:00');
 insert into fishing_instructor (id, text, biography, available_from, available_until) values ( 6, 'neki tekst', 'biografija coveka','2021-12-12 08:00:00', '2022-04-27 20:00:00');

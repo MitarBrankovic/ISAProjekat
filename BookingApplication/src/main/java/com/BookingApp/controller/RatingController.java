@@ -20,21 +20,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.model.Cottage;
+import com.BookingApp.model.CottageOwner;
 import com.BookingApp.dto.ClientRatingDto;
 import com.BookingApp.dto.RatingAdvDto;
 import com.BookingApp.dto.RatingBoatDto;
 import com.BookingApp.dto.RatingCottDto;
+import com.BookingApp.dto.RatingCottOwnerDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.RatingFishingAdventure;
 import com.BookingApp.model.UserType;
 import com.BookingApp.model.RatingCottage;
+import com.BookingApp.model.RatingCottageOwner;
 import com.BookingApp.model.RatingBoat;
 import com.BookingApp.repository.BoatRepository;
+import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.CottageRepository;
 import com.BookingApp.repository.FishingAdventureRepository;
 import com.BookingApp.repository.RatingBoatRepository;
+import com.BookingApp.repository.RatingCottageOwnerRepository;
 import com.BookingApp.repository.RatingCottageRepository;
 import com.BookingApp.repository.RatingFishingAdventureRepository;
 import com.BookingApp.repository.UserRepository;
@@ -64,6 +69,10 @@ public class RatingController {
 	private JavaMailSender javaMailSender;
 	@Autowired
 	private RatingService ratingService;
+	@Autowired
+	private RatingCottageOwnerRepository ratingCottageOwnerRepository;
+	@Autowired
+	private CottageOwnerRepository cottageOwnerRepository;
 	
 	
 	@PostMapping(path="/rateAdventure")
@@ -149,9 +158,69 @@ public class RatingController {
 				ratedBoats.add(boatRating);
 			}
 		}
-		return new ResponseEntity<List<RatingBoat>>(ratedBoats,HttpStatus.OK);
+		return new ResponseEntity<List<RatingBoat>>(ratedBoats,HttpStatus.OK);		
+	}
+	
+	
+	
+	
+	@PostMapping(path="/rateCottageOwner")
+	@PreAuthorize("hasAuthority('CLIENT')")
+	public boolean rateCottageOwner(@RequestBody RatingCottOwnerDto dto) throws Exception
+	{
+		CottageOwner cot = cottageOwnerRepository.findById(dto.cottageOwner.id).get();
+		RatingCottageOwner rate = new RatingCottageOwner(cot, dto.rating, LocalDateTime.now(), dto.client, false, dto.revision); 
+		
+		for(RatingCottageOwner r: ratingCottageOwnerRepository.findAll()) {
+			if(r.client.id == dto.client.id && r.cottageOwner.id == dto.cottageOwner.id)
+				return false;
+		}
+		ratingCottageOwnerRepository.save(rate);
+		formCottOwnerRating();
+		return true;
+	}
+	
+	
+	@GetMapping(path="/formCottOwnerRating")
+	public void formCottOwnerRating()
+	{
+		for(CottageOwner cottageOwner : cottageOwnerRepository.findAll()){
+			int counter = 0;
+			int sum = 0;
+			for (RatingCottageOwner ratingAdventure : ratingCottageOwnerRepository.findAll()) {
+				if(ratingAdventure.cottageOwner.id == cottageOwner.id){
+					counter ++;
+					sum += ratingAdventure.rating;
+				}
+			}
+			if(counter != 0){
+				cottageOwner.rating = (double)sum/counter;
+				cottageOwnerRepository.save(cottageOwner);
+			}
+		}
+	}
+	
+	
+	@GetMapping(path="/getMyRatedCottOwners/{email}")
+	public ResponseEntity<List<RatingCottageOwner>> getMyRatedCottOwners(@PathVariable String email)
+	{
+		List<RatingCottageOwner> ratedCottOwners = new ArrayList<RatingCottageOwner>();
+		for(RatingCottageOwner cottRating : ratingCottageOwnerRepository.findAll())
+		{
+			if(cottRating.client.email.equalsIgnoreCase(email))
+			{
+				ratedCottOwners.add(cottRating);
+			}
+		}
+		return new ResponseEntity<List<RatingCottageOwner>>(ratedCottOwners,HttpStatus.OK);
 		
 	}
+	
+	
+	
+	
+	
+	//ADMIN ########################################################################
 	
 	@GetMapping(path="/getRatings")
 	public List<ClientRatingDto> getRatings()

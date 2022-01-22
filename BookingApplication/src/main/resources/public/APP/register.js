@@ -73,7 +73,7 @@ Vue.component("Register", {
 				
 			    <button id="submit" class="button" type="submit" disabled>Register</button>
 				<div class="container signin">
-		    		<p>Already have an account? <a href="#/login">Sign in</a>.</p>
+		    		<p>Vec imate nalog? <a href="#/login">Sign in</a>.</p>
 		  		</div>
 		  	</div>
 		</form>

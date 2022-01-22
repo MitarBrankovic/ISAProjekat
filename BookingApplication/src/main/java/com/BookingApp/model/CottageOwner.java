@@ -14,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class CottageOwner extends AppUser {
 	@Column
 	public String cottageText;
+	@Column
+	public double rating;
 	@JsonIgnore
 	@OneToMany
 	(mappedBy = "cottageOwner", fetch = FetchType.EAGER, cascade= CascadeType.ALL)
@@ -30,9 +32,16 @@ public class CottageOwner extends AppUser {
 		this.cottageText = cottageText;
 	}
 	
+
 	public CottageOwner(AppUser appUser, String text) {
 		super(appUser.id, appUser.name, appUser.surname, appUser.email, appUser.password, appUser.address, appUser.city, appUser.country, appUser.phoneNumber, appUser.role, appUser.verificationCode, appUser.verified);
 		this.cottageText = text;
+	}
+	
+	public CottageOwner(AppUser appUser, String text, double rating) {
+		super(appUser.id, appUser.name, appUser.surname, appUser.email, appUser.password, appUser.address, appUser.city, appUser.country, appUser.phoneNumber, appUser.role, appUser.verificationCode, appUser.verified);
+		this.cottageText = text;
+		this.rating = rating;
 	}
 	
 	

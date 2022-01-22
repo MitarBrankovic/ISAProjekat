@@ -13,7 +13,10 @@ Vue.component("HistoryReservations", {
             myRatedCottages:[],
             upcomingCottages:[],
             myRatedBoats:[],
-            upcomingBoats:[]
+            upcomingBoats:[],
+
+            myRatedCottageOwners:[],
+
         }
     },
     template:`  
@@ -37,6 +40,7 @@ Vue.component("HistoryReservations", {
                         <td>Maksimalan broj osoba</td>
                         <td>Cena</td>
                         <td>Oceni</td>
+                        <td>Oceni vlasnika</td>
                     </tr>
                     </thead>
                     <tbody>
@@ -48,6 +52,9 @@ Vue.component("HistoryReservations", {
                         <td>{{appointment.price}} din.</td>
                         <td v-if="!cottageIsRated(appointment) && !cottageIsUpcoming(appointment)"><button  type="submit" class="button" v-on:click="rateCottage(appointment)">Oceni</button></td>
                         <td v-else-if="cottageIsRated(appointment)"><label>Ocenjeno</label></td>
+                        <td v-else-if="cottageIsUpcoming(appointment)"><label>Nije jos zavrseno</label></td>
+                        <td v-if="!cottageOwnerIsRated(appointment) && !cottageIsUpcoming(appointment)"><button  type="submit" class="button" v-on:click="rateCottageOwner(appointment)">Oceni</button></td>
+                        <td v-else-if="cottageOwnerIsRated(appointment)"><label>Ocenjeno</label></td>
                         <td v-else-if="cottageIsUpcoming(appointment)"><label>Nije jos zavrseno</label></td>
                         </tr>
                     </tbody>
@@ -134,7 +141,8 @@ Vue.component("HistoryReservations", {
         axios.get('/rating/getMyRatedCottages/' + this.activeUser.email),
         axios.get('/cottageAppointments/getReservedCottAppointmentsByClient/' + this.activeUser.id),
         axios.get('/rating/getMyRatedBoats/' + this.activeUser.email),
-        axios.get('/boatAppointments/getReservedBoatAppointmentsByClient/' + this.activeUser.id)])
+        axios.get('/boatAppointments/getReservedBoatAppointmentsByClient/' + this.activeUser.id),
+        axios.get('/rating/getMyRatedCottOwners/' + this.activeUser.email)])
         .then(axios.spread((...responses) => {
            this.cottages = responses[0].data
            this.boats = responses[1].data
@@ -145,6 +153,7 @@ Vue.component("HistoryReservations", {
            this.upcomingCottages = responses[6].data
            this.myRatedBoats = responses[7].data
            this.upcomingBoats = responses[8].data
+           this.myRatedCottageOwners = responses[9].data
        }))
 	},
     methods:{
@@ -414,6 +423,75 @@ Vue.component("HistoryReservations", {
         
                     axios
                     .post('/rating/rateBoat', ratingBoatDto,{
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                        },})
+                    .then(response=>{
+                        window.location.reload()
+                    })
+                    .catch(error=>{
+                        console.log("Greska.")	
+                        alert("Podaci su lose uneti.")
+                        window.location.reload()
+        
+                    })
+                }
+
+            })()
+        },
+
+        cottageOwnerIsRated:function(appointment){
+            var postoji = false
+            for(var i = 0; i < this.myRatedCottageOwners.length; i++){
+                if(this.activeUser.id == this.myRatedCottageOwners[i].client.id && appointment.cottage.cottageOwner.id == this.myRatedCottageOwners[i].cottageOwner.id){
+                    postoji = true
+                    break
+                }
+            }
+            return postoji
+        },
+        rateCottageOwner:function(appointment){
+            (async () => {
+                const { value: formValues } = await Swal.fire({
+                    title: 'Ocenite ovog vlasnika',
+                    html:
+                    '<label id="swalh" class="swal2-label" required>Komentar:</label>' +
+                    '<input id="swal-input1" class="swal2-textarea" required>' +
+                    '<form style="margin-left:5%;" class="rate centerIt starInvert" name="myForm" id="group">'+
+                        '<input type="radio" id="star5" name="group" value="5" />' +
+                        '<label for="star5" title="text">5 stars</label>' +
+                        '<input type="radio" id="star4" name="group" value="4" />' +
+                        '<label for="star4" title="text">4 stars</label>' +
+                        '<input type="radio" id="star3" name="group" value="3" />' +
+                        '<label for="star3" title="text">3 stars</label>' +
+                        '<input type="radio" id="star2" name="group" value="2" />' +
+                        '<label for="star2" title="text">2 stars</label>' +
+                        '<input type="radio" id="star1" name="group" value="1" />' +
+                        '<label for="star1" title="text">1 star</label>' +
+                    '</form>',
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        if (!document.getElementById('swal-input1').value || !document.forms.myForm.group.value){
+                            Swal.showValidationMessage('Popunite sva polja!')
+                        }else{
+                            return [
+                                document.getElementById('swal-input1').value,
+                                document.forms.myForm.group.value
+                            ]
+                        }   
+                    }
+                })
+                
+                if (formValues) {
+                    const ratingCottOwnerDto = {
+                        cottageOwner: appointment.cottage.cottageOwner,
+                        client: this.activeUser,
+                        rating: formValues[1],
+                        revision: formValues[0]
+                    }
+        
+                    axios
+                    .post('/rating/rateCottageOwner', ratingCottOwnerDto,{
                         headers: {
                           'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
                         },})

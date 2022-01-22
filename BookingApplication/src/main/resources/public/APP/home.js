@@ -75,7 +75,7 @@ template: `
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item"><b>Opis:</b> {{c.description}}</li>
                                 <li class="list-group-item"><b>Adresa:</b> {{c.address}}</li>
-                                <li class="list-group-item"><b>Broj soba:</b> {{c.roomsNum}}</li>
+                                <li class="list-group-item"><b>Vlasnik:</b> {{c.cottageOwner.name}} {{c.cottageOwner.surname}}</li>
                                 <li class="list-group-item"><b>Cena:</b> {{c.pricePerHour}}din/h</li>
                                 <li class="list-group-item"><b>Ocena:</b> {{c.rating}}</li>
                             </ul>
@@ -107,7 +107,7 @@ template: `
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item"><b>Opis:</b> {{b.description}}</li>
                                 <li class="list-group-item"><b>Adresa:</b> {{b.address}}</li>
-                                <li class="list-group-item"><b>Tip camca:</b> {{b.boatType}}</li>
+                                <li class="list-group-item"><b>Vlasnik:</b> {{b.shipOwner.name}} {{b.shipOwner.surname}}</li>
                                 <li class="list-group-item"><b>Cena:</b> {{b.pricePerHour}}din/h</li>
                                 <li class="list-group-item"><b>Ocena:</b> {{b.rating}}</li>
                             </ul>

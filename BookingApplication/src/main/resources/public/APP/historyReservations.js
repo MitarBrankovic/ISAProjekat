@@ -51,10 +51,10 @@ Vue.component("HistoryReservations", {
                         <td>{{appointment.maxAmountOfPeople}}</td>
                         <td>{{appointment.price}} din.</td>
                         <td v-if="!cottageIsRated(appointment) && !cottageIsUpcoming(appointment)"><button  type="submit" class="button" v-on:click="rateCottage(appointment)">Oceni</button></td>
-                        <td v-else-if="cottageIsRated(appointment)"><label>Ocenjeno</label></td>
+                        <td v-else-if="cottageIsRated(appointment)"><label style="color:green;">Ocenjeno</label></td>
                         <td v-else-if="cottageIsUpcoming(appointment)"><label>Nije jos zavrseno</label></td>
                         <td v-if="!cottageOwnerIsRated(appointment) && !cottageIsUpcoming(appointment)"><button  type="submit" class="button" v-on:click="rateCottageOwner(appointment)">Oceni</button></td>
-                        <td v-else-if="cottageOwnerIsRated(appointment)"><label>Ocenjeno</label></td>
+                        <td v-else-if="cottageOwnerIsRated(appointment)"><label style="color:green;">Ocenjeno</label></td>
                         <td v-else-if="cottageIsUpcoming(appointment)"><label>Nije jos zavrseno</label></td>
                         </tr>
                     </tbody>
@@ -86,7 +86,7 @@ Vue.component("HistoryReservations", {
                         <td>{{appointment.maxAmountOfPeople}}</td>
                         <td>{{appointment.price}} din.</td>
                         <td v-if="!boatIsRated(appointment) && !boatIsUpcoming(appointment)"><button  type="submit" class="button" v-on:click="rateBoat(appointment)">Oceni</button></td>
-                        <td v-else-if="boatIsRated(appointment)"><label>Ocenjeno</label></td>
+                        <td v-else-if="boatIsRated(appointment)"><label style="color:green;">Ocenjeno</label></td>
                         <td v-else-if="boatIsUpcoming(appointment)"><label>Nije jos zavrseno</label></td>
                         </tr>
                     </tbody>
@@ -118,7 +118,7 @@ Vue.component("HistoryReservations", {
                         <td>{{appointment.maxAmountOfPeople}}</td>
                         <td>{{appointment.price}} din.</td>
                         <td v-if="!adventureIsRated(appointment) && !adventureIsUpcoming(appointment)"><button  type="submit" class="button" v-on:click="rateAdventure(appointment)">Oceni</button></td>
-                        <td v-else-if="adventureIsRated(appointment)"><label>Ocenjeno</label></td>
+                        <td v-else-if="adventureIsRated(appointment)"><label style="color:green;">Ocenjeno</label></td>
                         <td v-else-if="adventureIsUpcoming(appointment)"><label>Nije jos zavrseno</label></td>
                         </tr>
                     </tbody>

@@ -38,6 +38,7 @@ const CottageOwnerHome = {template : '<CottageOwnerHome></CottageOwnerHome>'}
 const ReportsOfClient = {  template: '<ReportsOfClient></ReportsOfClient>' }
 const LoyaltyProgramAdmin = {  template: '<LoyaltyProgramAdmin></LoyaltyProgramAdmin>' }
 const CurrentFishingAppointments = {  template: '<CurrentFishingAppointments></CurrentFishingAppointments>' }
+const InstructorsCalendar = {  template: '<InstructorsCalendar></InstructorsCalendar>' }
 
 
 
@@ -85,10 +86,7 @@ const router = new VueRouter({
         { path: '/reportsOfClient', component: ReportsOfClient },	
 		{ path: '/loyaltyProgramAdmin', component: LoyaltyProgramAdmin },
         { path: '/currentFishingAppointments', component: CurrentFishingAppointments },
-
-		
-		
-
+        { path: '/instructorsCalendar', component: InstructorsCalendar },
     ]
 
 });
@@ -98,5 +96,6 @@ var app = new Vue({
     el: '#main-div',
     components: {
         vuejsDatepicker
+        
     },
 })

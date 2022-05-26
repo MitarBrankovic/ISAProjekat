@@ -242,4 +242,93 @@ html{
     color: white;
     text-shadow: 0 1px 2px rgba(0,0,0,.6);
   }
+  
+  .demo {
+	 border-radius: 4px;
+}
+ .demo.vuecal--date-picker .vuecal__cell-events-count {
+	 width: 4px;
+	 height: 4px;
+	 min-width: 0;
+	 padding: 0;
+	 margin-top: 4px;
+	 color: transparent;
+	 background-color: #42b983;
+}
+ .demo.vuecal--date-picker .vuecal__cell--selected .vuecal__cell-events-count {
+	 background-color: #fff;
+}
+ .demo .vuecal__cell--out-of-scope {
+	 color: rgba(0, 0, 0, 0.15);
+}
+ .demo.full-cal .vuecal__menu {
+	 background-color: transparent;
+}
+ .demo.full-cal .vuecal__title-bar {
+	 background: rgba(0, 0, 0, 0.03);
+}
+ .demo .vuecal__view-btn {
+	 background: none;
+	 padding: 0 10px;
+	 margin: 4px 2px;
+	 border-radius: 30px;
+	 height: 20px;
+	 line-height: 20px;
+	 font-size: 13px;
+	 text-transform: uppercase;
+	 border: none;
+	 color: inherit;
+}
+ .demo .vuecal__view-btn--active {
+	 background: #42b982;
+	 color: #fff;
+}
+ .demo.full-cal .weekday-label {
+	 opacity: 0.4;
+	 font-weight: 500;
+}
+ .demo .vuecal__header .v-icon {
+	 color: inherit;
+}
+ .demo:not(.vuecal--day-view) .vuecal__cell--selected {
+	 background-color: transparent;
+}
+ .demo:not(.vuecal--day-view).full-cal .vuecal__cell--selected:before {
+	 border: 1px solid rgba(66, 185, 131, 0.8);
+}
+ .demo .vuecal__event-time {
+	 margin: 3px 0;
+	 font-size: 12px;
+	 font-weight: 500;
+	 line-height: 1.2;
+}
+ .demo .vuecal__header .john {
+	 color: #3ba676;
+}
+ .demo .vuecal__body .john {
+	 background-color: rgba(66, 185, 131, 0.08);
+}
+ .demo .john .vuecal__event {
+	 background-color: rgba(83, 194, 143, 0.85);
+	 color: #fff;
+}
+ .demo .john .lunch {
+	 background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(66, 185, 131, 0.15) 10px, rgba(66, 185, 131, 0.15) 20px);
+	 color: rgba(53, 147, 104, 0.6);
+}
+ .demo .vuecal__header .kate {
+	 color: #ff66bd;
+}
+ .demo .vuecal__body .kate {
+	 background-color: rgba(255, 127, 200, 0.08);
+}
+ .demo .kate .vuecal__event {
+	 background-color: rgba(255, 153, 211, 0.85);
+	 color: #fff;
+}
+ .demo .kate .lunch {
+	 background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 127, 200, 0.15) 10px, rgba(255, 127, 200, 0.15) 20px);
+	 color: rgba(255, 76, 178, 0.6);
+}
+
 

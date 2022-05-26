@@ -53,7 +53,6 @@ Vue.component("Navbar", {
 			</div>
 		</div>
 
-	  	<a href="#contact">Contact</a>
 		<div class="topnav-right" v-if="(activeUser===null)">
 	    	<a href="/#/login">Login</a>
 	    	<a href="/#/register">Registruj se</a>
@@ -75,6 +74,8 @@ Vue.component("Navbar", {
 					<a href="/#/profileFishingInstructor">Moj profil</a>
 					<a href="/#/historyOfFishingAppointments">Sve rezervacije</a>
 					<a href="/#/currentFishingAppointments">Rezervacije u toku</a>
+					<a href="/#/instructorsGraph">Graf prihoda</a>
+					<a href="/#/instructorsCalendar">Kalendar zauzetosti</a>
 				</div>
 				<div v-if="(activeUser.role==='cottage_owner')">
 					<a href="/#/profileCottageOwner">Moj profil</a>

@@ -39,6 +39,7 @@ const ReportsOfClient = {  template: '<ReportsOfClient></ReportsOfClient>' }
 const LoyaltyProgramAdmin = {  template: '<LoyaltyProgramAdmin></LoyaltyProgramAdmin>' }
 const CurrentFishingAppointments = {  template: '<CurrentFishingAppointments></CurrentFishingAppointments>' }
 const InstructorsCalendar = {  template: '<InstructorsCalendar></InstructorsCalendar>' }
+const InstructorsGraph = {  template: '<InstructorsGraph></InstructorsGraph>' }
 
 
 
@@ -87,6 +88,9 @@ const router = new VueRouter({
 		{ path: '/loyaltyProgramAdmin', component: LoyaltyProgramAdmin },
         { path: '/currentFishingAppointments', component: CurrentFishingAppointments },
         { path: '/instructorsCalendar', component: InstructorsCalendar },
+        { path: '/instructorsGraph', component: InstructorsGraph },
+        
+        
     ]
 
 });

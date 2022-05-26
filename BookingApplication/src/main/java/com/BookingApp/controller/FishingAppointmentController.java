@@ -3,6 +3,8 @@ package com.BookingApp.controller;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.BookingApp.dto.ReservedFishingAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
 import com.BookingApp.dto.AppointmentReportDto;
+import com.BookingApp.dto.ChartInfoDto;
 import com.BookingApp.dto.DateReservationDto;
 import com.BookingApp.dto.FishingAppointmentDto;
 import com.BookingApp.dto.InstructorsAppointmentForClientDto;
@@ -350,7 +353,7 @@ public class FishingAppointmentController {
 		LocalDateTime start = appointmentDTO.formatDateFrom();
 		LocalDateTime end = appointmentDTO.formatDateFrom().plusHours(appointmentDTO.durationInHours());
 		FishingAdventure adventure = fishingAdventureRepository.findById(appointmentDTO.adventureId).get();
-		Set <FishingAppointment> appointments = fishingAppointmentRepository.findInstructorsReservationHistory(adventure.fishingInstructor.id);
+		List <FishingAppointment> appointments = fishingAppointmentRepository.findInstructorsReservationHistory(adventure.fishingInstructor.id);
 		System.out.println(appointments.size());
 		for (FishingAppointment app : appointments) {
 			if ((app.appointmentStart.isBefore(start) && app.appointmentStart.plusHours(app.duration).isAfter(start)) ||
@@ -406,6 +409,116 @@ public class FishingAppointmentController {
 		List<FishingAppointment> adventures = fishingAppointmentRepository.findAllAppointmentsByClient(id);
 		
 		return new ResponseEntity<List<FishingAppointment>>(adventures,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getFishingInstructorsCharts/{instructorId}")
+	public ResponseEntity<List<ChartInfoDto>> getChartInfo(@PathVariable("instructorId") long id)
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<FishingAppointment> appointments = fishingAppointmentRepository.findInstructorsReservationHistory(id);
+		boolean dateExists = false;
+		for (FishingAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.instructorProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.instructorProfit));
+			}
+		}
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getFishingInstructorsWeekCharts/{instructorId}")
+	public ResponseEntity<List<ChartInfoDto>> getWeekChartInfo(@PathVariable("instructorId") long id)
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<FishingAppointment> appointments = fishingAppointmentRepository.findInstructorsReservationHistory(id);
+		boolean dateExists = false;
+		for (FishingAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(7)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
+				System.out.println("Im in");
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.instructorProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.instructorProfit));
+			}
+		}
+		System.out.println(info);
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getFishingInstructorsMonthCharts/{instructorId}")
+	public ResponseEntity<List<ChartInfoDto>> getMonthChartInfo(@PathVariable("instructorId") long id)
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<FishingAppointment> appointments = fishingAppointmentRepository.findInstructorsReservationHistory(id);
+		boolean dateExists = false;
+		for (FishingAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(30)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
+				System.out.println("Im in");
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.instructorProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.instructorProfit));
+			}
+		}
+		System.out.println(info);
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getFishingInstructorsYearCharts/{instructorId}")
+	public ResponseEntity<List<ChartInfoDto>> getYearChartInfo(@PathVariable("instructorId") long id)
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<FishingAppointment> appointments = fishingAppointmentRepository.findInstructorsReservationHistory(id);
+		boolean dateExists = false;
+		for (FishingAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusYears(1)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
+				System.out.println("Im in");
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.instructorProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.instructorProfit));
+			}
+		}
+		System.out.println(info);
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
 	}
 	
 	

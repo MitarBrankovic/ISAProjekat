@@ -20,10 +20,7 @@ Vue.component("SelectedFishingAdventure", {
     <div>
     <div class="container-fluid" style="margin-top: 3%">
     <div class="row my-row" style="margin-top: 2%;">
-    					<div class="col col-sm-4">
-                        <!--<img :src="adventure.photo" class="entityPhoto" alt="...">-->
-                      </div>
-                      <div class="col col-sm-4">
+                      <div class="col col-sm-6">
                         <h1 style="color: #5cb85c;">{{adventure.name}}</h1>
                         <table class="table">
 					        <tbody>
@@ -54,11 +51,14 @@ Vue.component("SelectedFishingAdventure", {
 					        </tbody>
 					    </table>
                       </div>
-     				  <div class="col col-sm-4">
+     				  <div class="col col-sm-6">
                         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
 						  <div class="carousel-inner">
+						  <div class="carousel-item active">
+						      <img :src="adventure.photo" class="entityPhoto" alt="...">
+						    </div>
 						    <div v-for="p in photos" class="carousel-item">
-						      <img :src="adventure.photo" class="item" alt="...">
+						      <img :src="p.photo" class="entityPhoto" alt="...">
 						    </div>
 						  </div>
 						  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
@@ -80,14 +80,14 @@ Vue.component("SelectedFishingAdventure", {
                       	<div class="col col-sm-4">
 	                      	<div class="row my-row">
 		                      	<div class="col col-sm-6">
-		                      		<label v-if="activeUser != null && activeUser.role == 'fishing_instructor'" class="input-group-text" for="inputGroupFile01">Dodavanje slike:</label>
-				                	<input id="uploadImage" v-if="activeUser != null && activeUser.role == 'fishing_instructor'" name="myPhoto" required @change=imageAddedNew type="file" accept="image/png, image/jpeg" class="form-control">
+		                      		<label v-if="activeUser != null && activeUser.role == 'fishing_instructor' && activeUser.id == adventure.fishingInstructor.id" class="input-group-text" for="inputGroupFile01">Dodavanje slike:</label>
+				                	<input id="uploadImage" v-if="activeUser != null && activeUser.role == 'fishing_instructor'  && activeUser.id == adventure.fishingInstructor.id" name="myPhoto" required @change=imageAddedNew type="file" accept="image/png, image/jpeg" class="form-control">
 		                      	</div>
 		                      	<div class="col col-sm-3">
-		                      		<button type="button" v-if="activeUser != null && activeUser.role == 'fishing_instructor'" style="margin-top: 15%" v-on:click="addPhoto()" class="btn btn-success">Dodaj sliku</button>
+		                      		<button type="button" v-if="activeUser != null && activeUser.role == 'fishing_instructor'  && activeUser.id == adventure.fishingInstructor.id" style="margin-top: 15%" v-on:click="addPhoto()" class="btn btn-success">Dodaj sliku</button>
 		                      	</div>
 		                      	<div class="col col-sm-3">
-		                      		<button type="button" v-if="activeUser != null && activeUser.role == 'fishing_instructor'" style="margin-top: 15%" v-on:click="removePhoto()" class="btn btn-danger">Obriši sliku</button>
+		                      		<button type="button" v-if="activeUser != null && activeUser.role == 'fishing_instructor' && activeUser.id == adventure.fishingInstructor.id" style="margin-top: 15%" v-on:click="removePhoto()" class="btn btn-danger">Obriši sliku</button>
 		                      	</div>
 	                      	</div>
                       	</div>   
@@ -126,7 +126,7 @@ Vue.component("SelectedFishingAdventure", {
         </tbody>
     </table>
     </div>
-    <button type="button" style="margin-top: 3%; margin-bottom: 3%;" v-if="activeUser != null && activeUser.role == 'fishing_instructor'" data-bs-toggle="modal" data-bs-target="#newAppointment" class="btn btn-danger btn-lg">Dodaj brzu rezervaciju</button>
+    <button type="button" style="margin-top: 3%; margin-bottom: 3%;" v-if="activeUser != null && activeUser.role == 'fishing_instructor'  && activeUser.id == adventure.fishingInstructor.id" data-bs-toggle="modal" data-bs-target="#newAppointment" class="btn btn-danger btn-lg">Dodaj brzu rezervaciju</button>
 	<h2 v-if="activeUser != null && activeUser.role == 'fishing_instructor'">Cenovnik dodatnih usluga</h2>
 	
 	<div v-if="activeUser != null && activeUser.role == 'fishing_instructor'" class="container-fluid" style="margin-top: 3%">
@@ -142,9 +142,9 @@ Vue.component("SelectedFishingAdventure", {
 	            <tr v-for="p in pricelist">
 		            <td>{{p.description}}</td>
 		            <td>{{p.price}} din.</td>
-		            <td><button type="button" data-bs-toggle="modal" data-bs-target="#areYouSure" v-on:click="prepareItemToRemove(p.id)" class="btn btn-danger">Obriši</button> </td>
+		            <td><button v-if="activeUser.id == adventure.fishingInstructor.id" type="button" data-bs-toggle="modal" data-bs-target="#areYouSure" v-on:click="prepareItemToRemove(p.id)" class="btn btn-danger">Obriši</button> </td>
 	            </tr>
-	            <tr>
+	            <tr v-if="activeUser.id == adventure.fishingInstructor.id">
 		            <td><input type="text" class="form-control" v-model="newPricelistItem.description" placeholder="Unesite opis..."></td>
 		            <td><input type="number" min = "50" step="50" class="form-control" v-model="newPricelistItem.price" placeholder="Unesite cenu..."></td>
 		            <td><button type="button" v-on:click="addPricelistItem()" class="btn btn-success">Dodaj novu uslugu</button> </td>
@@ -246,26 +246,38 @@ Vue.component("SelectedFishingAdventure", {
     	`
     	,
     methods: {
-        addNewAppointment(){
+       async addNewAppointment(){
             this.quickAppointment.adventureId = this.adventure.id
             if (this.checkNewAppointment()){
+            var overlap = await this.checkOverlap()
+    		var instrAvail = await this.checkInstructorsAvailability()
             	if (this.checkDate()){
-		         	axios
-		               .post('/fishingAppointments/addQuickAppointment', this.quickAppointment)
-		               .then(response=>{
-		                  this.appointments = response.data
-		                  this.quickAppointment.dateFrom = ""
-		                  this.quickAppointment.timeFrom = ""
-		                  this.quickAppointment.dateUntil = ""
-		                  this.quickAppointment.timeUntil = ""
-		                  this.quickAppointment.extraNotes = ""
-		               })
-		               .catch(error=>{
-		                   console.log("Greska.")	
-		                   alert("Podaci su lose uneti.")
-		                   window.location.reload()
-		               })
+            		if (overlap) {
+	            		if (instrAvail) {
+			         	axios
+			               .post('/fishingAppointments/addQuickAppointment', this.quickAppointment)
+			               .then(response=>{
+			                  this.appointments = response.data
+			                  this.quickAppointment.dateFrom = ""
+			                  this.quickAppointment.timeFrom = ""
+			                  this.quickAppointment.dateUntil = ""
+			                  this.quickAppointment.timeUntil = ""
+			                  this.quickAppointment.extraNotes = ""
+			               })
+			               .catch(error=>{
+			                   console.log("Greska.")	
+			                   alert("Podaci su lose uneti.")
+			                   window.location.reload()
+			               })
 		           }
+	           			else{
+	         	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Niste dostupni u željeno vreme !'})
+	             		}
+	         		}
+	       			else{
+	     	  			Swal.fire({icon: 'error', title: 'Greška', text: 'Termin se preklapa sa nekim drugim vašim terminom !'})
+	         	    }
+	         	}
 		           else {
 		               Swal.fire({icon: 'error', title: 'Greška', text: 'Datum i vreme nisu validni !'})
 		           }
@@ -273,6 +285,30 @@ Vue.component("SelectedFishingAdventure", {
            else{
            	  Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke. Proverite da li je validna cena (> 99)!'})
            }
+        },
+        
+        async checkOverlap() {
+        	var bool = false;
+        	await axios
+               .post('/fishingAppointments/checkOverlap', this.quickAppointment)
+               .then((response)=>{
+               		bool = response.data
+               		console.log(bool)
+               		return response.data
+                })
+          return bool
+        },
+        
+        async checkInstructorsAvailability() {
+        	var bool = false;
+        	await axios
+               .post('/fishingAppointments/checkInstructorsAvailability', this.quickAppointment)
+               .then((response)=>{
+               		bool = response.data
+               		console.log(bool)
+               		return response.data
+                })
+          return bool
         },
         
         imageAddedNew(e){

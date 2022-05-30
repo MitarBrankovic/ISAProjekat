@@ -446,7 +446,6 @@ public class FishingAppointmentController {
 		for (FishingAppointment app : appointments) {
 			dateExists = false;
 			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(7)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
-				System.out.println("Im in");
 				for (ChartInfoDto infoDto : info) {
 					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
 						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
@@ -460,7 +459,6 @@ public class FishingAppointmentController {
 					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.instructorProfit));
 			}
 		}
-		System.out.println(info);
 		Collections.sort(info);
 		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
 	}
@@ -474,7 +472,6 @@ public class FishingAppointmentController {
 		for (FishingAppointment app : appointments) {
 			dateExists = false;
 			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(30)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
-				System.out.println("Im in");
 				for (ChartInfoDto infoDto : info) {
 					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
 						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
@@ -488,7 +485,6 @@ public class FishingAppointmentController {
 					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.instructorProfit));
 			}
 		}
-		System.out.println(info);
 		Collections.sort(info);
 		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
 	}
@@ -502,7 +498,6 @@ public class FishingAppointmentController {
 		for (FishingAppointment app : appointments) {
 			dateExists = false;
 			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusYears(1)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
-				System.out.println("Im in");
 				for (ChartInfoDto infoDto : info) {
 					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
 						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
@@ -516,7 +511,6 @@ public class FishingAppointmentController {
 					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.instructorProfit));
 			}
 		}
-		System.out.println(info);
 		Collections.sort(info);
 		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
 	}

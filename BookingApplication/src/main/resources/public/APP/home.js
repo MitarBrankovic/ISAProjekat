@@ -145,7 +145,7 @@ template: `
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showAdventureInformation(a.id)" class="btn btn-secondary">Info</button>
-                                <button style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || activeUser.role == 'fishing_instructor')" type="button" data-bs-toggle="modal" data-bs-target="#areYouSure" v-on:click="prepareAdventureToRemove(a.id)" class="btn btn-danger">Obriši</button>
+                                <button style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || (activeUser.role == 'fishing_instructor' && activeUser.id == a.fishingInstructor.id))" type="button" data-bs-toggle="modal" data-bs-target="#areYouSure" v-on:click="prepareAdventureToRemove(a.id)" class="btn btn-danger">Obriši</button>
                             </div>
                         </div>
 

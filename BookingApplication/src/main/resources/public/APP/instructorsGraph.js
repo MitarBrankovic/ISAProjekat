@@ -2,8 +2,6 @@ Vue.component("InstructorsGraph", {
     data: function() {
         return {
             activeUser:"",
-			xAxis:[],
-			yAxis:[],	
 			chartInfo:[],
         }
 	

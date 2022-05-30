@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.persistence.PreRemove;
+
 import java.util.Optional;
 import java.util.Set;
 
@@ -160,18 +163,12 @@ public class FishingAdventureController {
 		return true;
 	}
 	
+	@PreRemove
 	@PostMapping(path = "/removeAdventure/{adventureId}")
     public Set<FishingAdventure> removeAdventure(@PathVariable("adventureId") long id)
 	{	
-		FishingAdventure adv = fishingAdventureRepository.findById(id).get();
 		long instructorsId = fishingAdventureRepository.findById(id).get().fishingInstructor.id;
-		System.out.println("ID AVANTURE");
-		System.out.println(id);
-		System.out.println("ID INSTRUKTORA");
-		System.out.println(instructorsId);
-		System.out.println(fishingAdventureRepository.findAll().size());
-		fishingAdventureRepository.save(adv);
-		System.out.println(fishingAdventureRepository.findAll().size());
+		fishingAdventureRepository.deleteById(id);
 		return fishingAdventureRepository.findInstructorsAdventures(instructorsId);
 	}
 	

@@ -2,99 +2,169 @@ Vue.component("InstructorsCalendar", {
     data: function() {
         return {
             activeUser:"",
-            loyalty: "",
-            splits: [{ label: 'John', class: 'john' }, { label: 'Kate', class: 'kate' }],
-  			editable: { title: false, drag: false, resize: true, create: true, delete: true },
-  			events: [],
-  			selectedDate: new Date()
-        }
-	
+  			selectedDate: new Date(),
+  			appointments: [],
+  			calendar: "",
+			data: {
+				events: [],
+			},
+			availabilityData: {
+				 events: [],
+				 id: 1,
+			},
+			availabilityEdit: { dateFrom: "", dateUntil: "", timeFrom: "08:00", timeUntil: "00:00", instructorsId: ""},
+		   }
     },
     template :`
     <div>
-    <div class="flex mx-2" style="max-width: 800px">
-    <vue-cal class="vuecal--green-theme" 
-	    hide-weekends="hide-weekends" 
-	    :selected-date="selectedDate" 
-	    :time-from="8 * 60" 
-	    :time-to="19 * 60" 
-	    sticky-split-labels="sticky-split-labels" 
-	    :editable-events="editable" 
-	    active-view="week"
-	    :events="events" 
-	    today-button
-	    @cell-focus="selectedDate = $event.date || $event"
-	    style="height: 450px">
-	</vue-cal>
+
+
+<br>
+<div class="row my-row  justify-content-around">
+            <div class="col-sm-10 my-col">
+                <div id='calendar'></div>
+              </div>
+			<div class="col-sm-2">
+                <button style="margin-top: 2%" type="button" v-on:click="saveAvailability()" class="btn btn-success btn-md">Ažuriraj dostupnost</button>
+              </div>
 </div>
+		
 	</div>	  
     	`
     	,
     methods: {
-    	
-    },
-    
-    components: { 'vue-cal': vuecal },
-    
-    computed: {
-    // Get the Monday of the real time current week.
-    previousFirstDayOfWeek () {
-      return new Date(new Date().setDate(new Date().getDate() - (new Date().getDay() + 6) % 7))
-    }
-  },
+    saveAvailability(start, end) {
+    			if (localStorage.getItem('start') == null || localStorage.getItem('end') == null) {
+						Swal.fire({ icon: 'error', title: 'Morate selektovati period vaše dostupnosti !', showConfirmButton: true})
+    			}
+    			else {
+    				this.availabilityEdit.instructorsId = this.activeUser.id
+    				this.availabilityEdit.dateFrom = localStorage.getItem('start')
+    				this.availabilityEdit.dateUntil = localStorage.getItem('end')
+	    			axios
+					.post('/fishingInstructor/editInstructorsAvailability', this.availabilityEdit)	
+					.then(response => {
+		                	this.activeUser = response.data
+				 			localStorage.setItem("activeUser", JSON.stringify(this.activeUser));
+				 			localStorage.removeItem('start');
+				 			localStorage.removeItem('end');
+				 			this.refreshAvailabilityCalendar()
+				 			Swal.fire({ icon: 'success', title: 'Uspešno ste ažurirali vreme dostupnosti !', showConfirmButton: false, timer: 1500 })
+		        });	
+        	}
+        },
+        
+        loadAvailabilityCalendar() {
+        		var obj = 
+        		{
+				  title: "Dostupan",
+   				  start: this.activeUser.availableFrom,
+   				  end: this.activeUser.availableUntil,
+   				  backgroundColor: "blue"
+				}
+				this.availabilityData.events.push(obj)
+        },
+        
+        refreshAvailabilityCalendar() {
+        	this.availabilityData.events = []
+        		var obj = 
+        		{
+				  title: "Dostupan",
+   				  start: this.activeUser.availableFrom,
+   				  end: this.activeUser.availableUntil,
+   				  backgroundColor: "blue"
+				}
+				this.availabilityData.events.push(obj)
+				calendar.getEventSourceById(1).remove()
+				calendar.addEventSource(this.availabilityData)
+				
+        },
+
+    		loadCalendar() {
+			document.addEventListener('DOMContentLoaded', function() {
+		  var calendarEl = document.getElementById('calendar');
+		
+		   calendar = new FullCalendar.Calendar(calendarEl, {
+		    initialView: 'dayGridMonth',
+		    initialDate: '2022-05-29',
+		    dayMaxEvents: true,
+		    contentHeight: 600,
+		    height: 800,
+		    selectable: true,
+		    buttonText: {
+			  today:    'Danas',
+			  month:    'Mesec',
+			  week:     'Nedelja',
+			  day:      'Dan',
+			  list:     'Lista'
+			},
+		    headerToolbar: {
+				left: 'prevYear,prev,next,nextYear today',
+		      center: 'title',
+		      right: 'dayGridMonth,timeGridWeek,timeGridDay,list'
+		    },
+		    dateClick: function(info) {
+		    	calendar.changeView('list', info.dateStr);
+			  },
+			select: function(info) {
+		        localStorage.setItem('start', info.startStr);
+		        localStorage.setItem('end', info.endStr);
+		    },
+		    eventClick: function(info) {
+		    	Swal.fire({ icon: 'info', title: info.event.title, showConfirmButton: true, text: moment(info.event.start).format("MMMM Do YYYY, h:mm a") + " - " + moment(info.event.end).format("MMMM Do YYYY, h:mm a")})
+		      }
+			  		  });
+		  calendar.render();
+		});
+		},
+		
+		formatCalendarData() {
+			this.data.events = []
+			for (var i = 0; i < this.appointments.length; i ++ ){
+				
+				const endDate = new Date(this.appointments[i].appointmentStart)
+				endDate.setTime(endDate.getTime() + this.appointments[i].duration * 60 * 60 * 1000);
+				let monthNum = endDate.getMonth() + 1
+				let monthString = monthNum.toString()
+				if (monthNum < 10)
+					monthString = "0" + monthNum.toString()
+				var pieces = endDate.toString().split(" ") 
+				var obj = {
+				  title: this.appointments[i].client.name + " " + this.appointments[i].client.surname + "\n" +
+				  this.appointments[i].fishingAdventure.name + "\n" + this.appointments[i].price + " RSD",
+   				  start: this.appointments[i].appointmentStart,
+   				  end: pieces[3] + "-" + monthString + "-" + pieces[2] + "T" + pieces[4],
+   				  backgroundColor: "green"
+				}
+   				this.data.events.push(obj)
+			}
+		},
+    }, 
     
     mounted () {
-    // Place all the events in the real time current week.
-    // Date.format() and Date.addDays() are helper methods added by Vue Cal.
-    const monday = this.previousFirstDayOfWeek.format()
-    const tuesday = this.previousFirstDayOfWeek.addDays(1).format()
-    const thursday = this.previousFirstDayOfWeek.addDays(3).format()
-    const friday = this.previousFirstDayOfWeek.addDays(4).format()
-    const saturday = this.previousFirstDayOfWeek.addDays(5).format()
-    const sunday = this.previousFirstDayOfWeek.addDays(6).format()
-    this.events.push(
-      {
-        start: `${monday} 15:30`,
-        end: `${monday} 17:30`,
-        title: 'Tennis',
-        resizable: false,
-      },
-      {
-        start: `${tuesday} 15:30`,
-        end: `${tuesday} 17:30`,
-        title: 'Tennis',
-        resizable: false,
-      },
-      {
-        start: `${thursday} 09:00`,
-        end: `${thursday} 11:30`,
-        title: 'Golf',
-        resizable: false,
-      },
-      {
-        start: `${friday} 16:45`,
-        end: `${friday} 18:45`,
-        title: 'Movie',
-        resizable: false,
-      },
-      {
-        start: `${saturday} 16:45`,
-        end: `${saturday} 18:45`,
-        title: 'Movie',
-        resizable: false,
-      },
-      {
-        start: `${sunday} 16:45`,
-        end: `${sunday} 18:45`,
-        title: 'Movie',
-        resizable: false,
-      }
-    )
-      console.log(this.events)
-      console.log(this.selectedDate)
-  }
+       this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
+        if(this.activeUser.role != 'fishing_instructor')
+            this.$router.push('/')
+         axios
+            .get("fishingAppointments/getReservationsHistory/" + this.activeUser.id)
+	        .then(response => {
+	            this.appointments = response.data,
+	            this.formatCalendarData()
+	            this.loadAvailabilityCalendar()
+	            calendar.addEventSource(this.data)
+	            calendar.addEventSource(this.availabilityData)
+	            })
+            .catch(error=>{
+                window.location.reload()
+            })
+            this.loadCalendar()            
+  },
+  
+  
 
 }
+
+
     
     
     

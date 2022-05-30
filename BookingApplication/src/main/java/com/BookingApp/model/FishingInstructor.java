@@ -25,11 +25,7 @@ public class FishingInstructor extends AppUser  {
 	public LocalDateTime availableFrom;
 	@Column
 	public LocalDateTime availableUntil;
-	@JsonIgnore
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@OneToMany
-	(mappedBy = "fishingInstructor", fetch = FetchType.EAGER, cascade= CascadeType.ALL)
-	public Set<FishingAdventure> fishingAdventures = new HashSet<FishingAdventure>();
+
 
 	public FishingInstructor() {
 		super();

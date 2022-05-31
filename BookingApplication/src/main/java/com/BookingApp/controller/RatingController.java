@@ -48,7 +48,7 @@ import com.BookingApp.service.RatingService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/rating")
+@RequestMapping("c")
 public class RatingController {
 
 	@Autowired
@@ -235,6 +235,7 @@ public class RatingController {
 		return allRatings;
 	}
 	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/declineRating")
 	public List<ClientRatingDto> declineRationg(@RequestBody ClientRatingDto dto)
 	{
@@ -247,6 +248,7 @@ public class RatingController {
 		return getUnapprovedRatings();
 	}
 	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/approveRating")
 	public List<ClientRatingDto> approveRating(@RequestBody ClientRatingDto dto)
 	{

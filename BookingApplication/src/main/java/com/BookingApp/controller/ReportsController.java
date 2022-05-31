@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -148,6 +149,7 @@ public class ReportsController {
 		clientRepository.saveAll(clientsToSave);
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/declineFishingPenalty")
     public Set<FishingAppointmentReport> declineFishingPenalty(@RequestBody FishingAppointmentReport reportDTO)
 	{	
@@ -155,6 +157,7 @@ public class ReportsController {
 		return getFishingReports();
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/declineBoatPenalty")
     public Set<BoatAppointmentReport> declineBoatPenalty(@RequestBody BoatAppointmentReport reportDTO)
 	{	
@@ -162,6 +165,7 @@ public class ReportsController {
 		return getBoatReports();
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/declineCottagePenalty")
     public Set<CottageAppointmentReport> declineCottagePenalty(@RequestBody CottageAppointmentReport reportDTO)
 	{	
@@ -169,6 +173,7 @@ public class ReportsController {
 		return getCottageReports();
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/approveFishingPenalty")
     public Set<FishingAppointmentReport> approveFishingPenalty(@RequestBody FishingAppointmentReport reportDTO)
 	{	
@@ -184,6 +189,7 @@ public class ReportsController {
 		return getFishingReports();
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/approveBoatPenalty")
     public Set<BoatAppointmentReport> approveBoatPenalty(@RequestBody BoatAppointmentReport reportDTO)
 	{	
@@ -199,6 +205,7 @@ public class ReportsController {
 		return getBoatReports();
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/approveCottagePenalty")
     public Set<CottageAppointmentReport> approveCottagePenalty(@RequestBody CottageAppointmentReport reportDTO)
 	{	

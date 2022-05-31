@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 public class FishingAppointmentReport {
 	@Id
@@ -21,10 +24,13 @@ public class FishingAppointmentReport {
 	@Enumerated(value = EnumType.STRING)
 	@Column
 	public AppointmentRatingOptions ratingOption;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public AppUser client;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public AppUser owner;
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToOne
 	public FishingAppointment appointment;
 	@Column

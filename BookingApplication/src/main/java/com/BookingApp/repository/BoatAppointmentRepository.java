@@ -12,4 +12,7 @@ public interface BoatAppointmentRepository extends JpaRepository<BoatAppointment
 
 	@Query("select b from BoatAppointment b where b.client.id = :appUserId")
 	public List<BoatAppointment> findAllAppointmentsByClient(@Param("appUserId") long appUserId);
+
+	@Query("SELECT b FROM BoatAppointment b WHERE b.boat.shipOwner.id=?1")
+	public List<BoatAppointment> findOwnersReservationHistory(long id);
 }

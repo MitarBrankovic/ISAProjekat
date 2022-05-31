@@ -1,5 +1,7 @@
 package com.BookingApp.model;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,6 +36,10 @@ public class Cottage {
 	@Column
 	public String priceList;
 	@Column
+	public LocalDateTime availableFrom;
+	@Column
+	public LocalDateTime availableUntil;
+	@Column
 	public double pricePerHour;
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -54,6 +60,8 @@ public class Cottage {
 		this.description = description;
 		this.roomsNum = roomsNum;
 		this.bedsNum = bedsNum;
+		this.availableFrom = LocalDateTime.now();
+		this.availableUntil = LocalDateTime.now().plusDays(7);
 		this.rules = rules;
 		this.priceList = priceList;
 		this.pricePerHour = pricePerHour;
@@ -70,7 +78,48 @@ public class Cottage {
 		this.bedsNum = bedsNum;
 		this.rules = rules;
 		this.priceList = priceList;
+		this.availableFrom = LocalDateTime.now();
+		this.availableUntil = LocalDateTime.now().plusDays(7);
 		this.pricePerHour = pricePerHour;
+		this.rating = rating;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+	}
+	
+	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules,
+			String priceList, LocalDateTime availableFrom, LocalDateTime availableUntil, double pricePerHour, double rating, int maxAmountOfPeople) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.address = address;
+		this.description = description;
+		this.roomsNum = roomsNum;
+		this.bedsNum = bedsNum;
+		this.rules = rules;
+		this.priceList = priceList;
+		this.availableFrom = availableFrom;
+		this.availableUntil = availableUntil;
+		this.pricePerHour = pricePerHour;
+		this.rating = rating;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+	}
+
+
+	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules,
+			String priceList, LocalDateTime availableFrom, LocalDateTime availableUntil, double pricePerHour,
+			CottageOwner cottageOwner, double rating, int maxAmountOfPeople) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.address = address;
+		this.description = description;
+		this.roomsNum = roomsNum;
+		this.bedsNum = bedsNum;
+		this.rules = rules;
+		this.priceList = priceList;
+		this.availableFrom = availableFrom;
+		this.availableUntil = availableUntil;
+		this.pricePerHour = pricePerHour;
+		this.cottageOwner = cottageOwner;
 		this.rating = rating;
 		this.maxAmountOfPeople = maxAmountOfPeople;
 	}

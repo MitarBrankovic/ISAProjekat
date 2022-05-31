@@ -110,6 +110,18 @@ public class BoatAppointmentController {
 		return false;
 	}
 	
+	@GetMapping(path = "/getReservationsHistory/{ownerId}")
+	public ResponseEntity<List<BoatAppointment>> getInstructorsReservationsForReport(@PathVariable("ownerId") long id)
+	{
+		List<BoatAppointment> appointments = new ArrayList<BoatAppointment>();
+		for(BoatAppointment appointment : boatAppointmentRepository.findOwnersReservationHistory(id))
+		{
+			if (appointment.client != null)
+				appointments.add(appointment);
+		}
+		System.out.println(appointments);
+		return new ResponseEntity<List<BoatAppointment>>(appointments,HttpStatus.OK);
+	}
 
 	
 	@GetMapping(path = "/getReservedBoatAppointmentsByClient/{clientId}")

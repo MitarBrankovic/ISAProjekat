@@ -56,7 +56,10 @@ Vue.component("UsersAdmin", {
         if(this.activeUser.role != 'admin')
         this.$router.push('/')
         axios
-        .get('/appUser/getUsers')
+        .get('/appUser/getUsers', {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
         .then(response=>{
             this.users = response.data
         })
@@ -70,7 +73,10 @@ Vue.component("UsersAdmin", {
     methods:{
         deleteUser:function(u){
             axios
-            .post('/appUser/deleteUser', u)
+            .post('/appUser/deleteUser', u, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.users = response.data
             })

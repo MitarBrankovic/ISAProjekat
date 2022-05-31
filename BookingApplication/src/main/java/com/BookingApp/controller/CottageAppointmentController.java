@@ -31,6 +31,7 @@ import com.BookingApp.dto.SearchDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.Boat;
+import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Client;
 import com.BookingApp.model.Cottage;
 import com.BookingApp.model.CottageAppointment;
@@ -95,6 +96,19 @@ public class CottageAppointmentController {
 	public boolean scheduleCottageAppointment(@PathVariable("cottageId") long id, @PathVariable("userId") long userId) throws Exception
 	{
 		return cottageAppointmentService2.scheduleIt(id, userId);
+	}
+	
+	@GetMapping(path = "/getReservationsHistory/{ownerId}")
+	public ResponseEntity<List<CottageAppointment>> getInstructorsReservationsForReport(@PathVariable("ownerId") long id)
+	{
+		List<CottageAppointment> appointments = new ArrayList<CottageAppointment>();
+		for(CottageAppointment appointment : cottageAppointmentRepository.findOwnersReservationHistory(id))
+		{
+			if (appointment.client != null)
+				appointments.add(appointment);
+		}
+		System.out.println(appointments);
+		return new ResponseEntity<List<CottageAppointment>>(appointments,HttpStatus.OK);
 	}
 	
 	@PutMapping(path = "/cancelCottageAppointment/{cottageId}")

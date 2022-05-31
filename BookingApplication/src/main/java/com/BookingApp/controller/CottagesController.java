@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.EntityAvailabilityDto;
 import com.BookingApp.dto.SearchDto;
+import com.BookingApp.model.Boat;
 import com.BookingApp.model.Cottage;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.repository.CottageRepository;
@@ -47,6 +50,30 @@ public class CottagesController {
 		List<Cottage> cottages = cottageRepository.getAllCottagesForOwner(id);
 		
 		return new ResponseEntity<List<Cottage>>(cottages,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/editCottagesAvailability")
+    public Set<Cottage> editCottagesAvailability(@RequestBody EntityAvailabilityDto availabilityDTO)
+	{	
+		if(availabilityDTO != null) {
+			List<Cottage> cottages = cottageRepository.findAll();
+			for (Cottage c : cottages)
+				if (c.id == availabilityDTO.entityId) {
+					c.availableFrom = availabilityDTO.formatDateFrom();
+					c.availableUntil = availabilityDTO.formatDateUntil();
+					break;
+				}
+			cottageRepository.saveAll(cottages);
+			return cottageRepository.findOwnersCottages(availabilityDTO.ownerId);
+		}
+		return null;
+	}
+	
+	@GetMapping(path = "/getOwnersCottages/{ownersId}")
+	public Set<Cottage> getOwnersCottages(@PathVariable("ownersId") long id)
+	{	
+		System.out.println(cottageRepository.findOwnersCottages(id));
+		return cottageRepository.findOwnersCottages(id);
 	}
 	
 	

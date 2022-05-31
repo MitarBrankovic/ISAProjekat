@@ -57,6 +57,7 @@ public class AppUserController {
 	@Autowired
 	private FishingAdventureRepository fishingAdventureRepository;
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping(path="/getUsers")
 	public ResponseEntity<List<AppUser>> getUsers()
 	{	
@@ -151,6 +152,7 @@ public class AppUserController {
 		return userRepository.findById(id).get();
 	}
 
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/deleteUser")
 	public ResponseEntity<List<AppUser>> deleteUser(@RequestBody AppUser user)
 	{	

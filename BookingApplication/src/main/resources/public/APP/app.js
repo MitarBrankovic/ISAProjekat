@@ -40,6 +40,8 @@ const LoyaltyProgramAdmin = {  template: '<LoyaltyProgramAdmin></LoyaltyProgramA
 const CurrentFishingAppointments = {  template: '<CurrentFishingAppointments></CurrentFishingAppointments>' }
 const InstructorsCalendar = {  template: '<InstructorsCalendar></InstructorsCalendar>' }
 const InstructorsGraph = {  template: '<InstructorsGraph></InstructorsGraph>' }
+const BoatOwnersCalendar = {  template: '<BoatOwnersCalendar></BoatOwnersCalendar>' }
+const CottageOwnersCalendar = {  template: '<CottageOwnersCalendar></CottageOwnersCalendar>' }
 
 
 
@@ -89,6 +91,8 @@ const router = new VueRouter({
         { path: '/currentFishingAppointments', component: CurrentFishingAppointments },
         { path: '/instructorsCalendar', component: InstructorsCalendar },
         { path: '/instructorsGraph', component: InstructorsGraph },
+        { path: '/boatOwnersCalendar', component: BoatOwnersCalendar },
+        { path: '/cottageOwnersCalendar', component: CottageOwnersCalendar },
         
         
     ]

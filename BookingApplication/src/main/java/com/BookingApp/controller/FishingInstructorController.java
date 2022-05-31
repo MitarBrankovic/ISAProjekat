@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ public class FishingInstructorController {
 	@Autowired
 	private FishingInstructorRepository fishingInstructorRepository;
 	
+	@PreAuthorize("hasAuthority('FISHINGISNTRUCTOR')")
 	@PostMapping(path = "/editInstructor")
     public FishingInstructor editInstructor(@RequestBody FishingInstructor instructor)
 	{	
@@ -49,6 +51,7 @@ public class FishingInstructorController {
 		return null;
 	}
 	
+	@PreAuthorize("hasAuthority('FISHINGISNTRUCTOR')")
 	@PostMapping(path = "/editInstructorsAvailability")
     public FishingInstructor editInstructorsAvailability(@RequestBody FishingInstructorAvailabilityDto availabilityDTO)
 	{	

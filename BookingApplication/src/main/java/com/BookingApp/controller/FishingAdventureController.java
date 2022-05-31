@@ -15,6 +15,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,7 +68,8 @@ public class FishingAdventureController {
 		}
 		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
 	}
-
+	
+	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getFishingInstructorsAdventures/{instructorsId}")
 	public Set<FishingAdventure> getInstructorsAdventures(@PathVariable("instructorsId") long id)
 	{
@@ -89,6 +91,7 @@ public class FishingAdventureController {
 		return adventurePhotoRepository.findAdventuresPhotos(id);
 	}
 	
+	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/addPhoto")
     public Set<AdventurePhoto> addPhoto(@RequestBody NewPhotoDto photoDTO)
 	{	
@@ -99,6 +102,7 @@ public class FishingAdventureController {
 		return null;
 	}
 	
+	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/removePhoto/{adventureId}")
     public Set<AdventurePhoto> removePhoto(@PathVariable("adventureId") long id)
 	{	
@@ -112,6 +116,7 @@ public class FishingAdventureController {
 		return adventurePhotoRepository.findAdventuresPhotos(id);
 	}
 	
+	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/addNewAdventure")
     public Set<FishingAdventure> addAdventure(@RequestBody NewAdventureDto adventureDTO)
 	{	
@@ -127,6 +132,7 @@ public class FishingAdventureController {
 		return null;
 	}
 	
+	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/editAdventure")
     public Set<FishingAdventure> editAdventure(@RequestBody EditAdventureDto adventureDTO)
 	{	
@@ -153,6 +159,7 @@ public class FishingAdventureController {
 		return null;
 	}
 	
+	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/checkAdventureRemoval/{adventureId}")
     public boolean sendRequest(@PathVariable("adventureId") long id)
 	{	
@@ -163,6 +170,7 @@ public class FishingAdventureController {
 		return true;
 	}
 	
+	//@PreAuthorize("hasRole('FISHINGINSTRUCTOR') or hasRole('ADMIN')")
 	@PreRemove
 	@PostMapping(path = "/removeAdventure/{adventureId}")
     public Set<FishingAdventure> removeAdventure(@PathVariable("adventureId") long id)
@@ -310,7 +318,7 @@ public class FishingAdventureController {
 		return adventures;
 	}
 	
-
+	
 	@PostMapping(path = "/searchInstructorsAdventures")
 	public ResponseEntity<List<FishingAdventure>> searchInstructorsAdventures(@RequestBody SearchInstructorsAdventuresDto dto)
 	{

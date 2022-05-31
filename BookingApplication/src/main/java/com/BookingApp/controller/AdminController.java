@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,10 +24,7 @@ import com.BookingApp.dto.RequestDeleteAccDto;
 import com.BookingApp.model.Admin;
 import com.BookingApp.model.AdminType;
 import com.BookingApp.model.AppUser;
-import com.BookingApp.model.Client;
 import com.BookingApp.model.Complaint;
-import com.BookingApp.model.CottageAppointment;
-import com.BookingApp.model.FishingInstructor;
 import com.BookingApp.model.RequestDeleteAcc;
 import com.BookingApp.model.UserType;
 import com.BookingApp.repository.AdminRepository;
@@ -51,7 +47,7 @@ public class AdminController {
 	@Autowired
 	private AdminRepository adminRepository;
 	
-	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/acceptRequest")
 	public ResponseEntity<List<RequestDeleteAccDto>> acceptRequest(@RequestBody RequestDeleteAccDto requestDTO)
 	{	
@@ -85,7 +81,7 @@ public class AdminController {
 			return null;
 	}
 	
-	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/declineRequest")
 	public ResponseEntity<List<RequestDeleteAccDto>> declineRequest(@RequestBody RequestDeleteAccDto requestDTO)
 	{	
@@ -142,7 +138,7 @@ public class AdminController {
 			return "Vlasnik broda";
 	}
 	
-	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/answerComplaint")
 	public ResponseEntity<List<Complaint>> answerComplaint(@RequestBody AnswerComplaintDto answerComplaintDto)
 	{	
@@ -196,6 +192,7 @@ public class AdminController {
 		System.out.println("Email sent...");
 	}
 	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/editAdmin")
     public Admin editAdmin(@RequestBody Admin admin)
 	{	
@@ -220,6 +217,7 @@ public class AdminController {
 		return null;
 	}
 	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/addAdmin")
     public boolean addAdmin(@RequestBody AddAdminDto adminDTO)
 	{	
@@ -231,6 +229,7 @@ public class AdminController {
 		return false;
 	}
 	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/acceptNewAccount")
     public ResponseEntity<List<AppUser>> verifyOwner(@RequestBody AppUser appUser)
 	{	
@@ -257,6 +256,7 @@ public class AdminController {
 			}
 	}
 	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/declineNewAccount")
     public ResponseEntity<List<AppUser>> declineOwner(@RequestBody AppUser appUser)
 	{	
@@ -282,6 +282,7 @@ public class AdminController {
 			}
 	}
 	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping(path = "/changePassword/{userId}/{password}")
 	public boolean changeAdminPassword(@PathVariable("userId") long id, @PathVariable("password") String password)
 	{

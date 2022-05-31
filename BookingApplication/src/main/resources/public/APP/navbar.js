@@ -79,6 +79,10 @@ Vue.component("Navbar", {
 				</div>
 				<div v-if="(activeUser.role==='cottage_owner')">
 					<a href="/#/profileCottageOwner">Moj profil</a>
+					<a href="/#/cottageOwnersCalendar">Kalendar zauzetosti</a>
+				</div>
+				<div v-if="(activeUser.role==='ship_owner')">
+					<a href="/#/boatOwnersCalendar">Kalendar zauzetosti</a>
 				</div>
 				<a href="/#/logout">Logout</a>
 			</div>

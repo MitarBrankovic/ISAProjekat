@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,12 +25,14 @@ public class LoyaltyController {
 	@Autowired
 	private LoyaltyProgramRepository loyaltyProgramRepository;
 	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping(path = "/getLoyalty")
 	public LoyaltyProgram getLoyalty()
 	{
 		return loyaltyProgramRepository.getLoyalty();
 	}
 	
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/editLoyalty")
     public LoyaltyProgram editLoyalty(@RequestBody LoyaltyProgram loyalty)
 	{	

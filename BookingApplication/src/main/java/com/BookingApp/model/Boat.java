@@ -1,5 +1,7 @@
 package com.BookingApp.model;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -49,6 +51,10 @@ public class Boat {
 	@Column
 	public String priceList;
 	@Column
+	public LocalDateTime availableFrom;
+	@Column
+	public LocalDateTime availableUntil;
+	@Column
 	public double pricePerHour;
 	@Enumerated(value = EnumType.STRING)
 	public CancellationTerms cancellationTerms;
@@ -78,6 +84,8 @@ public class Boat {
 		this.navigationEquipment = navigationEquipment;
 		this.address = address;
 		this.description = description;
+		this.availableFrom = LocalDateTime.now();
+		this.availableUntil = LocalDateTime.now().plusDays(7);
 		this.capacity = capacity;
 		this.rules = rules;
 		this.fishingEquipment = fishingEquipment;
@@ -101,9 +109,37 @@ public class Boat {
 		this.address = address;
 		this.description = description;
 		this.capacity = capacity;
+		this.availableFrom = LocalDateTime.now();
+		this.availableUntil = LocalDateTime.now().plusDays(7);
 		this.rules = rules;
 		this.fishingEquipment = fishingEquipment;
 		this.priceList = priceList;
+		this.pricePerHour = pricePerHour;
+		this.cancellationTerms = cancellationTerms;
+		this.rating = rating;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+	}
+	
+	public Boat(long id, String name, String boatType, double length, String engineNumber, long enginePower,
+			double maxSpeed, String navigationEquipment, String address, String description, long capacity, 
+			String rules, String fishingEquipment, String priceList, LocalDateTime availableFrom, LocalDateTime availableUntil, double pricePerHour, CancellationTerms cancellationTerms, double rating, int maxAmountOfPeople) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.boatType = boatType;
+		this.length = length;
+		this.engineNumber = engineNumber;
+		this.enginePower = enginePower;
+		this.maxSpeed = maxSpeed;
+		this.navigationEquipment = navigationEquipment;
+		this.address = address;
+		this.description = description;
+		this.capacity = capacity;
+		this.rules = rules;
+		this.fishingEquipment = fishingEquipment;
+		this.priceList = priceList;
+		this.availableFrom = availableFrom;
+		this.availableUntil = availableUntil;
 		this.pricePerHour = pricePerHour;
 		this.cancellationTerms = cancellationTerms;
 		this.rating = rating;

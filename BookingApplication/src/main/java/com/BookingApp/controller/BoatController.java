@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.EntityAvailabilityDto;
+import com.BookingApp.dto.FishingInstructorAvailabilityDto;
 import com.BookingApp.dto.SearchDto;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.Cottage;
+import com.BookingApp.model.FishingAdventure;
+import com.BookingApp.model.FishingInstructor;
 import com.BookingApp.repository.BoatRepository;
 
 @CrossOrigin
@@ -42,6 +47,13 @@ public class BoatController {
 			return new ResponseEntity<List<Boat>>(boats,HttpStatus.OK);
 		}
 		
+		@GetMapping(path = "/getOwnersBoats/{ownersId}")
+		public Set<Boat> getOwnersBoats(@PathVariable("ownersId") long id)
+		{	
+			System.out.println(boatRepository.findOwnersBoats(id));
+			return boatRepository.findOwnersBoats(id);
+		}
+		
 		
 		@GetMapping(path = "/getSelectedBoat/{boatId}")
 		public ResponseEntity<Boat> getSelectedBoat(@PathVariable("boatId") long id)
@@ -50,6 +62,23 @@ public class BoatController {
 			Boat boatNew = boat.get();
 			
 			return new ResponseEntity<Boat>(boatNew,HttpStatus.OK);
+		}
+		
+		@PostMapping(path = "/editBoatsAvailability")
+	    public Set<Boat> editBoatsAvailability(@RequestBody EntityAvailabilityDto availabilityDTO)
+		{	
+			if(availabilityDTO != null) {
+				List<Boat> boats = boatRepository.findAll();
+				for (Boat b : boats)
+					if (b.id == availabilityDTO.entityId) {
+						b.availableFrom = availabilityDTO.formatDateFrom();
+						b.availableUntil = availabilityDTO.formatDateUntil();
+						break;
+					}
+				boatRepository.saveAll(boats);
+				return boatRepository.findOwnersBoats(availabilityDTO.ownerId);
+			}
+			return null;
 		}
 		
 		@PostMapping(path = "/searchBoats")

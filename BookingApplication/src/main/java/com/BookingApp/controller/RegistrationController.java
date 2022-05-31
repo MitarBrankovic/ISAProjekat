@@ -51,7 +51,6 @@ public class RegistrationController {
 	private JavaMailSender javaMailSender;
 	@Autowired
 	private RoleRepository roleRepository;
-	
 	@Autowired
 	private TokenUtils tokenUtils;
 	@Autowired

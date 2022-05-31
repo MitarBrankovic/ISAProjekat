@@ -3,6 +3,7 @@ package com.BookingApp.controller;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,12 +29,14 @@ public class PricelistController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	
 	@GetMapping(path = "/getInstructorsPricelist/{instructorsId}")
 	public Set<PricelistItem> getInstructorsPricelist(@PathVariable("instructorsId") long id)
 	{
 		return pricelistRepository.findAllItemsByInstructorsId(id);
 	}
 	
+	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/addPricelistItem")
     public Set<PricelistItem> addPricelistItem(@RequestBody PricelistItemDto itemDTO)
 	{	
@@ -45,6 +48,7 @@ public class PricelistController {
 		return null;
 	}
 	
+	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/deletePricelistItem")
     public Set<PricelistItem> deleteItem(@RequestBody PricelistItemRemoveDto itemDTO)
 	{	

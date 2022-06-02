@@ -41,7 +41,10 @@ Vue.component("AddAdmin", {
     		if (this.checkNewAdmin()) {
     			if (this.validateEmail()){
 	        	axios
-					.post('/admin/addAdmin', this.newAdmin)	
+					.post('/admin/addAdmin', this.newAdmin,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})	
 					.then(response => {
 						if (response.data) {
 		                	Swal.fire({ icon: 'success', title: 'Uspešno ste dodali novog administratora !', showConfirmButton: false, timer: 1500 })

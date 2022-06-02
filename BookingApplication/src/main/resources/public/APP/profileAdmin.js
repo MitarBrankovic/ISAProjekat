@@ -44,7 +44,10 @@ Vue.component("ProfileAdmin", {
     	saveInfoEdit() {
     		if (this.checkInfoEdit()) {
         	axios
-				.post('/admin/editAdmin', this.activeUser)	
+				.post('/admin/editAdmin', this.activeUser,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})	
 				.then(response => {
 	                	this.activeUser = response.data
 			 			localStorage.setItem("activeUser", JSON.stringify(this.activeUser));

@@ -106,7 +106,10 @@ Vue.component("ProfileFishingInstructor", {
     	saveInfoEdit() {
     		if (this.checkInfoEdit()) {
         	axios
-				.post('/fishingInstructor/editInstructor', this.activeUser)	
+				.post('/fishingInstructor/editInstructor', this.activeUser,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})	
 				.then(response => {
 	                	this.activeUser = response.data
 			 			localStorage.setItem("activeUser", JSON.stringify(this.activeUser));
@@ -124,7 +127,10 @@ Vue.component("ProfileFishingInstructor", {
         		this.fillAvailabilityEdit()
     			this.availabilityEdit.instructorsId = this.activeUser.id
     			axios
-				.post('/fishingInstructor/editInstructorsAvailability', this.availabilityEdit)	
+				.post('/fishingInstructor/editInstructorsAvailability', this.availabilityEdit,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})	
 				.then(response => {
 	                	this.activeUser = response.data
 			 			localStorage.setItem("activeUser", JSON.stringify(this.activeUser));

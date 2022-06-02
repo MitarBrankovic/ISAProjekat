@@ -56,10 +56,7 @@ Vue.component("UsersAdmin", {
         if(this.activeUser.role != 'admin')
         this.$router.push('/')
         axios
-        .get('/appUser/getUsers', {
-                headers: {
-                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
-                },})
+        .get('/appUser/getUsers')
         .then(response=>{
             this.users = response.data
         })

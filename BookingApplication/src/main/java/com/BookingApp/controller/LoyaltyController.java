@@ -25,7 +25,6 @@ public class LoyaltyController {
 	@Autowired
 	private LoyaltyProgramRepository loyaltyProgramRepository;
 	
-	//@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping(path = "/getLoyalty")
 	public LoyaltyProgram getLoyalty()
 	{

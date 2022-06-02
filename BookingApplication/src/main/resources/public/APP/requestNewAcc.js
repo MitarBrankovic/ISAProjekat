@@ -58,14 +58,20 @@ Vue.component("RequestNewAcc", {
     methods:{
         acceptRequest:function(r){
             axios
-            .post('/admin/acceptNewAccount', r)
+            .post('/admin/acceptNewAccount', r, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.requests = response.data
             })
         },
         declineRequest:function(r){
             axios
-            .post('/admin/declineNewAccount', r)
+            .post('/admin/declineNewAccount', r, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.requests = response.data
             })

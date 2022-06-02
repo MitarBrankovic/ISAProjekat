@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,7 @@ import com.BookingApp.model.UserType;
 import com.BookingApp.repository.AdminRepository;
 import com.BookingApp.repository.ComplaintRepository;
 import com.BookingApp.repository.RequestDeleteAccRepository;
+import com.BookingApp.repository.RoleRepository;
 import com.BookingApp.repository.UserRepository;
 
 @CrossOrigin
@@ -46,8 +48,10 @@ public class AdminController {
 	private JavaMailSender javaMailSender;
 	@Autowired
 	private AdminRepository adminRepository;
+	@Autowired
+	private RoleRepository roleRepository;
 	
-	//@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/acceptRequest")
 	public ResponseEntity<List<RequestDeleteAccDto>> acceptRequest(@RequestBody RequestDeleteAccDto requestDTO)
 	{	
@@ -81,7 +85,7 @@ public class AdminController {
 			return null;
 	}
 	
-	//@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/declineRequest")
 	public ResponseEntity<List<RequestDeleteAccDto>> declineRequest(@RequestBody RequestDeleteAccDto requestDTO)
 	{	
@@ -94,7 +98,7 @@ public class AdminController {
 		if(oldUser.isPresent()) {
 			appUser = oldUser.get();
 			try 
-			{
+			{ 
 				Thread t = new Thread() {
 					public void run()
 					{
@@ -138,7 +142,7 @@ public class AdminController {
 			return "Vlasnik broda";
 	}
 	
-	//@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/answerComplaint")
 	public ResponseEntity<List<Complaint>> answerComplaint(@RequestBody AnswerComplaintDto answerComplaintDto)
 	{	
@@ -192,7 +196,7 @@ public class AdminController {
 		System.out.println("Email sent...");
 	}
 	
-	//@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/editAdmin")
     public Admin editAdmin(@RequestBody Admin admin)
 	{	
@@ -217,19 +221,21 @@ public class AdminController {
 		return null;
 	}
 	
-	//@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/addAdmin")
     public boolean addAdmin(@RequestBody AddAdminDto adminDTO)
 	{	
 		if(adminDTO != null && checkEmailDuplicate(adminDTO.email)) {
-			adminRepository.save(new Admin(adminDTO.name, adminDTO.surname, adminDTO.email, adminDTO.password, adminDTO.address, 
-					adminDTO.city, adminDTO.country, adminDTO.phoneNumber, UserType.admin, null, false, "", AdminType.added));
+			Admin newAdmin = new Admin(adminDTO.name, adminDTO.surname, adminDTO.email, adminDTO.password, adminDTO.address, 
+					adminDTO.city, adminDTO.country, adminDTO.phoneNumber, UserType.admin, null, false, "", AdminType.added);
+					newAdmin.setRoles(roleRepository.findByName("ADMIN"));
+			adminRepository.save(newAdmin);
 			return true;
 		}
 		return false;
 	}
 	
-	//@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/acceptNewAccount")
     public ResponseEntity<List<AppUser>> verifyOwner(@RequestBody AppUser appUser)
 	{	
@@ -256,7 +262,7 @@ public class AdminController {
 			}
 	}
 	
-	//@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path = "/declineNewAccount")
     public ResponseEntity<List<AppUser>> declineOwner(@RequestBody AppUser appUser)
 	{	
@@ -282,7 +288,6 @@ public class AdminController {
 			}
 	}
 	
-	//@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping(path = "/changePassword/{userId}/{password}")
 	public boolean changeAdminPassword(@PathVariable("userId") long id, @PathVariable("password") String password)
 	{

@@ -77,7 +77,10 @@ Vue.component("FishingInstructorsReports", {
         if (this.validateReport()) {
        	  console.log(this.report)
           axios
-          .post("reports/sendFishingReport/",  this.report)
+          .post("reports/sendFishingReport/",  this.report, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
           .then(response => {
           	  this.appointments = response.data
 	          Swal.fire({ icon: 'success', title: 'Izveštaj uspešno poslat !', showConfirmButton: false, timer: 2000 })

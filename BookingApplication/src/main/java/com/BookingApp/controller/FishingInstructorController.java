@@ -25,7 +25,7 @@ public class FishingInstructorController {
 	@Autowired
 	private FishingInstructorRepository fishingInstructorRepository;
 	
-	@PreAuthorize("hasAuthority('FISHINGISNTRUCTOR')")
+	//@PreAuthorize("hasAuthority('FISHINGISNTRUCTOR')")
 	@PostMapping(path = "/editInstructor")
     public FishingInstructor editInstructor(@RequestBody FishingInstructor instructor)
 	{	
@@ -51,7 +51,7 @@ public class FishingInstructorController {
 		return null;
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGISNTRUCTOR')")
+	//@PreAuthorize("hasAuthority('FISHINGISNTRUCTOR')")
 	@PostMapping(path = "/editInstructorsAvailability")
     public FishingInstructor editInstructorsAvailability(@RequestBody FishingInstructorAvailabilityDto availabilityDTO)
 	{	

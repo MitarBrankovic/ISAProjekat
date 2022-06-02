@@ -42,7 +42,10 @@ Vue.component("InstructorsCalendar", {
     				this.availabilityEdit.dateFrom = localStorage.getItem('start')
     				this.availabilityEdit.dateUntil = localStorage.getItem('end')
 	    			axios
-					.post('/fishingInstructor/editInstructorsAvailability', this.availabilityEdit)	
+					.post('/fishingInstructor/editInstructorsAvailability', this.availabilityEdit,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})	
 					.then(response => {
 		                	this.activeUser = response.data
 				 			localStorage.setItem("activeUser", JSON.stringify(this.activeUser));

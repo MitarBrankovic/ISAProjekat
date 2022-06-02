@@ -98,6 +98,7 @@ public class ReportsController {
 		return true;
 	}
 	
+	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/sendFishingReport")
     public List<FishingAppointment> sendFishingReport(@RequestBody AppointmentReportDto reportDTO)
 	{	

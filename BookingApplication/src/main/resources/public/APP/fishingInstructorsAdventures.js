@@ -220,7 +220,10 @@ Vue.component("FishingInstructorsAdventures", {
                .then(response=>{
                   if (response.data) {
                   	 axios
-	                 .post('/fishingAdventures/removeAdventure/' + this.adventureIdRemove)
+	                 .post('/fishingAdventures/removeAdventure/' + this.adventureIdRemove, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
 	                 .then(response => { this.adventures = response.data 
 	                 console.log(response.data)})
                   }
@@ -235,7 +238,10 @@ Vue.component("FishingInstructorsAdventures", {
         	if (this.checkNewAdventure()){
         	console.log(this.newAdventure)
         		axios
-	               .post('/fishingAdventures/addNewAdventure', this.newAdventure)
+	               .post('/fishingAdventures/addNewAdventure', this.newAdventure, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
 	               .then(response=>{
 	                  this.adventures = response.data
 	                  this.newAdventure.name = ""
@@ -354,7 +360,10 @@ Vue.component("FishingInstructorsAdventures", {
         		console.log(this.editAdventure.photo.length)
         		if (this.editAdventure.photo.length < 1200000){
 	        		axios
-		               .post('/fishingAdventures/editAdventure', this.editAdventure)
+		               .post('/fishingAdventures/editAdventure', this.editAdventure, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
 		               .then(response=>{
 		                  this.adventures = response.data
 		               })

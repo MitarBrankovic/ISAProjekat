@@ -43,14 +43,20 @@ Vue.component("RequestDeleteAcc", {
     methods:{
         acceptRequest:function(r){
             axios
-            .post('/admin/acceptRequest', r)
+            .post('/admin/acceptRequest', r, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.requests = response.data
             })
         },
         declineRequest:function(r){
             axios
-            .post('/admin/declineRequest', r)
+            .post('/admin/declineRequest', r, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.requests = response.data
             })

@@ -88,7 +88,6 @@ public class FishingAppointmentController {
 	private LoyaltyProgramRepository loyaltyRepository;
 	@Autowired
 	private UserRepository userRepository;
-	
 	@Autowired
 	private FishingAppointmentService fishingAppointmentService2;
 	
@@ -104,7 +103,6 @@ public class FishingAppointmentController {
 		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
 	} 
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getReservationsForReports/{instructorsId}")
 	public ResponseEntity<List<FishingAppointment>> getInstructorsReservationsHistory(@PathVariable("instructorsId") long id)
 	{
@@ -126,7 +124,6 @@ public class FishingAppointmentController {
 		return false;
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getReservationsHistory/{instructorsId}")
 	public ResponseEntity<List<FishingAppointment>> getInstructorsReservationsForReport(@PathVariable("instructorsId") long id)
 	{
@@ -139,7 +136,6 @@ public class FishingAppointmentController {
 		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getCurrentAppointments/{instructorsId}")
 	public ResponseEntity<List<FishingAppointment>> getCurrentAppointments(@PathVariable("instructorsId") long id)
 	{
@@ -300,7 +296,6 @@ public class FishingAppointmentController {
 		return ret;
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getQuickFishingAppointments/{adventureId}")
 	public ResponseEntity<List<FishingAppointment>> getInstructorsAdventures(@PathVariable("adventureId") long id)
 	{
@@ -415,7 +410,6 @@ public class FishingAppointmentController {
 		return new ResponseEntity<List<FishingAppointment>>(adventures,HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getFishingInstructorsCharts/{instructorId}")
 	public ResponseEntity<List<ChartInfoDto>> getChartInfo(@PathVariable("instructorId") long id)
 	{	
@@ -442,7 +436,6 @@ public class FishingAppointmentController {
 		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getFishingInstructorsWeekCharts/{instructorId}")
 	public ResponseEntity<List<ChartInfoDto>> getWeekChartInfo(@PathVariable("instructorId") long id)
 	{	
@@ -469,7 +462,6 @@ public class FishingAppointmentController {
 		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getFishingInstructorsMonthCharts/{instructorId}")
 	public ResponseEntity<List<ChartInfoDto>> getMonthChartInfo(@PathVariable("instructorId") long id)
 	{	
@@ -496,7 +488,6 @@ public class FishingAppointmentController {
 		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getFishingInstructorsYearCharts/{instructorId}")
 	public ResponseEntity<List<ChartInfoDto>> getYearChartInfo(@PathVariable("instructorId") long id)
 	{	

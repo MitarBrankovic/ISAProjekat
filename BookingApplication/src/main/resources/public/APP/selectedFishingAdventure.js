@@ -255,7 +255,10 @@ Vue.component("SelectedFishingAdventure", {
             		if (overlap) {
 	            		if (instrAvail) {
 			         	axios
-			               .post('/fishingAppointments/addQuickAppointment', this.quickAppointment)
+			               .post('/fishingAppointments/addQuickAppointment', this.quickAppointment, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
 			               .then(response=>{
 			                  this.appointments = response.data
 			                  this.quickAppointment.dateFrom = ""
@@ -385,7 +388,10 @@ Vue.component("SelectedFishingAdventure", {
         this.newPhoto.entityId = this.adventure.id;
         if (this.newPhoto.photo != null){
          	axios
-               .post('/fishingAdventures/addPhoto', this.newPhoto)
+               .post('/fishingAdventures/addPhoto', this.newPhoto, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
                .then(response=>{
                   this.photos = response.data
                   console.log(this.photos)
@@ -403,7 +409,10 @@ Vue.component("SelectedFishingAdventure", {
         
         removePhoto(){
          	axios
-               .post('/fishingAdventure/removePhoto/' + this.adventure.id)
+               .post('/fishingAdventure/removePhoto/' + this.adventure.id, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
                .then(response=>{
                   this.photos = response.data
                   console.log(this.photos)
@@ -420,7 +429,10 @@ Vue.component("SelectedFishingAdventure", {
         this.newPricelistItem.instructorsId = this.activeUser.id
         if (this.checkNewPricelistItem()){
          	axios
-               .post('/pricelist/addPricelistItem', this.newPricelistItem)
+               .post('/pricelist/addPricelistItem', this.newPricelistItem, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
                .then(response=>{
                   this.pricelist = response.data
                })
@@ -444,7 +456,10 @@ Vue.component("SelectedFishingAdventure", {
         this.removeItemObject.instructorId = this.activeUser.id
         console.log(this.removeItemObject)
          	axios
-               .post('/pricelist/deletePricelistItem', this.removeItemObject)
+               .post('/pricelist/deletePricelistItem', this.removeItemObject, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
                .then(response=>{
                   this.pricelist = response.data
                })

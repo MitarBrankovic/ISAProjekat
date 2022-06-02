@@ -60,7 +60,10 @@ Vue.component("Complaints", {
             }
             if (this.textAreaComplaint.trim() != "") {
 	            axios
-	            .post('/admin/answerComplaint', answerComplaintDto)
+	            .post('/admin/answerComplaint', answerComplaintDto,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
 	            .then(response=>{
 	                this.complaints = response.data
 	                Swal.fire({ icon: 'success', title: 'Odgovorili ste na žalbu !', showConfirmButton: false, timer: 1500 })

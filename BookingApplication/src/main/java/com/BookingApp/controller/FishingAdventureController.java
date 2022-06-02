@@ -69,7 +69,6 @@ public class FishingAdventureController {
 		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
 	}
 	
-	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@GetMapping(path = "/getFishingInstructorsAdventures/{instructorsId}")
 	public Set<FishingAdventure> getInstructorsAdventures(@PathVariable("instructorsId") long id)
 	{
@@ -91,7 +90,7 @@ public class FishingAdventureController {
 		return adventurePhotoRepository.findAdventuresPhotos(id);
 	}
 	
-	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
+	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/addPhoto")
     public Set<AdventurePhoto> addPhoto(@RequestBody NewPhotoDto photoDTO)
 	{	
@@ -102,7 +101,7 @@ public class FishingAdventureController {
 		return null;
 	}
 	
-	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
+	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/removePhoto/{adventureId}")
     public Set<AdventurePhoto> removePhoto(@PathVariable("adventureId") long id)
 	{	
@@ -116,7 +115,7 @@ public class FishingAdventureController {
 		return adventurePhotoRepository.findAdventuresPhotos(id);
 	}
 	
-	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
+	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/addNewAdventure")
     public Set<FishingAdventure> addAdventure(@RequestBody NewAdventureDto adventureDTO)
 	{	
@@ -132,7 +131,7 @@ public class FishingAdventureController {
 		return null;
 	}
 	
-	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
+	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/editAdventure")
     public Set<FishingAdventure> editAdventure(@RequestBody EditAdventureDto adventureDTO)
 	{	
@@ -171,7 +170,6 @@ public class FishingAdventureController {
 	}
 	
 	//@PreAuthorize("hasRole('FISHINGINSTRUCTOR') or hasRole('ADMIN')")
-	@PreRemove
 	@PostMapping(path = "/removeAdventure/{adventureId}")
     public Set<FishingAdventure> removeAdventure(@PathVariable("adventureId") long id)
 	{	

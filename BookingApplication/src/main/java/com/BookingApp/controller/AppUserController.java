@@ -57,7 +57,6 @@ public class AppUserController {
 	@Autowired
 	private FishingAdventureRepository fishingAdventureRepository;
 	
-	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping(path="/getUsers")
 	public ResponseEntity<List<AppUser>> getUsers()
 	{	
@@ -66,7 +65,6 @@ public class AppUserController {
 	
 	
 	@PostMapping(path = "/sendRequest/{textArea}/{userId}")
-	@PreAuthorize("hasAuthority('CLIENT')")
     public boolean sendRequest(@PathVariable("textArea") String textArea, @PathVariable("userId") long userId)
 	{	
 		Optional<RequestDeleteAcc> oldRequest = Optional.ofNullable(requestDeleteAccRepository.findByAppUserId(userId));

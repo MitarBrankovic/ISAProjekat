@@ -2,7 +2,7 @@ Vue.component("RatingApproval", {
     data: function() {
         return {
             activeUser:"",
-            ratings:null
+            ratings:""
         }
     },
     template:`  
@@ -63,14 +63,20 @@ Vue.component("RatingApproval", {
     methods:{
         acceptRequest:function(r){
             axios
-            .post('/rating/approveRating', r)
+            .post('/rating/approveRating', r, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.ratings = response.data
             })
         },
         declineRequest:function(r){
             axios
-            .post('/rating/declineRating', r)
+            .post('/rating/declineRating', r, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
             .then(response=>{
                 this.ratings = response.data
             })

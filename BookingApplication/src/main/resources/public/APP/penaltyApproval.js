@@ -127,7 +127,10 @@ Vue.component("PenaltyApproval", {
         
         approveFishingPenalty(report) {
           axios
-          .post("reports/approveFishingPenalty/",  report)
+          .post("reports/approveFishingPenalty/",  report,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
           .then(response => {
           	  this.fishingReports = response.data
 	          Swal.fire({ icon: 'success', title: 'Penal uspešno dodaljen klijentu.', showConfirmButton: false, timer: 2000 })
@@ -136,7 +139,10 @@ Vue.component("PenaltyApproval", {
         
         approveBoatPenalty(report) {
           axios
-          .post("reports/approveBoatPenalty/",  report)
+          .post("reports/approveBoatPenalty/",  report,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
           .then(response => {
           	  this.boatReports = response.data
 	          Swal.fire({ icon: 'success', title: 'Penal uspešno dodaljen klijentu.', showConfirmButton: false, timer: 2000 })
@@ -145,7 +151,10 @@ Vue.component("PenaltyApproval", {
         
         approveCottagePenalty(report) {
           axios
-          .post("reports/approveCottagePenalty/",  report)
+          .post("reports/approveCottagePenalty/",  report,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
           .then(response => {
           	  this.cottageReports = response.data
 	          Swal.fire({ icon: 'success', title: 'Penal uspešno dodaljen klijentu.', showConfirmButton: false, timer: 2000 })
@@ -154,7 +163,10 @@ Vue.component("PenaltyApproval", {
         
         declineFishingPenalty(report) {
           axios
-          .post("reports/declineFishingPenalty/",  report)
+          .post("reports/declineFishingPenalty/",  report,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
           .then(response => {
           	  this.fishingReports = response.data
 	          Swal.fire({ icon: 'error', title: 'Zahtev za penal klijentu odbijen.', showConfirmButton: false, timer: 2000 })
@@ -163,7 +175,10 @@ Vue.component("PenaltyApproval", {
         
         declineBoatPenalty(report) {
           axios
-          .post("reports/declineBoatPenalty/",  report)
+          .post("reports/declineBoatPenalty/",  report,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
           .then(response => {
           	  this.boatReports = response.data
 	          Swal.fire({ icon: 'error', title: 'Zahtev za penal klijentu odbijen.', showConfirmButton: false, timer: 2000 })
@@ -172,7 +187,10 @@ Vue.component("PenaltyApproval", {
         
         declineCottagePenalty(report) {
           axios
-          .post("reports/declineCottagePenalty/",  report)
+          .post("reports/declineCottagePenalty/",  report,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
           .then(response => {
           	  this.cottageReports = response.data
 	          Swal.fire({ icon: 'error', title: 'Zahtev za penal klijentu odbijen.', showConfirmButton: false, timer: 2000 })

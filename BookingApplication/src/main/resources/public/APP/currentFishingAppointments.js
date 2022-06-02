@@ -192,7 +192,10 @@ Vue.component("CurrentFishingAppointments", {
         
         addAppointment() {
         	axios
-               .post('/fishingAppointments/addInstructorsAppointmentForClient', this.newAppointment)
+               .post('/fishingAppointments/addInstructorsAppointmentForClient', this.newAppointment,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
                .then(response=>{
                   this.resetData();
                   Swal.fire({ icon: 'success', title: 'Uspešno ste rezervisali termin za klijenta !', showConfirmButton: false, timer: 1500 })

@@ -259,7 +259,7 @@ public class RatingController {
 	public List<ClientRatingDto> approveRating(@RequestBody ClientRatingDto dto) throws Exception
 	{
 		AppUser user = userRepository.findByIdPess(dto.ownerId);
-		Thread.sleep(5000);
+		Thread.sleep(3000);
 		if (user.role == UserType.cottage_owner) {
 			updateCottageRatings(dto);
 			ratingCottageRepository.deleteById(dto.ratingId);

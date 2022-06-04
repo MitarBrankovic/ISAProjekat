@@ -182,12 +182,11 @@ public class AdminController {
 					}
 				};
 				t.start();
-				//complaintRepository.findByIdPess(complaint.id);
 			return new ResponseEntity<List<Complaint>>(complaintRepository.findAll(),HttpStatus.OK);
 			} 
 			catch (Exception e) 
-			{ 
-				return null;
+			{
+				return new ResponseEntity<List<Complaint>>(complaintRepository.findAll(),HttpStatus.CONFLICT);
 			}
 		}			
 		else

@@ -70,6 +70,10 @@ Vue.component("RatingApproval", {
             .then(response=>{
                 this.ratings = response.data
             })
+            .catch(error=>{
+            Swal.fire({ icon: 'info', title: 'Zahtev je vec obradjen od strane drugog admina.', showConfirmButton: false, timer: 3000 })
+            window.location.reload()
+        })
         },
         declineRequest:function(r){
             axios
@@ -80,6 +84,10 @@ Vue.component("RatingApproval", {
             .then(response=>{
                 this.ratings = response.data
             })
+            .catch(error=>{
+            Swal.fire({ icon: 'info', title: 'Zahtev je vec obradjen od strane drugog admina.', showConfirmButton: false, timer: 3000 })
+            window.location.reload()
+        })
         }
     }
 });

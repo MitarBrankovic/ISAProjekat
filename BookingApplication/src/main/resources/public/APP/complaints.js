@@ -69,9 +69,8 @@ Vue.component("Complaints", {
 	                Swal.fire({ icon: 'success', title: 'Odgovorili ste na žalbu !', showConfirmButton: false, timer: 1500 })
 	            })
 	            .catch(error=>{
-	                console.log("Greska.")	
-	                alert("Podaci su lose uneti.")
-	                window.location.reload()
+	                Swal.fire({ icon: 'info', title: 'Zahtev je vec obradjen od strane drugog admina.', showConfirmButton: false, timer: 5000 })
+           		    window.location.reload()
 	
 	            })
 	         }

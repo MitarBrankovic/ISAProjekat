@@ -19,4 +19,9 @@ public interface UserRepository  extends JpaRepository<AppUser, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("select c from AppUser c where c.id = :id")
 	public AppUser findByIdPess(@Param("id") long id);
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    void deleteById(long id);
+    
+    
 }

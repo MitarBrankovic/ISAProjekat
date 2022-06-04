@@ -50,6 +50,10 @@ Vue.component("RequestDeleteAcc", {
             .then(response=>{
                 this.requests = response.data
             })
+            .catch(error=>{
+            Swal.fire({ icon: 'info', title: 'Zahtev je vec obradjen od strane drugog admina.', showConfirmButton: false, timer: 5000 })
+            window.location.reload()
+        })
         },
         declineRequest:function(r){
             axios
@@ -60,6 +64,10 @@ Vue.component("RequestDeleteAcc", {
             .then(response=>{
                 this.requests = response.data
             })
+            .catch(error=>{
+            Swal.fire({ icon: 'info', title: 'Zahtev je vec obradjen od strane drugog admina.', showConfirmButton: false, timer: 5000 })
+            window.location.reload()
+        })
         }
 
 

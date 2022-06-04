@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -225,7 +227,6 @@ public class RatingController {
 	@GetMapping(path="/getRatings")
 	public List<ClientRatingDto> getRatings()
 	{
-		System.out.println(getUnapprovedRatings());
 		return getUnapprovedRatings();
 	}
 	
@@ -238,11 +239,14 @@ public class RatingController {
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/declineRating")
-	public List<ClientRatingDto> declineRationg(@RequestBody ClientRatingDto dto)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public List<ClientRatingDto> declineRating(@RequestBody ClientRatingDto dto) throws Exception
 	{
-		if (userRepository.findById(dto.ownerId).get().role == UserType.cottage_owner)
+		AppUser user = userRepository.findByIdPess(dto.ownerId);
+		Thread.sleep(3000);
+		if (user.role == UserType.cottage_owner)
 			ratingCottageRepository.deleteById(dto.ratingId);
-		else if (userRepository.findById(dto.ownerId).get().role == UserType.fishing_instructor)
+		else if (user.role == UserType.fishing_instructor)
 			ratingFishingAdventureRepository.deleteById(dto.ratingId);
 		else
 			ratingBoatRepository.deleteById(dto.ratingId);
@@ -250,19 +254,29 @@ public class RatingController {
 	}
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	@PostMapping(path="/approveRating")
-	public List<ClientRatingDto> approveRating(@RequestBody ClientRatingDto dto)
+	public List<ClientRatingDto> approveRating(@RequestBody ClientRatingDto dto) throws Exception
 	{
-		if (userRepository.findById(dto.ownerId).get().role == UserType.cottage_owner)
+		AppUser user = userRepository.findByIdPess(dto.ownerId);
+		Thread.sleep(5000);
+		if (user.role == UserType.cottage_owner) {
 			updateCottageRatings(dto);
-		else if (userRepository.findById(dto.ownerId).get().role == UserType.fishing_instructor)
+			ratingCottageRepository.deleteById(dto.ratingId);
+		}
+		else if (user.role == UserType.fishing_instructor) {
 			updateFishingRatings(dto);
-		else
+			ratingFishingAdventureRepository.deleteById(dto.ratingId);
+		}
+		else {
 			updateBoatRatings(dto);
+			ratingBoatRepository.deleteById(dto.ratingId);
+		}
 		sendRatingEmail(dto);
 		return getUnapprovedRatings();
 	}
 	
+	@Transactional(readOnly = false)
 	private void updateCottageRatings(ClientRatingDto dto) {
 		List <RatingCottage> cottageRatings = new ArrayList<RatingCottage>();
 		for (RatingCottage rc: ratingCottageRepository.findAll()) {
@@ -273,6 +287,7 @@ public class RatingController {
 		ratingCottageRepository.saveAll(cottageRatings);
 	}
 	
+	@Transactional(readOnly = false, propagation = Propagation.MANDATORY)
 	private void updateFishingRatings(ClientRatingDto dto) {
 		List <RatingFishingAdventure> fishingRatings = new ArrayList<RatingFishingAdventure>();
 		for (RatingFishingAdventure rf: ratingFishingAdventureRepository.findAll()) {
@@ -283,6 +298,7 @@ public class RatingController {
 		ratingFishingAdventureRepository.saveAll(fishingRatings);
 	}
 	
+	@Transactional(readOnly = false)
 	private void updateBoatRatings(ClientRatingDto dto) {
 		List <RatingBoat> boatRatings = new ArrayList<RatingBoat>();
 		for (RatingBoat rb: ratingBoatRepository.findAll()) {

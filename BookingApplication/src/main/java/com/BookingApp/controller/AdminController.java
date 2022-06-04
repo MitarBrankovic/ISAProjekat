@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.type.descriptor.converter.AttributeConverterMutabilityPlanImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,9 +56,11 @@ public class AdminController {
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/acceptRequest")
-	public ResponseEntity<List<RequestDeleteAccDto>> acceptRequest(@RequestBody RequestDeleteAccDto requestDTO)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public ResponseEntity<List<RequestDeleteAccDto>> acceptRequest(@RequestBody RequestDeleteAccDto requestDTO) throws Exception, NullPointerException
 	{	
-		RequestDeleteAcc request = requestDeleteAccRepository.findById(requestDTO.id).get();
+		RequestDeleteAcc request = requestDeleteAccRepository.findByIdPess(requestDTO.id);
+		Thread.sleep(3000);
 		String title = "Request for account deletion";
 		String body = "Hello,\nYour request for account deletion has been accepted.\n" 
 				  + "\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
@@ -78,7 +83,7 @@ public class AdminController {
 			} 
 			catch (Exception e) 
 			{
-				return null;
+				return new ResponseEntity<List<RequestDeleteAccDto>>(new ArrayList<RequestDeleteAccDto>(), HttpStatus.CONFLICT);
 			}
 		}			
 		else
@@ -87,9 +92,11 @@ public class AdminController {
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/declineRequest")
-	public ResponseEntity<List<RequestDeleteAccDto>> declineRequest(@RequestBody RequestDeleteAccDto requestDTO)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public ResponseEntity<List<RequestDeleteAccDto>> declineRequest(@RequestBody RequestDeleteAccDto requestDTO) throws Exception
 	{	
-		RequestDeleteAcc request = requestDeleteAccRepository.findById(requestDTO.id).get();
+		RequestDeleteAcc request = requestDeleteAccRepository.findByIdPess(requestDTO.id);
+		Thread.sleep(3000);
 		String title = "Request for account deletion";
 		String body = "Hello,\nYour request for account deletion has been declined.\n" 
 				  + "\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
@@ -111,7 +118,7 @@ public class AdminController {
 			} 
 			catch (Exception e) 
 			{
-				return null;
+				return new ResponseEntity<List<RequestDeleteAccDto>>(getRequests(), HttpStatus.CONFLICT);
 			}
 		}			
 		else
@@ -142,9 +149,10 @@ public class AdminController {
 			return "Vlasnik broda";
 	}
 	
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/answerComplaint")
-	public ResponseEntity<List<Complaint>> answerComplaint(@RequestBody AnswerComplaintDto answerComplaintDto)
+	public ResponseEntity<List<Complaint>> answerComplaint(@RequestBody AnswerComplaintDto answerComplaintDto) throws Exception
 	{	
 		ComplaintDto complaint  = answerComplaintDto.complaint;
 		String titleUser = "Answer on complaint";
@@ -155,6 +163,8 @@ public class AdminController {
 		String bodyOwner = "Hello,\nYou have recived complaint on your product.\n" +  "Complaint: " + answerComplaintDto.complaint.text
 					+	"\nPlease try to fix that issue.\n"  + answerComplaintDto.text
 				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+		complaintRepository.deleteById(complaint.id);
+		Thread.sleep(5000);
 		Optional<AppUser> owner = userRepository.findById(complaint.ownerId);
 		Optional<AppUser> user = userRepository.findById(complaint.client.id);
 		AppUser appUser;
@@ -162,7 +172,7 @@ public class AdminController {
 		if(user.isPresent() && owner.isPresent()) {
 			appUser = user.get();
 			appOwner = owner.get();
-			try 
+			try
 			{
 				Thread t = new Thread() {
 					public void run()
@@ -172,11 +182,11 @@ public class AdminController {
 					}
 				};
 				t.start();
-				complaintRepository.deleteById(complaint.id);
+				//complaintRepository.findByIdPess(complaint.id);
 			return new ResponseEntity<List<Complaint>>(complaintRepository.findAll(),HttpStatus.OK);
 			} 
 			catch (Exception e) 
-			{
+			{ 
 				return null;
 			}
 		}			
@@ -287,7 +297,7 @@ public class AdminController {
 				return null;
 			}
 	}
-	
+
 	@PutMapping(path = "/changePassword/{userId}/{password}")
 	public boolean changeAdminPassword(@PathVariable("userId") long id, @PathVariable("password") String password)
 	{

@@ -409,7 +409,7 @@ Vue.component("SelectedFishingAdventure", {
         
         removePhoto(){
          	axios
-               .post('/fishingAdventure/removePhoto/' + this.adventure.id, {
+               .post('/fishingAdventures/removePhoto/' + this.adventure.id, {
                 headers: {
                   'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
                 },})

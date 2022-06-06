@@ -1,5 +1,6 @@
 package com.BookingApp.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,9 +24,12 @@ import com.BookingApp.dto.EntityAvailabilityDto;
 import com.BookingApp.dto.FishingInstructorAvailabilityDto;
 import com.BookingApp.dto.SearchDto;
 import com.BookingApp.model.Boat;
+import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Cottage;
 import com.BookingApp.model.FishingAdventure;
+import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.FishingInstructor;
+import com.BookingApp.repository.BoatAppointmentRepository;
 import com.BookingApp.repository.BoatRepository;
 
 @CrossOrigin
@@ -35,6 +39,8 @@ public class BoatController {
 
 		@Autowired
 		private BoatRepository boatRepository;
+		@Autowired
+		private BoatAppointmentRepository boatAppointmentRepository;
 		
 		@GetMapping(path = "/getAllBoats")
 		public ResponseEntity<List<Boat>> getAllBoats()
@@ -79,6 +85,24 @@ public class BoatController {
 				return boatRepository.findOwnersBoats(availabilityDTO.ownerId);
 			}
 			return null;
+		}
+		
+		@PostMapping(path = "/checkBoatRemoval/{boatId}")
+	    public boolean sendRequest(@PathVariable("boatId") long id)
+		{	
+			Set<BoatAppointment> appointments = boatAppointmentRepository.findBoatAppointments(id);
+			for (BoatAppointment ba : appointments) 
+				if (ba.client != null && ba.appointmentStart.isAfter(LocalDateTime.now()))
+					return false;
+			return true;
+		}
+		
+		@PostMapping(path = "/removeBoat/{boatId}")
+	    public Set<Boat> removeAdventure(@PathVariable("boatId") long id)
+		{	
+			long ownerId = boatRepository.findById(id).get().shipOwner.id;
+			boatRepository.deleteById(id);
+			return boatRepository.findOwnersBoats(ownerId);
 		}
 		
 		@PostMapping(path = "/searchBoats")

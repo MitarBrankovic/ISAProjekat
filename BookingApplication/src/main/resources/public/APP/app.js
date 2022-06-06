@@ -42,6 +42,8 @@ const InstructorsCalendar = {  template: '<InstructorsCalendar></InstructorsCale
 const InstructorsGraph = {  template: '<InstructorsGraph></InstructorsGraph>' }
 const BoatOwnersCalendar = {  template: '<BoatOwnersCalendar></BoatOwnersCalendar>' }
 const CottageOwnersCalendar = {  template: '<CottageOwnersCalendar></CottageOwnersCalendar>' }
+const AdminsGraph = {  template: '<AdminsGraph></AdminsGraph>' }
+
 
 
 
@@ -93,6 +95,7 @@ const router = new VueRouter({
         { path: '/instructorsGraph', component: InstructorsGraph },
         { path: '/boatOwnersCalendar', component: BoatOwnersCalendar },
         { path: '/cottageOwnersCalendar', component: CottageOwnersCalendar },
+        { path: '/adminsGraph', component: AdminsGraph },
         
         
     ]

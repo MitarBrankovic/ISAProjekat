@@ -1,5 +1,6 @@
 package com.BookingApp.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -101,7 +102,7 @@ public class FishingAdventureController {
 		return null;
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
+	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/removePhoto/{adventureId}")
     public Set<AdventurePhoto> removePhoto(@PathVariable("adventureId") long id)
 	{	
@@ -158,18 +159,16 @@ public class FishingAdventureController {
 		return null;
 	}
 	
-	//@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/checkAdventureRemoval/{adventureId}")
     public boolean sendRequest(@PathVariable("adventureId") long id)
 	{	
 		Set<FishingAppointment> appointments = fishingAppointmentRepository.findAdventuresAppointments(id);
 		for (FishingAppointment fa : appointments) 
-			if (fa.client != null)
+			if (fa.client != null && fa.appointmentStart.isAfter(LocalDateTime.now()))
 				return false;
 		return true;
 	}
 	
-	//@PreAuthorize("hasRole('FISHINGINSTRUCTOR') or hasRole('ADMIN')")
 	@PostMapping(path = "/removeAdventure/{adventureId}")
     public Set<FishingAdventure> removeAdventure(@PathVariable("adventureId") long id)
 	{	

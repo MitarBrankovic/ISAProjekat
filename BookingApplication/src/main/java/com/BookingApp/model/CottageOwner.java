@@ -16,10 +16,6 @@ public class CottageOwner extends AppUser {
 	public String cottageText;
 	@Column
 	public double rating;
-	@JsonIgnore
-	@OneToMany
-	(mappedBy = "cottageOwner", fetch = FetchType.EAGER, cascade= CascadeType.ALL)
-	public Set<Cottage> cottages = new HashSet<Cottage>();
 
 	public CottageOwner() {
 		super();

@@ -13,6 +13,6 @@ public class BookingApplicationMain {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(BookingApplicationMain.class, args);
-		
+	
 		}
 }

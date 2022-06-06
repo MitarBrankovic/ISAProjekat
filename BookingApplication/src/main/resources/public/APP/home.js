@@ -81,7 +81,7 @@ template: `
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showCottageInformation(c.id)" class="btn btn-secondary">Info</button>
-                                <button  style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || activeUser.role == 'cottage_owner')" type="button" class="btn btn-danger">Obrisi</button>
+                                <button  style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || activeUser.role == 'cottage_owner')" type="button" data-bs-toggle="modal" data-bs-target="#areYouSureCottage" v-on:click="prepareAdventureToRemove(c.id)" class="btn btn-danger">Obrisi</button>
                             </div>
                         </div>
 
@@ -113,7 +113,7 @@ template: `
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showBoatInformation(b.id)" class="btn btn-secondary">Info</button>
-                                <button style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || activeUser.role == 'ship_owner')" type="button" class="btn btn-danger">Obrisi</button>
+                                <button style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || activeUser.role == 'ship_owner')" type="button" data-bs-toggle="modal" data-bs-target="#areYouSureBoat" v-on:click="prepareAdventureToRemove(b.id)" class="btn btn-danger">Obrisi</button>
                             </div>
                         </div>
 
@@ -145,7 +145,7 @@ template: `
                             </ul>
                             <div class="card-body">
                                 <button style="margin-left: 2%;" type="button" v-on:click="showAdventureInformation(a.id)" class="btn btn-secondary">Info</button>
-                                <button style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || (activeUser.role == 'fishing_instructor' && activeUser.id == a.fishingInstructor.id))" type="button" data-bs-toggle="modal" data-bs-target="#areYouSure" v-on:click="prepareAdventureToRemove(a.id)" class="btn btn-danger">Obriši</button>
+                                <button style="margin-left: 16%;" v-if="activeUser != null && (activeUser.role == 'admin' || (activeUser.role == 'fishing_instructor' && activeUser.id == a.fishingInstructor.id))" type="button" data-bs-toggle="modal" data-bs-target="#areYouSureFishing" v-on:click="prepareAdventureToRemove(a.id)" class="btn btn-danger">Obriši</button>
                             </div>
                         </div>
 
@@ -156,7 +156,7 @@ template: `
             </div>
         </div>
 
-	<div class="modal fade" id="areYouSure" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="areYouSureFishing" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -170,6 +170,44 @@ template: `
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ne</button>
 	        <button type="button" class="btn btn-danger" v-on:click="removeAdventure()" data-bs-dismiss="modal" >Da</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<div class="modal fade" id="areYouSureBoat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Potvrda</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <h2>Da li ste sigurni da želite da obrišete ovu stavku ?</h2>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ne</button>
+	        <button type="button" class="btn btn-danger" v-on:click="removeBoat()" data-bs-dismiss="modal" >Da</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<div class="modal fade" id="areYouSureCottage" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Potvrda</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <h2>Da li ste sigurni da želite da obrišete ovu stavku ?</h2>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ne</button>
+	        <button type="button" class="btn btn-danger" v-on:click="removeCottage()" data-bs-dismiss="modal" >Da</button>
 	      </div>
 	    </div>
 	  </div>
@@ -245,6 +283,35 @@ template: `
     	prepareAdventureToRemove(id){
         	this.adventureIdRemove = id;		
         },
+        removeBoat() {
+    		axios
+               .post('/boats/checkBoatRemoval/' + this.adventureIdRemove)
+               .then(response=>{
+                  if (response.data) {
+                  	 axios
+	                 .post('/boats/removeBoat/' + this.adventureIdRemove)
+	                 .then(response => { window.location.reload()})
+                  }
+                  else {
+                  	Swal.fire({icon: 'error', title: 'Ne možete obrisati ovaj brod, jer postoje zakazani termini za njega !'})
+                  }
+               })
+    	},
+    	removeCottage() {
+    		axios
+               .post('/cottages/checkCottageRemoval/' + this.adventureIdRemove)
+               .then(response=>{
+                  if (response.data) {
+                  	 axios
+	                 .post('/cottages/removeCottage/' + this.adventureIdRemove)
+	                 .then(response => { window.location.reload()})
+                  }
+                  else {
+                  	Swal.fire({icon: 'error', title: 'Ne možete obrisati ovu vikendicu, jer postoje zakazani termini za nju !'})
+                  }
+               })
+    	},
+
 
     },
     

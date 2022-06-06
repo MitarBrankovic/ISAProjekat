@@ -58,7 +58,7 @@ Vue.component("Navbar", {
 	    	<a href="/#/register">Registruj se</a>
   		</div>
 
-		<div class="topnav-right dropdown1" v-if="(activeUser !== null)">
+		<div class="topnav-right dropdown1" v-if="(activeUser !== null) && (activeUser.role !== 'admin') && (activeUser.role !== 'fishing_instructor')">
 			<button class="dropbtn1">Profil
 				<i class="fa fa-caret-down"></i>
 			</button>
@@ -68,14 +68,6 @@ Vue.component("Navbar", {
 					<a href="#/subscriptions">Pretplate</a>
 					<a href="#/reportsOfClient">Penali</a>
 					<a href="/#/sendComplaint">Napisi zalbu</a>
-				</div>
-				<div v-if="(activeUser.role==='fishing_instructor')">
-					<a href="/#/fishingInstructorsAdventures">Avanture</a>
-					<a href="/#/profileFishingInstructor">Moj profil</a>
-					<a href="/#/historyOfFishingAppointments">Sve rezervacije</a>
-					<a href="/#/currentFishingAppointments">Rezervacije u toku</a>
-					<a href="/#/instructorsGraph">Graf prihoda</a>
-					<a href="/#/instructorsCalendar">Kalendar zauzetosti</a>
 				</div>
 				<div v-if="(activeUser.role==='cottage_owner')">
 					<a href="/#/profileCottageOwner">Moj profil</a>
@@ -91,26 +83,20 @@ Vue.component("Navbar", {
 		<div class="topnav-right" v-if="(activeUser !== null)">
 		    <a id="logout" class="nav-link" href="/#/logout">Logout <i class="bi bi-box-arrow-in-right"></i></a>
 		</div>
-		<div class="topnav-right dropdown1" v-if="(activeUser !== null) && (activeUser.role==='admin')">
-            <button class="dropbtn1">Something
-            	<i class="fa fa-caret-down"></i>
-            </button>
-
-			<div class="dropdown-content1" >
-				<div v-if="(activeUser.role==='admin')">
-					<a class="nav-link" href="/#">Something</a>
-				</div>
-				<div v-if="(activeUser.role==='admin')">
-					<a class="nav-link" href="/#">Something</a>
-				</div>
-			</div>
-	  	</div>
+		
 	</div>
+	<a v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')" href="/#/fishingInstructorsAdventures">Avanture</a>
+	<a v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')" href="/#/profileFishingInstructor">Moj profil</a>
+	<a v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')" href="/#/historyOfFishingAppointments">Sve rezervacije</a>
+	<a v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')" href="/#/currentFishingAppointments">Rezervacije u toku</a>
+	<a v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')" href="/#/instructorsGraph">Graf prihoda</a>
+	<a v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')" href="/#/instructorsCalendar">Kalendar zauzetosti</a>
 	
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/usersAdmin">Korisnici</a>
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin') && (activeUser.adminType ==='main')" href="#/addAdmin">Novi admin</a>
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/profileAdmin">Moj profil</a>
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/penaltyApproval">Penali</a>
+	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/adminsGraph">Graf prihoda</a>
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/loyaltyProgramAdmin">Loyalty</a>
 	<a v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')" href="#/fishingInstructorsReports">Izveštaji</a>
 	</nav>

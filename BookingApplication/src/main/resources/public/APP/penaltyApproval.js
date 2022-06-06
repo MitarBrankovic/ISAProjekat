@@ -17,7 +17,7 @@ Vue.component("PenaltyApproval", {
             <td>Adresa</td>
             <td>Datum i vreme početka rezervacije</td>
             <td>Trajanje</td>
-            <td>Maksimalan broj osoba</td>
+            <td>Komentar</td>
             <td>Dodatne usluge</td>
             <td>Cena</td>
             <td>Ocena</td>
@@ -32,7 +32,7 @@ Vue.component("PenaltyApproval", {
             <td>{{cottageReport.appointment.cottage.address}}</td>
             <td>{{cottageReport.appointment.appointmentStart.substring(8,10)}}.{{cottageReport.appointment.appointmentStart.substring(5,7)}}.{{cottageReport.appointment.appointmentStart.substring(0,4)}}. {{cottageReport.appointment.appointmentStart.substring(11,13)}}:{{cottageReport.appointment.appointmentStart.substring(14,16)}}</td>
             <td>{{cottageReport.appointment.duration}} h</td>
-            <td>{{cottageReport.appointment.maxAmountOfPeople}}</td>
+            <td>{{cottageReport.comment}}</td>
             <td>{{cottageReport.appointment.extraNotes}}</td>
             <td>{{cottageReport.appointment.price}} din.</td>
             <td v-if="cottageReport.appointment.cottage.rating == 0">-/5</td>
@@ -54,7 +54,7 @@ Vue.component("PenaltyApproval", {
             <td>Adresa</td>
             <td>Datum i vreme početka rezervacije</td>
             <td>Trajanje</td>
-            <td>Maksimalan broj osoba</td>
+            <td>Komentar</td>
             <td>Dodatne usluge</td>
             <td>Cena</td>
             <td>Ocena</td>
@@ -69,7 +69,7 @@ Vue.component("PenaltyApproval", {
             <td>{{fishingReport.appointment.fishingAdventure.address}}, {{fishingReport.appointment.fishingAdventure.city}}</td>
             <td>{{fishingReport.appointment.appointmentStart.substring(8,10)}}.{{fishingReport.appointment.appointmentStart.substring(5,7)}}.{{fishingReport.appointment.appointmentStart.substring(0,4)}}. {{fishingReport.appointment.appointmentStart.substring(11,13)}}:{{fishingReport.appointment.appointmentStart.substring(14,16)}}</td>
             <td>{{fishingReport.appointment.duration}} h</td>
-            <td>{{fishingReport.appointment.maxAmountOfPeople}}</td>
+            <td>{{fishingReport.comment}}</td>
             <td>{{fishingReport.appointment.extraNotes}}</td>
             <td>{{fishingReport.appointment.price}} din.</td>
             <td v-if="fishingReport.appointment.fishingAdventure.rating == 0">-/5</td>
@@ -91,7 +91,7 @@ Vue.component("PenaltyApproval", {
             <td>Adresa</td>
             <td>Datum i vreme početka rezervacije</td>
             <td>Trajanje</td>
-            <td>Maksimalan broj osoba</td>
+            <td>Komentar</td>
             <td>Dodatne usluge</td>
             <td>Cena</td>
             <td>Ocena</td>
@@ -106,7 +106,7 @@ Vue.component("PenaltyApproval", {
             <td>{{boatReport.appointment.boat.address}}</td>
             <td>{{boatReport.appointment.appointmentStart.substring(8,10)}}.{{boatReport.appointment.appointmentStart.substring(5,7)}}.{{boatReport.appointment.appointmentStart.substring(0,4)}}. {{boatReport.appointment.appointmentStart.substring(11,13)}}:{{boatReport.appointment.appointmentStart.substring(14,16)}}</td>
             <td>{{boatReport.appointment.duration}} h</td>
-            <td>{{boatReport.appointment.maxAmountOfPeople}}</td>
+            <td>{{boatReport.comment}}</td>
             <td>{{boatReport.appointment.extraNotes}}</td>
             <td>{{boatReport.appointment.price}} din.</td>
             <td v-if="boatReport.appointment.boat.rating == 0">-/5</td>

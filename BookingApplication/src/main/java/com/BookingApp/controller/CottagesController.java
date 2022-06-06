@@ -1,5 +1,6 @@
 package com.BookingApp.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,8 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.BookingApp.dto.EntityAvailabilityDto;
 import com.BookingApp.dto.SearchDto;
 import com.BookingApp.model.Boat;
+import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Cottage;
+import com.BookingApp.model.CottageAppointment;
+import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
+import com.BookingApp.repository.CottageAppointmentRepository;
 import com.BookingApp.repository.CottageRepository;
 
 @CrossOrigin
@@ -33,6 +38,8 @@ public class CottagesController {
 
 	@Autowired
 	private CottageRepository cottageRepository;
+	@Autowired
+	private CottageAppointmentRepository cottageAppointmentRepository;
 	
 	@GetMapping(path = "/getAllCottages")
 	public ResponseEntity<List<Cottage>> getAllCottage()
@@ -74,6 +81,24 @@ public class CottagesController {
 	{	
 		System.out.println(cottageRepository.findOwnersCottages(id));
 		return cottageRepository.findOwnersCottages(id);
+	}
+	
+	@PostMapping(path = "/removeCottage/{cottageId}")
+    public Set<Cottage> removeCottage(@PathVariable("cottageId") long id)
+	{	
+		long ownerId = cottageRepository.findById(id).get().cottageOwner.id;
+		cottageRepository.deleteById(id);
+		return cottageRepository.findOwnersCottages(ownerId);
+	}
+	
+	@PostMapping(path = "/checkCottageRemoval/{cottageId}")
+    public boolean sendRequest(@PathVariable("cottageId") long id)
+	{	
+		Set<CottageAppointment> appointments = cottageAppointmentRepository.findCottageAppointments(id);
+		for (CottageAppointment ca : appointments) 
+			if (ca.client != null && ca.appointmentStart.isAfter(LocalDateTime.now()))
+				return false;
+		return true;
 	}
 	
 	

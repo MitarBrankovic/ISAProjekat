@@ -156,7 +156,7 @@ Vue.component("FishingInstructorsAdventures", {
             <div class="row row-cols-1 row-cols-md-4 g-4">
               <div class="col" v-for="adventure in adventures">
                 <div class="card" style="width: 93%">
-                  <img :src="adventure.photo" height="220" class="card-img-top" alt="...">
+                  <img :src="adventure.photo" height="220" class="card-img-top" alt="Slika jos uvek nije ubacena">
                   <div class="card-body">
                     <h5 class="card-title">{{ adventure.name }}</h5>
                   </div>

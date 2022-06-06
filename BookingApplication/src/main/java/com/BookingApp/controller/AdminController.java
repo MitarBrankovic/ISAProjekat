@@ -1,6 +1,8 @@
 package com.BookingApp.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,16 +26,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.BookingApp.dto.AddAdminDto;
 import com.BookingApp.dto.AnswerComplaintDto;
+import com.BookingApp.dto.ChartInfoDto;
 import com.BookingApp.dto.ComplaintDto;
 import com.BookingApp.dto.RequestDeleteAccDto;
 import com.BookingApp.model.Admin;
 import com.BookingApp.model.AdminType;
 import com.BookingApp.model.AppUser;
+import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Complaint;
+import com.BookingApp.model.CottageAppointment;
+import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.RequestDeleteAcc;
 import com.BookingApp.model.UserType;
 import com.BookingApp.repository.AdminRepository;
+import com.BookingApp.repository.BoatAppointmentRepository;
 import com.BookingApp.repository.ComplaintRepository;
+import com.BookingApp.repository.CottageAppointmentRepository;
+import com.BookingApp.repository.FishingAppointmentRepository;
 import com.BookingApp.repository.RequestDeleteAccRepository;
 import com.BookingApp.repository.RoleRepository;
 import com.BookingApp.repository.UserRepository;
@@ -53,6 +63,12 @@ public class AdminController {
 	private AdminRepository adminRepository;
 	@Autowired
 	private RoleRepository roleRepository;
+	@Autowired
+	private FishingAppointmentRepository fishingAppointmentRepository;
+	@Autowired
+	private CottageAppointmentRepository cottageAppointmentRepository;
+	@Autowired
+	private BoatAppointmentRepository boatAppointmentRepository;
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(path="/acceptRequest")
@@ -147,6 +163,236 @@ public class AdminController {
 			return "Instruktor pecanja";
 		else
 			return "Vlasnik broda";
+	}
+	
+	@GetMapping(path = "/getProfit")
+	public ResponseEntity<List<ChartInfoDto>> getChartInfo()
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<FishingAppointment> appointments = fishingAppointmentRepository.findAll();
+		boolean dateExists = false;
+		for (FishingAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		for (CottageAppointment app : cottageAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		for (BoatAppointment app : boatAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getProfitWeekCharts")
+	public ResponseEntity<List<ChartInfoDto>> getWeekChartInfo()
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<FishingAppointment> appointments = fishingAppointmentRepository.findAll();
+		boolean dateExists = false;
+		for (FishingAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(7)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		for (CottageAppointment app : cottageAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(7)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		for (BoatAppointment app : boatAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(7)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getProfitMonthCharts")
+	public ResponseEntity<List<ChartInfoDto>> getMonthChartInfo()
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		boolean dateExists = false;
+		for (FishingAppointment app : fishingAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(30)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		for (CottageAppointment app : cottageAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(30)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		for (BoatAppointment app : boatAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(30)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getProfitYearCharts")
+	public ResponseEntity<List<ChartInfoDto>> getYearChartInfo()
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		boolean dateExists = false;
+		for (FishingAppointment app : fishingAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusYears(1)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		for (CottageAppointment app : cottageAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusYears(1)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		for (BoatAppointment app : boatAppointmentRepository.findAll()) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusYears(1)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now()) && app.client != null) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.systemProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.systemProfit));
+			}
+		}
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
 	}
 	
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)

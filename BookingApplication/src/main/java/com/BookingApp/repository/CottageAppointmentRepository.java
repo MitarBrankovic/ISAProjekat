@@ -23,5 +23,7 @@ public interface CottageAppointmentRepository extends JpaRepository<CottageAppoi
 	
 	@Query("SELECT b FROM CottageAppointment b WHERE b.cottage.id=?1")
 	public Set<CottageAppointment> findCottageAppointments(long id);
+	@Query("SELECT b FROM CottageAppointment b WHERE b.cottage.id=?1")
+	public List<CottageAppointment> findCottageAppointmentsHistory(long id);
 	
 }

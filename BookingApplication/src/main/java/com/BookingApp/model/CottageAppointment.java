@@ -84,4 +84,18 @@ public class CottageAppointment {
 		this.cottage = cottage;
 		this.client = client;
 	}
+	public CottageAppointment(LocalDateTime appointmentStart, long duration, int maxAmountOfPeople,
+			AppointmentType appointmentType, String extraNotes, double price, double ownerProfit, double systemProfit) {
+		super();
+		this.appointmentStart = appointmentStart;
+		this.duration = duration;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+		this.appointmentType = appointmentType;
+		this.extraNotes = extraNotes;
+		this.price = price;
+		this.ownerProfit = ownerProfit;
+		this.systemProfit = systemProfit;
+	}
+	
+	
 }

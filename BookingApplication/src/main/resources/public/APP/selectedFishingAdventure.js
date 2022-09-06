@@ -5,6 +5,8 @@ Vue.component("SelectedFishingAdventure", {
             adventure: "",
             photos: "",
             pricelistIdRemove: "",
+			address:"",
+			previewMap:false,
             adventureIdRemove: "",
             userId:"",
             quickAppointment: {dateFrom: "", timeFrom: "8:00", dateUntil: "", timeUntil: "12:00", extraNotes: "", price: 100, adventureId: 0 },
@@ -127,6 +129,22 @@ Vue.component("SelectedFishingAdventure", {
     </table>
     </div>
     <button type="button" style="margin-top: 3%; margin-bottom: 3%;" v-if="activeUser != null && activeUser.role == 'fishing_instructor'  && activeUser.id == adventure.fishingInstructor.id" data-bs-toggle="modal" data-bs-target="#newAppointment" class="btn btn-danger btn-lg">Dodaj brzu rezervaciju</button>
+	<div>
+	<div>
+	<button type="button" class="btn btn-outline-success"   v-on:click="previewMapChooseLocation()"><i></i>See on map</button>
+                          </div>
+			                
+			                <div class="col">
+			                 <div id="popup" class="ol-popup">
+					            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+					            <div id="popup-content"></div>
+          					  </div>
+								
+           						 <div id="map" class="map" v-if="previewMap" style="width: 1000px;height:500px; margin-right:50px;margin-top:20px"></div>
+        					</div>
+        					
+        				 </div>
+	
 	<h2 v-if="activeUser != null && activeUser.role == 'fishing_instructor'">Cenovnik dodatnih usluga</h2>
 	
 	<div v-if="activeUser != null && activeUser.role == 'fishing_instructor'" class="container-fluid" style="margin-top: 3%">
@@ -543,7 +561,83 @@ Vue.component("SelectedFishingAdventure", {
                 }
             }
             return postoji
-        }
+        },
+init: function(){
+            const map = new ol.Map({
+                target: 'map',
+                layers: [
+                  new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                  })
+                ],
+                view: new ol.View({
+                  center: ol.proj.fromLonLat([this.adventure.longitude, this.adventure.latitude]),
+                  maxZoom: 18,
+                  zoom: 12
+                })
+              })
+
+              var layer = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    features: [
+                        new ol.Feature({
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat([this.adventure.longitude, this.adventure.latitude]))
+                        })
+                    ]
+                })
+            });
+            map.addLayer(layer);
+
+            var container = document.getElementById('popup');
+            var content = document.getElementById('popup-content');
+            var closer = document.getElementById('popup-closer');
+  
+            var overlay = new ol.Overlay({
+                element: container,
+                autoPan: true,
+                autoPanAnimation: {
+                    duration: 250
+                }
+            });
+            map.addOverlay(overlay);
+  			console.log(this.adventure)
+            closer.onclick = function() {
+                overlay.setPosition(undefined);
+                closer.blur();
+                return false;
+            };
+  
+            map.on('singleclick', function (event) {
+              if (map.hasFeatureAtPixel(event.pixel) === true) {
+                  var coordinate = event.coordinate;
+  
+                  content.innerHTML =  this.adventure.name;
+                  overlay.setPosition(coordinate);
+              } else {
+                  overlay.setPosition(undefined);
+                  closer.blur();
+              }
+          });
+  
+          content.innerHTML = this.adventure.name;
+          overlay.setPosition(ol.proj.fromLonLat([this.adventure.longitude, this.adventure.latitude]));
+
+        },
+        previewMapChooseLocation: function () {
+            this.previewMap = !this.previewMap;
+            if (this.previewMap) {
+                // Draw map on screen
+                this.$nextTick(function () {
+                    this.init();
+    
+                    // Seting some extra style for map
+                    let c = document.getElementById("map").childNodes;
+                    c[0].style.borderRadius  = '10px';
+                    c[0].style.border = '4px solid lightgrey';
+                })
+            }
+          }
+
     },
     mounted(){
         this.activeUser = JSON.parse(localStorage.getItem('activeUser'))
@@ -563,6 +657,11 @@ Vue.component("SelectedFishingAdventure", {
             this.appointments = responses[2].data
             this.pricelist = responses[3].data
             this.subscibedAdventures = responses[4].data
+this.$nextTick(function () {
+            this.init();
+            this.previewMap = true;
+            this.previewMapChooseLocation();
+        })
         }))
         }
         else{
@@ -574,6 +673,11 @@ Vue.component("SelectedFishingAdventure", {
             this.photos = responses[1].data
             console.log(this.photos)
             this.appointments = responses[2].data
+this.$nextTick(function () {
+            this.init();
+            this.previewMap = true;
+            this.previewMapChooseLocation();
+        })
         }))
         }
     },

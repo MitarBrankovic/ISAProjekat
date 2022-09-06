@@ -2,6 +2,7 @@ package com.BookingApp.controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -9,6 +10,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +23,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.BoatAppointmentDto;
+import com.BookingApp.dto.BoatAppointmentForClientDto;
+import com.BookingApp.dto.ChartInfoDto;
+import com.BookingApp.dto.ChartInfoReservationDto;
+import com.BookingApp.dto.CottageAppointmentDto;
+import com.BookingApp.dto.CottageAppointmentForClientDto;
 import com.BookingApp.dto.DateReservationDto;
 import com.BookingApp.dto.ReserveAdventureDto;
 import com.BookingApp.dto.ReserveBoatDto;
@@ -29,14 +38,19 @@ import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.BoatAppointment;
+import com.BookingApp.model.BoatAppointmentReport;
 import com.BookingApp.model.Client;
+import com.BookingApp.model.Cottage;
 import com.BookingApp.model.CottageAppointment;
+import com.BookingApp.model.CottageAppointmentReport;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.FishingInstructor;
 import com.BookingApp.model.LoyaltyProgram;
 import com.BookingApp.model.LoyaltyStatus;
 import com.BookingApp.model.ShipOwner;
+import com.BookingApp.model.SubscribeBoat;
+import com.BookingApp.model.SubscribeCottage;
 import com.BookingApp.repository.BoatAppointmentRepository;
 import com.BookingApp.repository.BoatReportsRepository;
 import com.BookingApp.repository.BoatRepository;
@@ -44,8 +58,11 @@ import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.CottageReportsRepository;
 import com.BookingApp.repository.FishingReportsRepository;
 import com.BookingApp.repository.LoyaltyProgramRepository;
+import com.BookingApp.repository.SubscribeBoatRepository;
+import com.BookingApp.repository.SubscribeCottageRepository;
 import com.BookingApp.repository.UserRepository;
 import com.BookingApp.service.BoatAppointmentService;
+import com.BookingApp.service.FishingAppointmentService;
 
 
 @CrossOrigin
@@ -68,7 +85,12 @@ public class BoatAppointmentController {
 	private LoyaltyProgramRepository loyaltyRepository;
 	@Autowired
 	private UserRepository userRepository;
-	
+	@Autowired
+	private SubscribeBoatRepository subscribeBoatRepository;
+	@Autowired
+	private FishingAppointmentService fishingAppointmentService2;
+	@Autowired
+	private JavaMailSender javaMailSender;
 	@Autowired
 	private BoatAppointmentService boatAppointmentService2;
 	
@@ -203,6 +225,26 @@ public class BoatAppointmentController {
 	public boolean reserveBoat(@RequestBody ReserveBoatDto reserveBoatDto) throws Exception
 	{	
 		return boatAppointmentService2.reserveBoat(reserveBoatDto);
+	}
+	
+	@PostMapping(path = "/checkOverlap")
+    public boolean checkOverlap(@RequestBody BoatAppointmentForClientDto appointmentDTO)
+	{	
+		LocalDateTime start = appointmentDTO.formatDateFrom();
+		LocalDateTime end = appointmentDTO.formatDateFrom().plusHours(appointmentDTO.durationInHours());
+		Boat boat = boatRepository.findById(appointmentDTO.boatId).get();
+		List <BoatAppointment> appointments = boatAppointmentRepository.findBoatAppointmentsHistory(boat.id);
+		System.out.println(appointments.size());
+		for (BoatAppointment app : appointments) {
+			if ((app.appointmentStart.isBefore(start) && app.appointmentStart.plusHours(app.duration).isAfter(start)) ||
+					(app.appointmentStart.isBefore(end) && app.appointmentStart.plusHours(app.duration).isAfter(end)) ||
+					(app.appointmentStart.isAfter(start) && app.appointmentStart.plusHours(app.duration).isBefore(end)) ||
+					app.appointmentStart.isEqual(start) || app.appointmentStart.plusHours(app.duration).isEqual(end)) {
+				System.out.println("Fejkara");
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	@PostMapping(path = "/searchBoatAppointments")
@@ -364,5 +406,391 @@ public class BoatAppointmentController {
 		}
 		
 		return new ResponseEntity<List<BoatAppointment>>(appointments,HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/addQuickAppointment")
+    public ResponseEntity<List<BoatAppointment>> addAppointment(@RequestBody BoatAppointmentDto appointmentDTO)
+	{	
+		Boat boat = boatRepository.findById(appointmentDTO.boatId).get();
+		if(appointmentDTO != null) {
+			BoatAppointment appointment = new BoatAppointment(appointmentDTO.formatDateFrom(), 
+											 appointmentDTO.durationInHours(), boat.maxAmountOfPeople,AppointmentType.quick,
+											 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
+			appointment.boat = getBoatById(appointmentDTO.boatId);
+			boatAppointmentRepository.save(appointment);
+			sendEmailToSubscribers(appointmentDTO);
+			return getAllQuickAppointmentsForBoat(appointmentDTO.boatId);
+		}
+		return null;
+	}
+	private Boat getBoatById(long id) {
+		Optional<Boat> boat = boatRepository.findById(id);
+		Boat ret = boat.get(); 
+		return ret;
+	}
+	public boolean sendEmailToClient(BoatAppointment app)
+	{	
+		Boat boat = boatRepository.findById(app.boat.id).get();
+		String title = "New reservation notification";
+		String body = "Hello,\nYour reservation requested from the instructor has been successful - " + boat.name + " - " + boat.address + ", " + " . \n"
+					+ "\nAction information:\n"
+					+	"\nStart : " + app.appointmentStart + "\n"
+					+	"\nDuration : " + app.duration + " hours \n"
+					+	"\nCapacity : " + boat.maxAmountOfPeople +" people \n"
+					+	"\nPrice : " + app.price +" din\n"
+					+	"\nExtras : " + app.extraNotes +"\n"
+				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+			try 
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmail(app.client.email,body,title);	
+					}
+				};
+				t.start();
+				return true;
+			} 
+			catch (Exception e) 
+			{
+				return false;
+			}
+	}
+
+	
+	public boolean sendEmailToSubscribers(BoatAppointmentForClientDto appDto)
+	{	
+		Boat boat = boatRepository.findById(appDto.boatId).get();
+		String title = "New reservation notification";
+		String body = "Hello,\nYour reservation requested from the instructor has been successful - " + boat.name + " - " + boat.address + ", "  + " . \n"
+					+ "\nAction information:\n"
+					+	"\nStart :" + appDto.dateFrom + " - " + appDto.timeFrom + "\n"
+					+	"\nDuration : " + appDto.durationInHours() + " hours \n"
+					+	"\nCapacity : " + boat.maxAmountOfPeople +" people \n"
+					+	"\nPrice : " + appDto.price +"\n"
+					+	"\nExtras : " + appDto.extraNotes +"\n"
+				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+			List<SubscribeBoat> subs =  subscribeBoatRepository.findAllByBoat(appDto.boatId);
+		for (SubscribeBoat sa : subs) {
+			try 
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmail(sa.client.email,body,title);	
+					}
+				};
+				t.start();
+			} 
+			catch (Exception e) 
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean sendEmailToSubscribers(BoatAppointmentDto appDto)
+	{	
+		Boat boat = boatRepository.findById(appDto.boatId).get();
+		String title = "New action notification";
+		String body = "Hello,\nThere is a new action reservation available for " + boat.name + " - " + boat.address + ", " + " . \n"
+					+ "\nAction information:\n"
+					+	"\nStart :" + appDto.dateFrom + " - " + appDto.timeFrom + "\n"
+					+	"\nDuration : " + appDto.durationInHours() + " hours \n"
+					+	"\nCapacity : " + boat.maxAmountOfPeople +" people \n"
+					+	"\nPrice : " + appDto.price +"\n"
+					+	"\nExtras : " + appDto.extraNotes +"\n"
+				  + "\n\nIf you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+		List<SubscribeBoat> subs =  subscribeBoatRepository.findAllByBoat(appDto.boatId);
+		for (SubscribeBoat sa : subs) {
+			try 
+			{
+				Thread t = new Thread() {
+					public void run()
+					{
+						sendEmail(sa.client.email,body,title);	
+					}
+				};
+				t.start();
+			} 
+			catch (Exception e) 
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public void sendEmail(String to, String body, String title)
+	{
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo(to);
+		msg.setSubject(title);
+		msg.setText(body);
+		javaMailSender.send(msg);
+		System.out.println("Email sent...");
+	}
+	@GetMapping(path = "/getCurrentAppointments/{ownerId}")
+	public ResponseEntity<List<BoatAppointment>> getCurrentAppointments(@PathVariable("ownerId") long id)
+	{
+		System.out.println("a");
+		List<BoatAppointment> appointments = new ArrayList<BoatAppointment>();
+		List<Boat> boats = boatRepository.getOwnersBoats(id);
+		for (Boat boat : boats) {
+			for(BoatAppointment appointment : boatAppointmentRepository.findBoatAppointmentsHistory(boat.id))
+			{
+				if (appointment.client != null && LocalDateTime.now().isAfter(appointment.appointmentStart) && LocalDateTime.now().isBefore(appointment.appointmentStart.plusHours(appointment.duration)))
+					appointments.add(appointment);
+			}
+			System.out.println(appointments.size());
+		}
+		
+		return new ResponseEntity<List<BoatAppointment>>(appointments,HttpStatus.OK);
+	}
+	@PostMapping(path = "/addOwnersAppointmentForClient")
+    public ResponseEntity<List<BoatAppointment>> addClientAppointment(@RequestBody BoatAppointmentForClientDto appointmentDTO)
+	{	
+		Boat boat = boatRepository.findById(appointmentDTO.boatId).get();
+		if(appointmentDTO != null) {
+			BoatAppointment appointment = new BoatAppointment(appointmentDTO.formatDateFrom(), 
+					 appointmentDTO.durationInHours(), boat.maxAmountOfPeople,AppointmentType.quick,
+					 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
+			appointment.boat = getBoatById(appointmentDTO.boatId);
+			appointment.client = clientRepository.findById(appointmentDTO.clientId).get();
+			appointment.price = fishingAppointmentService2.calculateDiscountedPrice(appointment.price, appointment.client);
+			double ownerCut = fishingAppointmentService2.getOwnerProfitBoat(appointment.boat.shipOwner);
+			appointment.ownerProfit = appointment.price*ownerCut/100;
+			appointment.systemProfit = appointment.price - appointment.ownerProfit;
+			boatAppointmentRepository.save(appointment);
+			sendEmailToClient(appointment);
+			return getAllQuickAppointmentsForBoat(appointmentDTO.boatId);
+		}
+		return null;
+	}
+	@GetMapping(path = "/getReservationsForReports/{ownerId}")
+	public ResponseEntity<List<BoatAppointment>> getInstructorsReservationsHistory(@PathVariable("ownerId") long id)
+	{
+		List<BoatAppointment> appointments = new ArrayList<BoatAppointment>();
+		for(BoatAppointment appointment : boatAppointmentRepository.findOwnersReservationHistory(id))
+		{
+			if (appointment.client != null && appointment.appointmentStart.plusHours(appointment.duration).isBefore(LocalDateTime.now()) && !checkIfReportExists(appointment.id))
+				appointments.add(appointment);
+		}
+		return new ResponseEntity<List<BoatAppointment>>(appointments,HttpStatus.OK);
+	}
+	private boolean checkIfReportExists(long id) {
+		for(BoatAppointmentReport rep : boatReportsRepository.findAll()) {
+			if (rep.appointment.id == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+	@GetMapping(path = "/getBoatProfitCharts/{ownerId}")
+	public ResponseEntity<List<ChartInfoDto>> getChartInfo(@PathVariable("ownerId") long id)
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<BoatAppointment> appointments = boatAppointmentRepository.findOwnersReservationHistory(id);
+		boolean dateExists = false;
+		for (BoatAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.ownerProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.ownerProfit));
+			}
+		}
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getBoatProfitChartsWeek/{ownerId}")
+	public ResponseEntity<List<ChartInfoDto>> getWeekChartInfo(@PathVariable("ownerId") long id)
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<BoatAppointment> appointments = boatAppointmentRepository.findOwnersReservationHistory(id);
+		boolean dateExists = false;
+		for (BoatAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(7)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.ownerProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.ownerProfit));
+			}
+		}
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getBoatProfitChartsMonth/{ownerId}")
+	public ResponseEntity<List<ChartInfoDto>> getMonthChartInfo(@PathVariable("ownerId") long id)
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<BoatAppointment> appointments = boatAppointmentRepository.findOwnersReservationHistory(id);
+		boolean dateExists = false;
+		for (BoatAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusDays(30)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.ownerProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.ownerProfit));
+			}
+		}
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getBoatProfitChartsYear/{ownerId}")
+	public ResponseEntity<List<ChartInfoDto>> getYearChartInfo(@PathVariable("ownerId") long id)
+	{	
+		List<ChartInfoDto> info = new ArrayList<ChartInfoDto>();
+		List<BoatAppointment> appointments = boatAppointmentRepository.findOwnersReservationHistory(id);
+		boolean dateExists = false;
+		for (BoatAppointment app : appointments) {
+			dateExists = false;
+			if (app.appointmentStart.plusHours(app.duration).isAfter(LocalDateTime.now().minusYears(1)) && app.appointmentStart.plusHours(app.duration).isBefore(LocalDateTime.now())) {
+				for (ChartInfoDto infoDto : info) {
+					if (infoDto.dateAndTime.getDayOfMonth() == app.appointmentStart.getDayOfMonth() && 
+						infoDto.dateAndTime.getYear() == app.appointmentStart.getYear() && 
+						infoDto.dateAndTime.getMonth() == app.appointmentStart.getMonth()) {
+						infoDto.price += app.ownerProfit;
+						dateExists = true;
+						break;
+					}
+				}
+				if (!dateExists)
+					info.add(new ChartInfoDto(app.appointmentStart.plusHours(app.duration), app.ownerProfit));
+			}
+		}
+		Collections.sort(info);
+		return new ResponseEntity<List<ChartInfoDto>>(info,HttpStatus.OK);
+	}
+	@PostMapping(path = "/checkOverlapNow/{boatId}")
+    public boolean checkOverlapNow(@PathVariable("boatId") long id)
+	{	
+		LocalDateTime start = LocalDateTime.now();
+		Boat b = boatRepository.findById(id).get();
+		List <BoatAppointment> appointments = boatAppointmentRepository.findBoatAppointmentsHistory(b.id);
+		System.out.println(appointments.size());
+		for (BoatAppointment app : appointments) {
+			if ((app.appointmentStart.isBefore(start) && app.appointmentStart.plusDays(app.duration).isAfter(start)) ||
+					app.appointmentStart.isEqual(start)) {
+				System.out.println("Fejkara");
+				return false;
+			}
+		}
+		return true;
+	}
+	@GetMapping(path = "/getBoatReservationCharts/{ownerId}")
+	public ResponseEntity<List<ChartInfoReservationDto>> getCottageReservationCharts(@PathVariable("ownerId") long id)
+	{	
+		List<ChartInfoReservationDto> info = new ArrayList<ChartInfoReservationDto>();
+		List<Boat> boats = boatRepository.getOwnersBoats(id);
+		for (Boat boat : boats) {
+			List<BoatAppointment> appointments = boatAppointmentRepository.findBoatAppointmentsHistory(boat.id);
+			ChartInfoReservationDto dto = new ChartInfoReservationDto();
+			dto.name = boat.name;
+			dto.amount = 0;
+			for (BoatAppointment app : appointments) {
+				if (app.appointmentStart.plusDays(app.duration).isBefore(LocalDateTime.now())) {
+						dto.amount += 1;
+						
+				}
+			}
+			info.add(dto);
+		}
+		
+		return new ResponseEntity<List<ChartInfoReservationDto>>(info,HttpStatus.OK);
+	}
+
+	@GetMapping(path = "/getBoatReservationChartsWeek/{ownerId}")
+	public ResponseEntity<List<ChartInfoReservationDto>> getCottageReservationChartsWeek(@PathVariable("ownerId") long id)
+	{
+		List<ChartInfoReservationDto> info = new ArrayList<ChartInfoReservationDto>();
+		List<Boat> boats = boatRepository.getOwnersBoats(id);
+		for (Boat boat : boats) {
+			List<BoatAppointment> appointments = boatAppointmentRepository.findBoatAppointmentsHistory(boat.id);
+			ChartInfoReservationDto dto = new ChartInfoReservationDto();
+			dto.name = boat.name;
+			dto.amount = 0;
+			for (BoatAppointment app : appointments) {
+			if (app.appointmentStart.plusDays(app.duration).isAfter(LocalDateTime.now().minusDays(7)) && app.appointmentStart.plusDays(app.duration).isBefore(LocalDateTime.now())) {
+					dto.amount += 1;
+					
+			}
+		}
+		info.add(dto);
+	}
+	
+	return new ResponseEntity<List<ChartInfoReservationDto>>(info,HttpStatus.OK);
+}
+
+	@GetMapping(path = "/getBoatReservationChartsMonth/{ownerId}")
+	public ResponseEntity<List<ChartInfoReservationDto>> getCottageReservationChartsMonth(@PathVariable("ownerId") long id)
+	{
+		List<ChartInfoReservationDto> info = new ArrayList<ChartInfoReservationDto>();
+		List<Boat> boats = boatRepository.getOwnersBoats(id);
+		for (Boat boat : boats) {
+			List<BoatAppointment> appointments = boatAppointmentRepository.findBoatAppointmentsHistory(boat.id);
+			ChartInfoReservationDto dto = new ChartInfoReservationDto();
+			dto.name = boat.name;
+			dto.amount = 0;
+			for (BoatAppointment app : appointments) {
+				if (app.appointmentStart.plusDays(app.duration).isAfter(LocalDateTime.now().minusDays(30)) && app.appointmentStart.plusDays(app.duration).isBefore(LocalDateTime.now())) {
+						dto.amount += 1;
+						
+				}
+			}
+			info.add(dto);
+		}
+		
+		return new ResponseEntity<List<ChartInfoReservationDto>>(info,HttpStatus.OK);
+	}
+
+	@GetMapping(path = "/getBoatReservationChartsYear/{ownerId}")
+	public ResponseEntity<List<ChartInfoReservationDto>> getCottageReservationChartsYear(@PathVariable("ownerId") long id)
+	{
+		List<ChartInfoReservationDto> info = new ArrayList<ChartInfoReservationDto>();
+		List<Boat> boats = boatRepository.getOwnersBoats(id);
+		for (Boat boat : boats) {
+			List<BoatAppointment> appointments = boatAppointmentRepository.findBoatAppointmentsHistory(boat.id);
+			ChartInfoReservationDto dto = new ChartInfoReservationDto();
+			dto.name = boat.name;
+			dto.amount = 0;
+			for (BoatAppointment app : appointments) {
+				if (app.appointmentStart.plusDays(app.duration).isAfter(LocalDateTime.now().minusYears(1)) && app.appointmentStart.plusDays(app.duration).isBefore(LocalDateTime.now())) {
+						dto.amount += 1;
+						
+				}
+			}
+			info.add(dto);
+		}
+		
+		return new ResponseEntity<List<ChartInfoReservationDto>>(info,HttpStatus.OK);
 	}
 }

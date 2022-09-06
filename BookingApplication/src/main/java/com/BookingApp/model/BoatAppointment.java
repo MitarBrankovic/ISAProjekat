@@ -69,6 +69,7 @@ public class BoatAppointment {
 		this.client = client;
 	}
 	
+	
 	public BoatAppointment(LocalDateTime appointmentStart, long duration, int maxAmountOfPeople,
 			AppointmentType appointmentType, String extraNotes, double price, Boat boat, Client client) {
 		super();
@@ -82,5 +83,17 @@ public class BoatAppointment {
 		this.systemProfit = price* 0.2;
 		this.boat = boat;
 		this.client = client;
+	}
+	public BoatAppointment(LocalDateTime appointmentStart, long duration, int maxAmountOfPeople,
+			AppointmentType appointmentType, String extraNotes, double price, double ownerProfit, double systemProfit) {
+		super();
+		this.appointmentStart = appointmentStart;
+		this.duration = duration;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+		this.appointmentType = appointmentType;
+		this.extraNotes = extraNotes;
+		this.price = price;
+		this.ownerProfit = ownerProfit;
+		this.systemProfit = systemProfit;
 	}
 }

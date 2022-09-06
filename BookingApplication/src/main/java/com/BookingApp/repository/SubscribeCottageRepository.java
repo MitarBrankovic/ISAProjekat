@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.BookingApp.model.SubscribeAdventure;
 import com.BookingApp.model.SubscribeCottage;
 
 public interface SubscribeCottageRepository extends JpaRepository<SubscribeCottage, Long> {
@@ -16,4 +17,8 @@ public interface SubscribeCottageRepository extends JpaRepository<SubscribeCotta
 	
 	@Query("select r from SubscribeCottage r where r.client.id = :id")
 	public List<SubscribeCottage> findAllByClient(@Param("id") long id);
+	
+	@Query("select r from SubscribeCottage r where r.cottage.id = :id")
+	public List<SubscribeCottage> findAllByCottage(@Param("id") long id);
+	
 }

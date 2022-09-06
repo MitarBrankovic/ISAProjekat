@@ -17,11 +17,13 @@ import com.BookingApp.dto.ReserveAdventureDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.Client;
+import com.BookingApp.model.CottageOwner;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.FishingInstructor;
 import com.BookingApp.model.LoyaltyProgram;
 import com.BookingApp.model.LoyaltyStatus;
+import com.BookingApp.model.ShipOwner;
 import com.BookingApp.repository.BoatReportsRepository;
 import com.BookingApp.repository.ClientRepository;
 import com.BookingApp.repository.CottageReportsRepository;
@@ -142,6 +144,28 @@ public class FishingAppointmentService {
 		else if (instructor.loyaltyStatus == LoyaltyStatus.bronze)
 			return loyalty.bronzePrecentage;
 		else if (instructor.loyaltyStatus == LoyaltyStatus.silver)
+			return loyalty.silverPrecentage;
+		else
+			return loyalty.goldPrecentage;
+	}
+	public double getOwnerProfitCottage(CottageOwner owner) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (owner.loyaltyStatus == LoyaltyStatus.regular)
+			return 80;
+		else if (owner.loyaltyStatus == LoyaltyStatus.bronze)
+			return loyalty.bronzePrecentage;
+		else if (owner.loyaltyStatus == LoyaltyStatus.silver)
+			return loyalty.silverPrecentage;
+		else
+			return loyalty.goldPrecentage;
+	}
+	public double getOwnerProfitBoat(ShipOwner owner) {
+		LoyaltyProgram loyalty = loyaltyRepository.getLoyalty();
+		if (owner.loyaltyStatus == LoyaltyStatus.regular)
+			return 80;
+		else if (owner.loyaltyStatus == LoyaltyStatus.bronze)
+			return loyalty.bronzePrecentage;
+		else if (owner.loyaltyStatus == LoyaltyStatus.silver)
 			return loyalty.silverPrecentage;
 		else
 			return loyalty.goldPrecentage;

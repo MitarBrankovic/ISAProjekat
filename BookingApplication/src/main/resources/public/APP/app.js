@@ -6,6 +6,9 @@ const Logout = { template: '<Logout></Logout>' }
 const ProfileClient = { template: '<ProfileClient></ProfileClient>' }
 const Navbar = { template: '<Navbar></Navbar>' }
 const SearchCottages = { template: '<SearchCottages></SearchCottages>' }
+const SearchOwnerCottage = { template: '<SearchOwnerCottage></SearchOwnerCottage>' }
+const SearchOwnerBoat = {template: '<SearchOwnerBoat></SearchOwnerBoat>'}
+const AddNewCottage = { template: '<AddNewCottage></AddNewCottage>' }
 const SearchBoats = { template: '<SearchBoats></SearchBoats>' }
 const SearchAdventures = { template: '<SearchAdventures></SearchAdventures>' }
 const RequestDeleteAcc = { template: '<RequestDeleteAcc></RequestDeleteAcc>' }
@@ -43,10 +46,22 @@ const InstructorsGraph = {  template: '<InstructorsGraph></InstructorsGraph>' }
 const BoatOwnersCalendar = {  template: '<BoatOwnersCalendar></BoatOwnersCalendar>' }
 const CottageOwnersCalendar = {  template: '<CottageOwnersCalendar></CottageOwnersCalendar>' }
 const AdminsGraph = {  template: '<AdminsGraph></AdminsGraph>' }
-
-
-
-
+const CottageReservationHistory = { template: '<CottageReservationHistory></CottageReservationHistory>'}
+const CurrentCottageAppointments = {template: '<CurrentCottageAppointments></CurrentCottageAppointments>'}
+const CurrentBoatReservations = {template: '<CurrentBoatReservations></CurrentBoatReservations>'}
+const BoatOwnerHome = {template: '<BoatOwnerHome></BoatOwnerHome>'}
+const BoatReservationHistory = {template: '<BoatReservationHistory></BoatReservationHistory>'}
+const ProfileBoatOwner = {template:'<ProfileBoatOwner></ProfileBoatOwner>'}
+const FinishingCottageReports = {template:'<FinishingCottageReports></FinishingCottageReports>'}
+const FinishingBoatReports = {template:'<FinishingBoatReports></FinishingBoatReports>'}
+const CottageProfitGraph = {template:'<CottageProfitGraph></CottageProfitGraph>'}
+const BoatProfitGraph = {template:'<BoatProfitGraph></BoatProfitGraph>'}
+const BoatRatingGraph = {template:'<BoatRatingGraph></BoatRatingGraph>'}
+const CottageRatingGraph = {template:'<CottageRatingGraph></CottageRatingGraph>'}
+const FishingAdventureRatingGraph = {template:'<FishingAdventureRatingGraph></FishingAdventureRatingGraph>'}
+const CottageReservationGraph = {template:'<CottageReservationGraph></CottageReservationGraph>'}
+const BoatReservationGraph = {template:'<BoatReservationGraph></BoatReservationGraph>'}
+const FishingAdventureReservationGraph = {template:'<FishingAdventureReservationGraph></FishingAdventureReservationGraph>'}
 
 const router = new VueRouter({
     mode: 'hash',
@@ -59,6 +74,8 @@ const router = new VueRouter({
         { path: '/profileClient', component: ProfileClient },
         { path: '/navbar', component: Navbar },
         { path: '/searchCottages', component: SearchCottages },
+ 		{ path: '/searchOwnerCottage', component: SearchOwnerCottage },
+		{ path: '/addNewCottage', component: AddNewCottage },
         { path: '/searchBoats', component: SearchBoats },
         { path: '/searchAdventures', component: SearchAdventures },
         { path: '/requestDeleteAcc', component: RequestDeleteAcc },
@@ -96,9 +113,24 @@ const router = new VueRouter({
         { path: '/boatOwnersCalendar', component: BoatOwnersCalendar },
         { path: '/cottageOwnersCalendar', component: CottageOwnersCalendar },
         { path: '/adminsGraph', component: AdminsGraph },
-        
-        
-    ]
+        { path: '/cottageReservationHistory', component: CottageReservationHistory },
+        { path: '/currentCottageAppointments', component: CurrentCottageAppointments },
+		{path: '/boatOwnerHome', component: BoatOwnerHome},
+		{path: '/currentBoatReservations', component: CurrentBoatReservations},
+		{path: '/boatReservationHistory', component: BoatReservationHistory},
+		{path: '/profileBoatOwner', component: ProfileBoatOwner},
+		{path: '/finishingCottageReports', component: FinishingCottageReports},
+		{path: '/finishingBoatReports', component: FinishingBoatReports},
+		{path: '/cottageProfitGraph', component: CottageProfitGraph},
+		{path: '/boatProfitGraph', component: BoatProfitGraph},
+		{path: '/boatRatingGraph', component: BoatRatingGraph},
+		{path: '/cottageRatingGraph', component: CottageRatingGraph},
+		{path: '/fishingAdventureRatingGraph', component: FishingAdventureRatingGraph},
+    	{path: '/cottageReservationGraph', component: CottageReservationGraph},
+		{path: '/boatReservationGraph', component: BoatReservationGraph},
+		{path: '/fishingAdventureReservationGraph', component: FishingAdventureReservationGraph},
+		{path: '/searchOwnerBoat', component: SearchOwnerBoat},
+	]
 
 });
 

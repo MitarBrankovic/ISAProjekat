@@ -25,6 +25,10 @@ public class Cottage {
 	@Column
 	public String address;
 	@Column
+	public double longitude; //geo duzina
+	@Column
+	public double latitude; //geo sirina
+	@Column
 	public String description;
 	//public String images;
 	public int roomsNum;
@@ -40,7 +44,7 @@ public class Cottage {
 	@Column
 	public LocalDateTime availableUntil;
 	@Column
-	public double pricePerHour;
+	public double pricePerHour;//mislimo na dane
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(fetch = FetchType.EAGER)
 	public CottageOwner cottageOwner;
@@ -52,9 +56,43 @@ public class Cottage {
 	public Cottage() {}
 
 	
+	public double getLongitude() {
+		return longitude;
+	}
+
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+
 	public Cottage(long id, String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList, double pricePerHour, int maxAmountOfPeople) {
 		super();
 		this.id = id;
+		this.name = name;
+		this.address = address;
+		this.description = description;
+		this.roomsNum = roomsNum;
+		this.bedsNum = bedsNum;
+		this.availableFrom = LocalDateTime.now();
+		this.availableUntil = LocalDateTime.now().plusDays(7);
+		this.rules = rules;
+		this.priceList = priceList;
+		this.pricePerHour = pricePerHour;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+	}
+	public Cottage(String name, String address, String description, int roomsNum, int bedsNum, String rules, String priceList, double pricePerHour, int maxAmountOfPeople) {
+		super();
 		this.name = name;
 		this.address = address;
 		this.description = description;

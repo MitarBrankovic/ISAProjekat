@@ -28,6 +28,7 @@ import com.BookingApp.dto.ReservedFishingAppointmentDto;
 import com.BookingApp.dto.SearchAppointmentDto;
 import com.BookingApp.dto.AppointmentReportDto;
 import com.BookingApp.dto.ChartInfoDto;
+import com.BookingApp.dto.ChartInfoReservationDto;
 import com.BookingApp.dto.DateReservationDto;
 import com.BookingApp.dto.FishingAppointmentDto;
 import com.BookingApp.dto.InstructorsAppointmentForClientDto;
@@ -712,6 +713,93 @@ public class FishingAppointmentController {
 		}
 		
 		return new ResponseEntity<List<FishingAppointment>>(appointments,HttpStatus.OK);
+	}
+	@GetMapping(path = "/getFishingAdventureReservationCharts/{ownerId}")
+	public ResponseEntity<List<ChartInfoReservationDto>> getCottageReservationCharts(@PathVariable("ownerId") long id)
+	{	
+		List<ChartInfoReservationDto> info = new ArrayList<ChartInfoReservationDto>();
+		List<FishingAdventure> fishingAdventures = fishingAdventureRepository.findInstructorsAdventuresList(id);
+		for (FishingAdventure fishingAdventure : fishingAdventures) {
+			List<FishingAppointment> appointments = fishingAppointmentRepository.findAdventureAppointmentsHistory(fishingAdventure.id);
+			ChartInfoReservationDto dto = new ChartInfoReservationDto();
+			dto.name = fishingAdventure.name;
+			dto.amount = 0;
+			for (FishingAppointment app : appointments) {
+				if (app.appointmentStart.plusDays(app.duration).isBefore(LocalDateTime.now())) {
+						dto.amount += 1;
+						
+				}
+			}
+			info.add(dto);
+		}
+		
+		return new ResponseEntity<List<ChartInfoReservationDto>>(info,HttpStatus.OK);
+	}
+
+	@GetMapping(path = "/getFishingAdventureReservationChartsWeek/{ownerId}")
+	public ResponseEntity<List<ChartInfoReservationDto>> getCottageReservationChartsWeek(@PathVariable("ownerId") long id)
+	{
+		List<ChartInfoReservationDto> info = new ArrayList<ChartInfoReservationDto>();
+		List<FishingAdventure> fishingAdventures = fishingAdventureRepository.findInstructorsAdventuresList(id);
+		for (FishingAdventure fishingAdventure : fishingAdventures) {
+			List<FishingAppointment> appointments = fishingAppointmentRepository.findAdventureAppointmentsHistory(fishingAdventure.id);
+			ChartInfoReservationDto dto = new ChartInfoReservationDto();
+			dto.name = fishingAdventure.name;
+			dto.amount = 0;
+			for (FishingAppointment app : appointments) {
+			if (app.appointmentStart.plusDays(app.duration).isAfter(LocalDateTime.now().minusDays(7)) && app.appointmentStart.plusDays(app.duration).isBefore(LocalDateTime.now())) {
+					dto.amount += 1;
+					
+			}
+		}
+		info.add(dto);
+	}
+	
+	return new ResponseEntity<List<ChartInfoReservationDto>>(info,HttpStatus.OK);
+}
+
+	@GetMapping(path = "/getFishingAdventureReservationChartsMonth/{ownerId}")
+	public ResponseEntity<List<ChartInfoReservationDto>> getCottageReservationChartsMonth(@PathVariable("ownerId") long id)
+	{
+		List<ChartInfoReservationDto> info = new ArrayList<ChartInfoReservationDto>();
+		List<FishingAdventure> fishingAdventures = fishingAdventureRepository.findInstructorsAdventuresList(id);
+		for (FishingAdventure fishingAdventure : fishingAdventures) {
+			List<FishingAppointment> appointments = fishingAppointmentRepository.findAdventureAppointmentsHistory(fishingAdventure.id);
+			ChartInfoReservationDto dto = new ChartInfoReservationDto();
+			dto.name = fishingAdventure.name;
+			dto.amount = 0;
+			for (FishingAppointment app : appointments) {
+				if (app.appointmentStart.plusDays(app.duration).isAfter(LocalDateTime.now().minusDays(30)) && app.appointmentStart.plusDays(app.duration).isBefore(LocalDateTime.now())) {
+						dto.amount += 1;
+						
+				}
+			}
+			info.add(dto);
+		}
+		
+		return new ResponseEntity<List<ChartInfoReservationDto>>(info,HttpStatus.OK);
+	}
+
+	@GetMapping(path = "/getFishingAdventureReservationChartsYear/{ownerId}")
+	public ResponseEntity<List<ChartInfoReservationDto>> getCottageReservationChartsYear(@PathVariable("ownerId") long id)
+	{
+		List<ChartInfoReservationDto> info = new ArrayList<ChartInfoReservationDto>();
+		List<FishingAdventure> fishingAdventures = fishingAdventureRepository.findInstructorsAdventuresList(id);
+		for (FishingAdventure fishingAdventure : fishingAdventures) {
+			List<FishingAppointment> appointments = fishingAppointmentRepository.findAdventureAppointmentsHistory(fishingAdventure.id);
+			ChartInfoReservationDto dto = new ChartInfoReservationDto();
+			dto.name = fishingAdventure.name;
+			dto.amount = 0;
+			for (FishingAppointment app : appointments) {
+				if (app.appointmentStart.plusDays(app.duration).isAfter(LocalDateTime.now().minusYears(1)) && app.appointmentStart.plusDays(app.duration).isBefore(LocalDateTime.now())) {
+						dto.amount += 1;
+						
+				}
+			}
+			info.add(dto);
+		}
+		
+		return new ResponseEntity<List<ChartInfoReservationDto>>(info,HttpStatus.OK);
 	}
 
 }

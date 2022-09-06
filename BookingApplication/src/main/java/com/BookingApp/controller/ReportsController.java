@@ -22,10 +22,12 @@ import com.BookingApp.dto.ReportsClientDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentRatingOptions;
 import com.BookingApp.model.Boat;
+import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.BoatAppointmentReport;
 import com.BookingApp.model.FishingAppointmentReport;
 import com.BookingApp.model.Client;
 import com.BookingApp.model.Cottage;
+import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.CottageAppointmentReport;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
@@ -118,11 +120,73 @@ public class ReportsController {
 					userRepository.findById(reportDTO.ownerId).get(), fishingAppointmentRepository.findById(reportDTO.appointmentId).get(), true));
 		return getReservationsForReports(reportDTO);
 	}
+	@PreAuthorize("hasAuthority('COTTAGEOWNER')")
+	@PostMapping(path = "/sendCottageReport")
+    public List<CottageAppointment> sendCottageReport(@RequestBody AppointmentReportDto reportDTO)
+	{	
+		if (reportDTO.type.equalsIgnoreCase("didnt_show")) {
+			cottageReportsRepository.save(new CottageAppointmentReport(reportDTO.comment, AppointmentRatingOptions.didnt_show, userRepository.findById(reportDTO.clientId).get(), 
+					userRepository.findById(reportDTO.ownerId).get(), cottageAppointmentRepository.findById(reportDTO.appointmentId).get(), true));
+			penaliseClient(reportDTO.clientId);
+			AppointmentReportDto newDto = reportDTO;
+			newDto.type = "cottage";
+			sendPenaltyEmail(newDto);
+		}
+		else if (reportDTO.type.equalsIgnoreCase("penalty"))
+			cottageReportsRepository.save(new CottageAppointmentReport(reportDTO.comment, AppointmentRatingOptions.penalty, userRepository.findById(reportDTO.clientId).get(), 
+					userRepository.findById(reportDTO.ownerId).get(), cottageAppointmentRepository.findById(reportDTO.appointmentId).get(), false));
+		else
+			cottageReportsRepository.save(new CottageAppointmentReport(reportDTO.comment, AppointmentRatingOptions.positive, userRepository.findById(reportDTO.clientId).get(), 
+					userRepository.findById(reportDTO.ownerId).get(), cottageAppointmentRepository.findById(reportDTO.appointmentId).get(), true));
+		return getReservationsForReportsCottage(reportDTO);
+	}
+	@PreAuthorize("hasAuthority('BOATOWNER')")
+	@PostMapping(path = "/sendBoatReport")
+    public List<BoatAppointment> sendBoatReport(@RequestBody AppointmentReportDto reportDTO)
+	{	
+		if (reportDTO.type.equalsIgnoreCase("didnt_show")) {
+			boatReportsRepository.save(new BoatAppointmentReport(reportDTO.comment, AppointmentRatingOptions.didnt_show, userRepository.findById(reportDTO.clientId).get(), 
+					userRepository.findById(reportDTO.ownerId).get(),boatAppointmentRepository.findById(reportDTO.appointmentId).get(), true));
+			penaliseClient(reportDTO.clientId);
+			AppointmentReportDto newDto = reportDTO;
+			newDto.type = "boat";
+			sendPenaltyEmail(newDto);
+		}
+		else if (reportDTO.type.equalsIgnoreCase("penalty"))
+			boatReportsRepository.save(new BoatAppointmentReport(reportDTO.comment, AppointmentRatingOptions.penalty, userRepository.findById(reportDTO.clientId).get(), 
+					userRepository.findById(reportDTO.ownerId).get(), boatAppointmentRepository.findById(reportDTO.appointmentId).get(), false));
+		else
+			boatReportsRepository.save(new BoatAppointmentReport(reportDTO.comment, AppointmentRatingOptions.positive, userRepository.findById(reportDTO.clientId).get(), 
+					userRepository.findById(reportDTO.ownerId).get(), boatAppointmentRepository.findById(reportDTO.appointmentId).get(), true));
+		return getReservationsForReportsBoat(reportDTO);
+	}
 
 	public List<FishingAppointment> getReservationsForReports(AppointmentReportDto reportDTO)
 	{
 		List<FishingAppointment> appointments = new ArrayList<FishingAppointment>();
 		for(FishingAppointment appointment : fishingAppointmentRepository.findInstructorsReservationHistory(reportDTO.ownerId))
+		{
+			if (appointment.client != null && appointment.appointmentStart.plusHours(appointment.duration).isBefore(LocalDateTime.now()) && 
+					!checkIfReportExists(appointment.id))
+				appointments.add(appointment);
+		}
+		return appointments;
+	}
+	public List<CottageAppointment> getReservationsForReportsCottage(AppointmentReportDto reportDTO)
+	{
+		List<CottageAppointment> appointments = new ArrayList<CottageAppointment>();
+		for(CottageAppointment appointment : cottageAppointmentRepository.findOwnersReservationHistory(reportDTO.ownerId))
+		{
+			if (appointment.client != null && appointment.appointmentStart.plusDays(appointment.duration).isBefore(LocalDateTime.now()) && 
+					!checkIfReportExists(appointment.id))
+				appointments.add(appointment);
+		}
+		return appointments;
+	}
+	public List<BoatAppointment> getReservationsForReportsBoat(AppointmentReportDto reportDTO)
+	{
+		List<BoatAppointment> appointments = new ArrayList<BoatAppointment>();
+		for(BoatAppointment appointment : boatAppointmentRepository.findOwnersReservationHistory(reportDTO.ownerId))
 		{
 			if (appointment.client != null && appointment.appointmentStart.plusHours(appointment.duration).isBefore(LocalDateTime.now()) && 
 					!checkIfReportExists(appointment.id))

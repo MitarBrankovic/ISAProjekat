@@ -1,5 +1,6 @@
 package com.BookingApp.repository;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.LockModeType;
@@ -18,6 +19,9 @@ public interface FishingAdventureRepository extends JpaRepository<FishingAdventu
 
 	@Query("SELECT fi FROM FishingAdventure fi WHERE fi.fishingInstructor.id=?1")
 	public Set<FishingAdventure> findInstructorsAdventures(long id);
+	
+	@Query("SELECT fi FROM FishingAdventure fi WHERE fi.fishingInstructor.id=?1")
+	public List<FishingAdventure> findInstructorsAdventuresList(long id);
 	
 	@Modifying
 	@Query("delete from FishingAdventure fi where fi.id = ?1")

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.BookingApp.model.BoatAppointment;
+import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.FishingAppointment;
 
 public interface BoatAppointmentRepository extends JpaRepository<BoatAppointment, Long>{
@@ -20,4 +21,7 @@ public interface BoatAppointmentRepository extends JpaRepository<BoatAppointment
 	
 	@Query("SELECT b FROM BoatAppointment b WHERE b.boat.id=?1")
 	public Set<BoatAppointment> findBoatAppointments(long id);
+	
+	@Query("SELECT b FROM BoatAppointment b WHERE b.boat.id=?1")
+	public List<BoatAppointment> findBoatAppointmentsHistory(long id);
 }

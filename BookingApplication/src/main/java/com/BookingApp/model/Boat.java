@@ -39,6 +39,10 @@ public class Boat {
 	@Column
 	public String address;
 	@Column
+	public double longitude; //geo duzina
+	@Column
+	public double latitude; //geo sirina
+	@Column
 	public String description;
 	//public String images ?
 	@Column
@@ -143,6 +147,28 @@ public class Boat {
 		this.pricePerHour = pricePerHour;
 		this.cancellationTerms = cancellationTerms;
 		this.rating = rating;
+		this.maxAmountOfPeople = maxAmountOfPeople;
+	}
+
+	public Boat(String name, String boatType, double length, String engineNumber, long enginePower, double maxSpeed,
+			String navigationEquipment, String address, String description, long capacity, String rules,
+			String fishingEquipment, String priceList, double pricePerHour,
+			int maxAmountOfPeople) {
+		super();
+		this.name = name;
+		this.boatType = boatType;
+		this.length = length;
+		this.engineNumber = engineNumber;
+		this.enginePower = enginePower;
+		this.maxSpeed = maxSpeed;
+		this.navigationEquipment = navigationEquipment;
+		this.address = address;
+		this.description = description;
+		this.capacity = capacity;
+		this.rules = rules;
+		this.fishingEquipment = fishingEquipment;
+		this.priceList = priceList;
+		this.pricePerHour = pricePerHour;
 		this.maxAmountOfPeople = maxAmountOfPeople;
 	}
 	

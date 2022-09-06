@@ -25,6 +25,10 @@ public class FishingAdventure {
 	@Column
 	public String address;
 	@Column
+	public double longitude; //geo duzina
+	@Column
+	public double latitude; //geo sirina
+	@Column
 	public String city;
 	@Column
 	public String description;

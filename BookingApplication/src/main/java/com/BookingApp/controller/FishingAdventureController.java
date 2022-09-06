@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.BookingApp.dto.ChartInfoRatingDto;
 import com.BookingApp.dto.EditAdventureDto;
 import com.BookingApp.dto.FishingAppointmentDto;
 import com.BookingApp.dto.NewAdventureDto;
@@ -35,6 +36,7 @@ import com.BookingApp.dto.SearchInstructorsAdventuresDto;
 import com.BookingApp.model.AdventurePhoto;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.Boat;
+import com.BookingApp.model.Cottage;
 import com.BookingApp.model.FishingAdventure;
 import com.BookingApp.model.FishingAppointment;
 import com.BookingApp.model.PricelistItem;
@@ -413,5 +415,13 @@ public class FishingAdventureController {
 		
 		
 		return new ResponseEntity<List<FishingAdventure>>(adventures,HttpStatus.OK);
+	}
+	@GetMapping(path="/ratingforAdventures/{ownerId}")
+	public List<ChartInfoRatingDto> ratingForBoats(@PathVariable("ownerId") long id){
+		List<ChartInfoRatingDto> info = new ArrayList<ChartInfoRatingDto>();
+		for (FishingAdventure fishingAdventure : fishingAdventureRepository.findInstructorsAdventures(id)) {
+			info.add(new ChartInfoRatingDto(fishingAdventure.name,fishingAdventure.rating));
+		}
+		return info;
 	}
 }

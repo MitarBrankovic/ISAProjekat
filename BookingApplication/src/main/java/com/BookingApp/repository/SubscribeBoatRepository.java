@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.BookingApp.model.SubscribeBoat;
+import com.BookingApp.model.SubscribeCottage;
 
 public interface SubscribeBoatRepository extends JpaRepository<SubscribeBoat, Long>  {
 	
@@ -15,4 +16,7 @@ public interface SubscribeBoatRepository extends JpaRepository<SubscribeBoat, Lo
 	
 	@Query("select r from SubscribeBoat r where r.client.id = :id")
 	public List<SubscribeBoat> findAllByClient(@Param("id") long id);
+	
+	@Query("select r from SubscribeBoat r where r.boat.id = :id")
+	public List<SubscribeBoat> findAllByBoat(@Param("id") long id);
 }

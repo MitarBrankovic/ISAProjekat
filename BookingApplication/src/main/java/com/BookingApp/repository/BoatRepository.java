@@ -1,5 +1,6 @@
 package com.BookingApp.repository;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.LockModeType;
@@ -21,4 +22,7 @@ public interface BoatRepository  extends JpaRepository<Boat, Long>  {
     
     @Query("SELECT fi FROM Boat fi WHERE fi.shipOwner.id=?1")
 	public Set<Boat> findOwnersBoats(long id);
+    
+    @Query("SELECT fi FROM Boat fi WHERE fi.shipOwner.id=?1")
+	public List<Boat> getOwnersBoats(long id);
 }

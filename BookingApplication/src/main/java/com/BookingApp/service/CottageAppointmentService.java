@@ -9,12 +9,16 @@ import javax.persistence.LockModeType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.BookingApp.dto.CottageAppointmentDto;
+import com.BookingApp.dto.CottageAppointmentForClientDto;
 import com.BookingApp.dto.ReserveCottageDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
@@ -52,6 +56,8 @@ public class CottageAppointmentService {
 	private LoyaltyProgramRepository loyaltyRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private FishingAppointmentService fishingAppointmentService2;
 	
 	
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
@@ -80,6 +86,45 @@ public class CottageAppointmentService {
 				return true;
 			}else return false;
 		}else return false;
+	}
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+    public boolean addQucikAppointment(CottageAppointmentDto appointmentDTO) throws InterruptedException
+	{	
+		Cottage cottage = cottageRepository.findById(appointmentDTO.cottageId).get();
+		if(appointmentDTO != null) {
+			CottageAppointment appointment = new CottageAppointment(appointmentDTO.formatDateFrom(), 
+											 appointmentDTO.durationInHours(), cottage.maxAmountOfPeople,AppointmentType.quick,
+											 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
+			appointment.cottage = getCottageById(appointmentDTO.cottageId);
+			cottageAppointmentRepository.save(appointment);
+			return true;
+		}
+		return false;
+	}
+    
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+    public CottageAppointment addClientAppointment(CottageAppointmentForClientDto appointmentDTO) throws InterruptedException
+	{	
+		Cottage cottage = cottageRepository.findById(appointmentDTO.cottageId).get();
+		if(appointmentDTO != null) {
+			CottageAppointment appointment = new CottageAppointment(appointmentDTO.formatDateFrom(), 
+					 appointmentDTO.durationInHours(), cottage.maxAmountOfPeople,AppointmentType.quick,
+					 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
+			appointment.cottage = getCottageById(appointmentDTO.cottageId);
+			appointment.client = clientRepository.findById(appointmentDTO.clientId).get();
+			appointment.price = fishingAppointmentService2.calculateDiscountedPrice(appointment.price, appointment.client);
+			double ownerCut = fishingAppointmentService2.getOwnerProfitCottage(appointment.cottage.cottageOwner);
+			appointment.ownerProfit = appointment.price*ownerCut/100;
+			appointment.systemProfit = appointment.price - appointment.ownerProfit;
+			cottageAppointmentRepository.save(appointment);
+			return appointment;
+		}
+		return null;
+	}
+    private Cottage getCottageById(long id) {
+		Optional<Cottage> cottage = cottageRepository.findById(id);
+		Cottage ret = cottage.get(); 
+		return ret;
 	}
     
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
@@ -189,4 +234,5 @@ public class CottageAppointmentService {
 		else
 			return LoyaltyStatus.gold;
 	}
+    
 }

@@ -43,6 +43,7 @@ import com.BookingApp.repository.CottageAppointmentRepository;
 import com.BookingApp.repository.CottageOwnerRepository;
 import com.BookingApp.repository.CottagePhotoRepository;
 import com.BookingApp.repository.CottageRepository;
+import com.BookingApp.service.CottageService;
 
 @CrossOrigin
 @RestController
@@ -57,7 +58,8 @@ public class CottagesController {
 	private CottageOwnerRepository cottageOwnerRepository;
 	@Autowired
 	private CottagePhotoRepository cottagePhotoRepository;
-	
+	@Autowired
+	private CottageService cottageService;
 	@GetMapping(path = "/getAllCottages")
 	public ResponseEntity<List<Cottage>> getAllCottage()
 	{
@@ -387,19 +389,9 @@ public class CottagesController {
 	
 	@PostMapping(path="/editCottage")
 	public ResponseEntity<List<Cottage>> editCottage(@RequestBody EditCottageDto dto){
-	Cottage c = cottageRepository.findById(dto.id).get();
-	System.out.println(c);
-	c.name = dto.name;
-	c.address = dto.address;
-	c.description = dto.description;
-	c.roomsNum = dto.roomsNum;
-	c.bedsNum = dto.bedsNum;
-	c.rules = dto.rules;
-	c.priceList = dto.priceList;
-	c.pricePerHour = dto.pricePerHour;
-	c.maxAmountOfPeople = dto.maxAmountOfPeople;
-	cottageRepository.save(c);
+		if(cottageService.editCottage(dto))
 	return new ResponseEntity<List<Cottage>>(cottageRepository.getAllCottagesForOwner(dto.cottageOwnerId),HttpStatus.OK);
+		else return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
 	}
 	@PostMapping(path="/editOwner")
 	public CottageOwner editOwner(@RequestBody CottageOwner owner)

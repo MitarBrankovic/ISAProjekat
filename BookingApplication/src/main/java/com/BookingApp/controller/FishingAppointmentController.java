@@ -151,15 +151,9 @@ public class FishingAppointmentController {
 
 	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/addQuickAppointment")
-    public ResponseEntity<List<FishingAppointment>> addAppointment(@RequestBody FishingAppointmentDto appointmentDTO)
+    public ResponseEntity<List<FishingAppointment>> addAppointment(@RequestBody FishingAppointmentDto appointmentDTO) throws Exception
 	{	
-		FishingAdventure adventure = fishingAdventureRepository.findById(appointmentDTO.adventureId).get();
-		if(appointmentDTO != null) {
-			FishingAppointment appointment = new FishingAppointment(appointmentDTO.formatDateFrom(), adventure.address, adventure.city, 
-											 appointmentDTO.durationInHours(), adventure.maxAmountOfPeople, AppointmentType.quick, true, 0,
-											 appointmentDTO.extraNotes, appointmentDTO.price);
-			appointment.fishingAdventure = getAdventureById(appointmentDTO.adventureId);
-			fishingAppointmentRepository.save(appointment);
+			if(fishingAppointmentService2.addAppointment(appointmentDTO)) {
 			sendEmailToSubscribers(appointmentDTO);
 			return getAdventureQuickAppointments(appointmentDTO.adventureId);
 		}
@@ -168,20 +162,11 @@ public class FishingAppointmentController {
 	
 	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/addInstructorsAppointmentForClient")
-    public ResponseEntity<List<FishingAppointment>> addClientAppointment(@RequestBody InstructorsAppointmentForClientDto appointmentDTO)
+    public ResponseEntity<List<FishingAppointment>> addClientAppointment(@RequestBody InstructorsAppointmentForClientDto appointmentDTO) throws Exception
 	{	
-		FishingAdventure adventure = fishingAdventureRepository.findById(appointmentDTO.adventureId).get();
-		if(appointmentDTO != null) {
-			FishingAppointment appointment = new FishingAppointment(appointmentDTO.formatDateFrom(), adventure.address, adventure.city, 
-											 appointmentDTO.durationInHours(), adventure.maxAmountOfPeople, AppointmentType.regular, false, 0,
-											 appointmentDTO.extraNotes, appointmentDTO.price);
-			appointment.fishingAdventure = getAdventureById(appointmentDTO.adventureId);
-			appointment.client = clientRepository.findById(appointmentDTO.clientId).get();
-			appointment.price = fishingAppointmentService2.calculateDiscountedPrice(appointment.price, appointment.client);
-			double ownerCut = fishingAppointmentService2.getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
-			appointment.instructorProfit = appointment.price*ownerCut/100;
-			appointment.systemProfit = appointment.price - appointment.instructorProfit;
-			fishingAppointmentRepository.save(appointment);
+
+			FishingAppointment appointment = fishingAppointmentService2.addClientAppointment(appointmentDTO);
+			if(appointment!=null) {
 			sendEmailToClient(appointment);
 			return getAdventureQuickAppointments(appointmentDTO.adventureId);
 		}

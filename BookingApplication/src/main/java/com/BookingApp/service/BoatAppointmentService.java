@@ -6,18 +6,25 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.BookingApp.dto.BoatAppointmentDto;
+import com.BookingApp.dto.BoatAppointmentForClientDto;
+import com.BookingApp.dto.CottageAppointmentDto;
+import com.BookingApp.dto.CottageAppointmentForClientDto;
 import com.BookingApp.dto.ReserveBoatDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
 import com.BookingApp.model.Boat;
 import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Client;
+import com.BookingApp.model.Cottage;
+import com.BookingApp.model.CottageAppointment;
 import com.BookingApp.model.LoyaltyProgram;
 import com.BookingApp.model.LoyaltyStatus;
 import com.BookingApp.model.ShipOwner;
@@ -50,6 +57,8 @@ public class BoatAppointmentService {
 	private LoyaltyProgramRepository loyaltyRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private FishingAppointmentService fishingAppointmentService2;
 	
 	
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
@@ -193,4 +202,44 @@ public class BoatAppointmentService {
 		else
 			return LoyaltyStatus.gold;
 	}
+	 @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	 public boolean addAppointment(@RequestBody BoatAppointmentDto appointmentDTO) throws InterruptedException
+		{	
+			Boat boat = boatRepository.findById(appointmentDTO.boatId).get();
+			if(appointmentDTO != null) {
+				BoatAppointment appointment = new BoatAppointment(appointmentDTO.formatDateFrom(), 
+												 appointmentDTO.durationInHours(), boat.maxAmountOfPeople,AppointmentType.quick,
+												 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
+				appointment.boat = getBoatById(appointmentDTO.boatId);
+				boatAppointmentRepository.save(appointment);
+				return true;
+			}
+			return false;
+		}
+	    
+	    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	    public BoatAppointment addClientAppointment(BoatAppointmentForClientDto appointmentDTO) throws InterruptedException
+		{	
+			Boat boat = boatRepository.findById(appointmentDTO.boatId).get();
+			if(appointmentDTO != null) {
+				BoatAppointment appointment = new BoatAppointment(appointmentDTO.formatDateFrom(), 
+						 appointmentDTO.durationInHours(), boat.maxAmountOfPeople,AppointmentType.quick,
+						 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
+				appointment.boat = getBoatById(appointmentDTO.boatId);
+				appointment.client = clientRepository.findById(appointmentDTO.clientId).get();
+				appointment.price = fishingAppointmentService2.calculateDiscountedPrice(appointment.price, appointment.client);
+				double ownerCut = fishingAppointmentService2.getOwnerProfitBoat(appointment.boat.shipOwner);
+				appointment.ownerProfit = appointment.price*ownerCut/100;
+				appointment.systemProfit = appointment.price - appointment.ownerProfit;
+				boatAppointmentRepository.save(appointment);
+				return appointment;
+			}
+			return null;
+		}
+	    private Boat getBoatById(long id) {
+			Optional<Boat> boat = boatRepository.findById(id);
+			Boat ret = boat.get(); 
+			return ret;
+		}
+	    
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -13,9 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.BookingApp.dto.BoatAppointmentForClientDto;
+import com.BookingApp.dto.FishingAppointmentDto;
+import com.BookingApp.dto.InstructorsAppointmentForClientDto;
 import com.BookingApp.dto.ReserveAdventureDto;
 import com.BookingApp.model.AppUser;
 import com.BookingApp.model.AppointmentType;
+import com.BookingApp.model.Boat;
+import com.BookingApp.model.BoatAppointment;
 import com.BookingApp.model.Client;
 import com.BookingApp.model.CottageOwner;
 import com.BookingApp.model.FishingAdventure;
@@ -242,4 +248,43 @@ public class FishingAppointmentService {
 		else
 			return LoyaltyStatus.gold;
 	}
+	 @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	    public boolean addAppointment(@RequestBody FishingAppointmentDto appointmentDTO) throws InterruptedException
+		{	
+			FishingAdventure adventure = fishingAdventureRepository.findById(appointmentDTO.adventureId).get();
+			if(appointmentDTO != null) {
+				FishingAppointment appointment = new FishingAppointment(appointmentDTO.formatDateFrom(), adventure.address, adventure.city, 
+												 appointmentDTO.durationInHours(), adventure.maxAmountOfPeople, AppointmentType.quick, true, 0,
+												 appointmentDTO.extraNotes, appointmentDTO.price);
+				appointment.fishingAdventure = getAdventureById(appointmentDTO.adventureId);
+				fishingAppointmentRepository.save(appointment);
+					return true;
+				}
+				return false;
+			}
+		    
+		    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+		    public FishingAppointment addClientAppointment(@RequestBody InstructorsAppointmentForClientDto appointmentDTO) throws InterruptedException
+			{	
+				FishingAdventure adventure = fishingAdventureRepository.findById(appointmentDTO.adventureId).get();
+				if(appointmentDTO != null) {
+					FishingAppointment appointment = new FishingAppointment(appointmentDTO.formatDateFrom(), adventure.address, adventure.city, 
+													 appointmentDTO.durationInHours(), adventure.maxAmountOfPeople, AppointmentType.regular, false, 0,
+													 appointmentDTO.extraNotes, appointmentDTO.price);
+					appointment.fishingAdventure = getAdventureById(appointmentDTO.adventureId);
+					appointment.client = clientRepository.findById(appointmentDTO.clientId).get();
+					appointment.price = this.calculateDiscountedPrice(appointment.price, appointment.client);
+					double ownerCut = this.getOwnerProfit(appointment.fishingAdventure.fishingInstructor);
+					appointment.instructorProfit = appointment.price*ownerCut/100;
+					appointment.systemProfit = appointment.price - appointment.instructorProfit;
+					fishingAppointmentRepository.save(appointment);
+					return appointment;
+				}
+				return null;
+			}
+		    private FishingAdventure getAdventureById(long id) {
+				Optional<FishingAdventure> adventure = fishingAdventureRepository.findById(id);
+				FishingAdventure ret = adventure.get(); 
+				return ret;
+			}
 }

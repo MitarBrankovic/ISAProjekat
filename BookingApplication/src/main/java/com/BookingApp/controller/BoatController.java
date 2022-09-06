@@ -46,6 +46,7 @@ import com.BookingApp.repository.BoatAppointmentRepository;
 import com.BookingApp.repository.BoatPhotoRepository;
 import com.BookingApp.repository.BoatRepository;
 import com.BookingApp.repository.ShipOwnerRepository;
+import com.BookingApp.service.BoatService;
 
 @CrossOrigin
 @RestController
@@ -60,6 +61,8 @@ public class BoatController {
 		private ShipOwnerRepository shipOwnerRepository;
 		@Autowired
 		private BoatPhotoRepository boatPhotoRepository;
+		@Autowired
+		private BoatService boatService;
 		
 		@GetMapping(path = "/getAllBoats")
 		public ResponseEntity<List<Boat>> getAllBoats()
@@ -284,29 +287,10 @@ public class BoatController {
 			return boatRepository.findById(id).get();
 		}
 		@PostMapping(path="/editBoat")
-		public ResponseEntity<List<Boat>> editCottage(@RequestBody EditBoatDto dto){
-		Boat b = boatRepository.findById(dto.id).get();
-		System.out.println(b);
-		b.name = dto.name;
-		b.boatType = dto.boatType;
-		b.length = dto.length;
-		b.engineNumber = dto.engineNumber;
-		b.enginePower = dto.enginePower;
-		b.maxSpeed = dto.maxSpeed;
-		b.navigationEquipment = dto.navigationEquipment;
-		b.address = dto.address;
-		b.description = dto.description;
-		b.capacity = dto.capacity;
-		b.rules = dto.rules;
-		b.fishingEquipment = dto.fishingEquipment;
-		b.priceList = dto.priceList;
-		b.pricePerHour = dto.pricePerHour;
-		b.maxAmountOfPeople = dto.maxAmountOfPeople;
-		b.shipOwner = shipOwnerRepository.findById(dto.shipOwnerId).get();
-	
-		
-		boatRepository.save(b);
+		public ResponseEntity<List<Boat>> editBoat(@RequestBody EditBoatDto dto) throws Exception{
+		if(boatService.editBoat(dto))
 		return new ResponseEntity<List<Boat>>(boatRepository.getOwnersBoats(dto.shipOwnerId),HttpStatus.OK);
+		else return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
 		}
 		
 		@GetMapping(path="/ratingForBoats/{ownerId}")

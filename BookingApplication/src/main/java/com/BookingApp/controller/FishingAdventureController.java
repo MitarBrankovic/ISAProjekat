@@ -45,6 +45,7 @@ import com.BookingApp.repository.AdventurePhotoRepository;
 import com.BookingApp.repository.FishingAdventureRepository;
 import com.BookingApp.repository.FishingAppointmentRepository;
 import com.BookingApp.repository.FishingInstructorRepository;
+import com.BookingApp.service.FishingAdventureService;
 
 @CrossOrigin
 @RestController
@@ -59,7 +60,8 @@ public class FishingAdventureController {
 	private FishingAppointmentRepository fishingAppointmentRepository;
 	@Autowired
 	private AdventurePhotoRepository adventurePhotoRepository;
-	
+	@Autowired
+	private FishingAdventureService fishingAdventureService ;
 	@GetMapping(path = "/getAllAdventures")
 	public ResponseEntity<List<FishingAdventure>> getAllAdventures()
 	{
@@ -136,26 +138,11 @@ public class FishingAdventureController {
 	
 	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
 	@PostMapping(path = "/editAdventure")
-    public Set<FishingAdventure> editAdventure(@RequestBody EditAdventureDto adventureDTO)
+    public Set<FishingAdventure> editAdventure(@RequestBody EditAdventureDto adventureDTO) throws Exception
 	{	
+		long instructorsId = fishingAdventureRepository.findById(adventureDTO.adventureId).get().fishingInstructor.id;
 		//byte[] decodedPhoto = Base64.getMimeDecoder().decode(adventureDTO.photo);
-		if(adventureDTO != null) {
-			long instructorsId = fishingAdventureRepository.findById(adventureDTO.adventureId).get().fishingInstructor.id;
-			List<FishingAdventure> allAdventures = fishingAdventureRepository.findAll();
-			for (FishingAdventure adventure : allAdventures)
-				if (adventure.id == adventureDTO.adventureId) {
-					adventure.name = adventureDTO.name;
-					adventure.address = adventureDTO.address;
-					adventure.city = adventureDTO.city;
-					adventure.description = adventureDTO.description;
-					adventure.photo = adventureDTO.photo;
-					adventure.maxAmountOfPeople = adventureDTO.maxAmountOfPeople;
-					adventure.behaviourRules = adventureDTO.behaviourRules;
-					adventure.equipment = adventureDTO.equipment;
-					adventure.pricePerHour = adventureDTO.pricePerHour;
-					adventure.cancellingPrecentage = adventureDTO.cancellingPrecentage;
-				}
-			fishingAdventureRepository.saveAll(allAdventures); 
+		if(fishingAdventureService.editAdventure(adventureDTO)) { 
 			return fishingAdventureRepository.findInstructorsAdventures(instructorsId);
 		}
 		return null;

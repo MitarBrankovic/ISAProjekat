@@ -409,16 +409,9 @@ public class BoatAppointmentController {
 	}
 	
 	@PostMapping(path = "/addQuickAppointment")
-    public ResponseEntity<List<BoatAppointment>> addAppointment(@RequestBody BoatAppointmentDto appointmentDTO)
+    public ResponseEntity<List<BoatAppointment>> addAppointment(@RequestBody BoatAppointmentDto appointmentDTO) throws Exception
 	{	
-		Boat boat = boatRepository.findById(appointmentDTO.boatId).get();
-		if(appointmentDTO != null) {
-			BoatAppointment appointment = new BoatAppointment(appointmentDTO.formatDateFrom(), 
-											 appointmentDTO.durationInHours(), boat.maxAmountOfPeople,AppointmentType.quick,
-											 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
-			appointment.boat = getBoatById(appointmentDTO.boatId);
-			boatAppointmentRepository.save(appointment);
-			sendEmailToSubscribers(appointmentDTO);
+		if(boatAppointmentService2.addAppointment(appointmentDTO)) {
 			return getAllQuickAppointmentsForBoat(appointmentDTO.boatId);
 		}
 		return null;
@@ -549,20 +542,10 @@ public class BoatAppointmentController {
 		return new ResponseEntity<List<BoatAppointment>>(appointments,HttpStatus.OK);
 	}
 	@PostMapping(path = "/addOwnersAppointmentForClient")
-    public ResponseEntity<List<BoatAppointment>> addClientAppointment(@RequestBody BoatAppointmentForClientDto appointmentDTO)
+    public ResponseEntity<List<BoatAppointment>> addClientAppointment(@RequestBody BoatAppointmentForClientDto appointmentDTO) throws Exception
 	{	
-		Boat boat = boatRepository.findById(appointmentDTO.boatId).get();
-		if(appointmentDTO != null) {
-			BoatAppointment appointment = new BoatAppointment(appointmentDTO.formatDateFrom(), 
-					 appointmentDTO.durationInHours(), boat.maxAmountOfPeople,AppointmentType.quick,
-					 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
-			appointment.boat = getBoatById(appointmentDTO.boatId);
-			appointment.client = clientRepository.findById(appointmentDTO.clientId).get();
-			appointment.price = fishingAppointmentService2.calculateDiscountedPrice(appointment.price, appointment.client);
-			double ownerCut = fishingAppointmentService2.getOwnerProfitBoat(appointment.boat.shipOwner);
-			appointment.ownerProfit = appointment.price*ownerCut/100;
-			appointment.systemProfit = appointment.price - appointment.ownerProfit;
-			boatAppointmentRepository.save(appointment);
+		BoatAppointment appointment = boatAppointmentService2.addClientAppointment(appointmentDTO);
+		if(appointment!=null) {
 			sendEmailToClient(appointment);
 			return getAllQuickAppointmentsForBoat(appointmentDTO.boatId);
 		}

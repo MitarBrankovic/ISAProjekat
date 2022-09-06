@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -52,6 +53,9 @@ public class Cottage {
 	public double rating;
 	@Column
 	public int maxAmountOfPeople;
+	
+	@Version
+    public Long version;
 	
 	public Cottage() {}
 

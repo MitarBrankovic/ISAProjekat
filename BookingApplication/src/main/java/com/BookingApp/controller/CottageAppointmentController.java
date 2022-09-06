@@ -287,21 +287,11 @@ public class CottageAppointmentController {
 		return true;
 	}
 	@PostMapping(path = "/addOwnersAppointmentForClient")
-    public ResponseEntity<List<CottageAppointment>> addClientAppointment(@RequestBody CottageAppointmentForClientDto appointmentDTO)
+    public ResponseEntity<List<CottageAppointment>> addClientAppointment(@RequestBody CottageAppointmentForClientDto appointmentDTO) throws Exception
 	{	
-		Cottage cottage = cottageRepository.findById(appointmentDTO.cottageId).get();
-		if(appointmentDTO != null) {
-			CottageAppointment appointment = new CottageAppointment(appointmentDTO.formatDateFrom(), 
-					 appointmentDTO.durationInHours(), cottage.maxAmountOfPeople,AppointmentType.quick,
-					 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
-			appointment.cottage = getCottageById(appointmentDTO.cottageId);
-			appointment.client = clientRepository.findById(appointmentDTO.clientId).get();
-			appointment.price = fishingAppointmentService2.calculateDiscountedPrice(appointment.price, appointment.client);
-			double ownerCut = fishingAppointmentService2.getOwnerProfitCottage(appointment.cottage.cottageOwner);
-			appointment.ownerProfit = appointment.price*ownerCut/100;
-			appointment.systemProfit = appointment.price - appointment.ownerProfit;
-			cottageAppointmentRepository.save(appointment);
-			sendEmailToClient(appointment);
+		CottageAppointment app  = cottageAppointmentService2.addClientAppointment(appointmentDTO);
+	if(app!=null) {
+			sendEmailToClient(app);
 			return getAllQuickAppointmentsForCottage(appointmentDTO.cottageId);
 		}
 		return null;
@@ -336,20 +326,15 @@ public class CottageAppointmentController {
 	}
 
 	@PostMapping(path = "/addQuickAppointment")
-    public ResponseEntity<List<CottageAppointment>> addAppointment(@RequestBody CottageAppointmentDto appointmentDTO)
+    public ResponseEntity<List<CottageAppointment>> addQucikAppointment(@RequestBody CottageAppointmentDto appointmentDTO) throws Exception
 	{	
-		Cottage cottage = cottageRepository.findById(appointmentDTO.cottageId).get();
-		if(appointmentDTO != null) {
-			CottageAppointment appointment = new CottageAppointment(appointmentDTO.formatDateFrom(), 
-											 appointmentDTO.durationInHours(), cottage.maxAmountOfPeople,AppointmentType.quick,
-											 appointmentDTO.extraNotes, appointmentDTO.price,appointmentDTO.price/5,appointmentDTO.price/5*4);
-			appointment.cottage = getCottageById(appointmentDTO.cottageId);
-			cottageAppointmentRepository.save(appointment);
+			if(cottageAppointmentService2.addQucikAppointment(appointmentDTO)) { 
 			sendEmailToSubscribers(appointmentDTO);
 			return getAllQuickAppointmentsForCottage(appointmentDTO.cottageId);
+			}
+			return null;
 		}
-		return null;
-	}
+
 	public boolean sendEmailToSubscribers(CottageAppointmentForClientDto appDto)
 	{	
 		Cottage cottage = cottageRepository.findById(appDto.cottageId).get();

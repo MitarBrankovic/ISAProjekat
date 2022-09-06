@@ -36,7 +36,7 @@ public class PricelistController {
 		return pricelistRepository.findAllItemsByInstructorsId(id);
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
+	
 	@PostMapping(path = "/addPricelistItem")
     public Set<PricelistItem> addPricelistItem(@RequestBody PricelistItemDto itemDTO)
 	{	
@@ -48,7 +48,7 @@ public class PricelistController {
 		return null;
 	}
 	
-	@PreAuthorize("hasAuthority('FISHINGINSTRUCTOR')")
+	
 	@PostMapping(path = "/deletePricelistItem")
     public Set<PricelistItem> deleteItem(@RequestBody PricelistItemRemoveDto itemDTO)
 	{	

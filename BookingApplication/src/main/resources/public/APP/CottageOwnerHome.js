@@ -3,8 +3,8 @@ Vue.component("CottageOwnerHome", {
         return {        
 			activeUser:"",
             cottages:[],
-			newCottage:{name:"",address:"",description:"",roomsNum:1,bedsNum:1,rules:"",priceList:"",pricePerHour:0,cottageOwnerId:"",maxAmountOfPeople:1},
-       		editCottage:{id:0,name:"",address:"",description:"",roomsNum:1,bedsNum:1,rules:"",priceList:"",pricePerHour:"",cottageOwnerId:"",maxAmountOfPeople:1},
+			newCottage:{name:"",address:"",longitude:0,latitude:0,description:"",roomsNum:1,bedsNum:1,rules:"",priceList:"",pricePerHour:0,cottageOwnerId:"",maxAmountOfPeople:1},
+       		editCottage:{id:0,name:"",address:"",longitude:0,latitude:0,description:"",roomsNum:1,bedsNum:1,rules:"",priceList:"",pricePerHour:"",cottageOwnerId:"",maxAmountOfPeople:1},
 			flag:false,
 	 }
     },
@@ -93,23 +93,22 @@ template: `
 					  </div>
 						<div class="row">
 	                  <div class="col-sm-6" style="margin-left: -2.5%;">
-	                  <label class="input-group-text" for="inputGroupFile01">Dodavanje slike:</label>
-	                  <input id="uploadImage" name="myPhoto" required @change=imageAddedNew type="file" accept="image/png, image/jpeg" class="form-control">
+	                  <label class="input-group-text" for="inputGroupFile01">Latituda za mapu:</label>
+	                  <input id="roomInput" name="roomInput" v-model="newCottage.latitude" class="form-control" placeholder="Oprema za navigaciju">
 	                  </div>
+					<div class="col-sm-6" style="margin-left: -2.5%;">
+						<label class="input-group-text" for="inputGroupFile01">longituda za mapu:</label>
+	                  <input id="roomInput" name="roomInput" v-model="newCottage.longitude" class="form-control" placeholder="Oprema za navigaciju">
 	                  </div>
-	                  <div class="row" style="margin-top: 5%;">
-	                  <div class="col-sm-6" style="margin-left: -2.5%;">
-	                  <img  id="uploadPreview" style="width: 375px; height: 260px;" />
-	                   </div>
+ 					</div>
 	                   <div class="col-sm-6">
 	                  <button type="button" style="margin-left: 10%; margin-top: 25%;" v-on:click="addNewCottage()" class="btn btn-success btn-lg">Dodaj vikendicu</button>
-	                   </div>
-	                   </div>
-                  </div>
+		 				 </div>
+    </div>
+ </div>
+</div>
+</div>
               </div>
-              </div>
-            </div>
-        </div>
           </div>
         </div>
 </div>
@@ -159,18 +158,15 @@ template: `
 	                  <input id="roomInput" name="roomInput" v-model="editCottage.roomsNum" class="form-control" placeholder="Unesite broj soba">
 					  </div>
 					  <div class="row">
-					  <div class="col-sm-6" style="margin-left: -2.5%;">	                 
-					  </div>
-						<div class="row">
-	                  <div class="col-sm-6" style="margin-left: -2.5%;">
-	                  <label class="input-group-text" for="inputGroupFile01">Dodavanje slike:</label>
-	                  <input id="uploadImage" name="myPhoto" required @change=imageAddedNew type="file" accept="image/png, image/jpeg" class="form-control">
+					  <div class="col-sm-6" style="margin-left: -2.5%;">
+	                  <label class="input-group-text" for="inputGroupFile01">Latituda za mapu:</label>
+	                  <input id="roomInput" name="roomInput" v-model="editCottage.latitude" class="form-control" placeholder="Oprema za navigaciju">
 	                  </div>
+					<div class="col-sm-6" style="margin-left: -2.5%;">
+						<label class="input-group-text" for="inputGroupFile01">longituda za mapu:</label>
+	                  <input id="roomInput" name="roomInput" v-model="editCottage.longitude" class="form-control" placeholder="Oprema za navigaciju">
 	                  </div>
-	                  <div class="row" style="margin-top: 5%;">
-	                  <div class="col-sm-6" style="margin-left: -2.5%;">
-	                  <img  id="uploadPreview" style="width: 375px; height: 260px;" />
-	                   </div>
+ 					</div>
 	                   <div class="col-sm-6">
 	                  <button type="button"  style="margin-left: 10%; margin-top: 25%;" v-on:click="changeCottage()" class="btn btn-success btn-lg">Sacuvaj izmene</button>
 	                   </div>

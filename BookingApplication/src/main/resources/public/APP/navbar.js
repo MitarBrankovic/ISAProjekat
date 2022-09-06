@@ -32,6 +32,9 @@ Vue.component("Navbar", {
 		<div v-if="(activeUser !== null) && (activeUser.role==='cottage_owner')">
 					<a href="#/cottageRatingGraph">Ocene</a>
 			</div>
+			<div v-if="(activeUser !== null) && (activeUser.role==='cottage_owner')">
+					<a href="#/cottageReservationGraph">Posecenost</a>
+			</div>
 		
 		<div v-if="(activeUser !== null) && (activeUser.role==='ship_owner')">
 			<a href="#/boatOwnerHome">Moji brodovi</a>
@@ -51,7 +54,9 @@ Vue.component("Navbar", {
 		<div v-if="(activeUser !== null) && (activeUser.role==='ship_owner')">
 					<a href="#/boatRatingGraph">Ocene</a>
 			</div>
-		
+		<div v-if="(activeUser !== null) && (activeUser.role==='ship_owner')">
+					<a href="#/boatReservationGraph">Posecenost</a>
+			</div>
 		
 		
 		
@@ -130,6 +135,9 @@ Vue.component("Navbar", {
 	<a v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')" href="/#/instructorsCalendar">Kalendar zauzetosti</a>
 	<div v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')">
 					<a href="#/fishingAdventureRatingGraph">Ocene</a>
+			</div>
+			<div v-if="(activeUser !== null) && (activeUser.role==='fishing_instructor')">
+					<a href="#/fishingAdventureReservationGraph">Posecenost</a>
 			</div>
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin')" href="#/usersAdmin">Korisnici</a>
 	<a v-if="(activeUser !== null) && (activeUser.role==='admin') && (activeUser.adminType ==='main')" href="#/addAdmin">Novi admin</a>

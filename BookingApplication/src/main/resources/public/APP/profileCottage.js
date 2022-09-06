@@ -10,6 +10,9 @@ Vue.component("ProfileCottage", {
             quickAppointment: {dateFrom: "", timeFrom: "8:00", dateUntil: "", timeUntil: "12:00", extraNotes: "", price: 100, cottageId: 0 },
 			 photos: "",
 			newPhoto:{photo: null, entityId: 0},
+			pricelist: "",
+            newPricelistItem: {instructorsId: "", description: "", price: 50},
+            removeItemObject: {itemId: "", instructorId: ""},
         }
     },
     template : ` 
@@ -22,8 +25,6 @@ Vue.component("ProfileCottage", {
     <br> Broj soba: {{this.cottage.roomsNum}}
     <br> Broj kreveta po sobi : {{this.cottage.bedsNum}}
     <br> Pravila : {{this.cottage.rules}}
-    <br> Cenovnik i dodatne usluge:
-    <br> {{this.cottage.priceList}}
     </p><br>
     <button v-if="activeUser.role == 'client' && !exist()" type="submit" class="button" v-on:click="subscribe()">Pretplati se</button>
     <button v-if="activeUser.role == 'client' && exist()" type="submit" class="btn btn-danger" v-on:click="unsubscribe()">Odjavi se</button>
@@ -114,6 +115,51 @@ Vue.component("ProfileCottage", {
         					
         				 </div>
  </div>
+<h2 v-if="activeUser != null && activeUser.role == 'cottage_owner'">Cenovnik dodatnih usluga</h2>
+	
+	<div v-if="activeUser != null && activeUser.role == 'cottage_owner'" class="container-fluid" style="margin-top: 3%">
+		<table class="table">
+	        <thead>
+	        	<tr>
+	            	<td scope="col">Opis</td>
+	            	<td scope="col">Cena</td>
+	            	<td scope="col"></td>
+	        	</tr>
+	        </thead>
+	        <tbody>
+	            <tr v-for="p in pricelist">
+		            <td>{{p.description}}</td>
+		            <td>{{p.price}} din.</td>
+		            <td><button v-if="activeUser.id == cottage.cottageOwner.id" type="button" data-bs-toggle="modal" data-bs-target="#areYouSure" v-on:click="prepareItemToRemove(p.id)" class="btn btn-danger">Obriši</button> </td>
+	            </tr>
+	            <tr v-if="activeUser.id == cottage.cottageOwner.id">
+		            <td><input type="text" class="form-control" v-model="newPricelistItem.description" placeholder="Unesite opis..."></td>
+		            <td><input type="number" min = "50" step="50" class="form-control" v-model="newPricelistItem.price" placeholder="Unesite cenu..."></td>
+		            <td><button type="button" v-on:click="addPricelistItem()" class="btn btn-success">Dodaj novu uslugu</button> </td>
+	            </tr>
+	        </tbody>
+	    </table>
+	</div>
+	
+		<!-- Modal za potvrdu brisanja stavke cenovnika -->
+	<div class="modal fade" id="areYouSure" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Potvrda</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <h2>Da li ste sigurni da želite da obrišete ovu stavku ?</h2>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ne</button>
+	        <button type="button" class="btn btn-danger" v-on:click="removeItem()" data-bs-dismiss="modal" >Da</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 	<div class="modal fade" id="newAppointment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
@@ -417,6 +463,52 @@ addPhoto(){
                })
 
         },
+addPricelistItem(){
+        this.newPricelistItem.instructorsId = this.activeUser.id
+        if (this.checkNewPricelistItem()){
+         	axios
+               .post('/pricelist/addPricelistItem', this.newPricelistItem, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
+               .then(response=>{
+                  this.pricelist = response.data
+               })
+               .catch(error=>{
+                   console.log("Greska.")	
+                   alert("Podaci su lose uneti.")
+                   window.location.reload()
+               })
+           }
+           else {
+           	   Swal.fire({icon: 'error', title: 'Greška', text: 'Niste uneli sve potrebne podatke ili je cena nevalidna !'})
+           }
+        },
+        
+        prepareItemToRemove(id){
+        	this.pricelistIdRemove = id;		
+        },
+        
+        removeItem(){
+        this.removeItemObject.itemId = this.pricelistIdRemove
+        this.removeItemObject.instructorId = this.activeUser.id
+        console.log(this.removeItemObject)
+         	axios
+               .post('/pricelist/deletePricelistItem', this.removeItemObject, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.jwt.slice(1,-1)}`
+                },})
+               .then(response=>{
+                  this.pricelist = response.data
+               })
+               
+        },
+checkNewPricelistItem(){
+        	if (this.newPricelistItem.description !== "" && this.newPricelistItem.price !== "" && this.newPricelistItem.price > 49) 
+        		return true;
+        	else
+        		return false;
+        },
    init: function(){
             const map = new ol.Map({
                 target: 'map',
@@ -501,11 +593,13 @@ addPhoto(){
             axios.get("cottages/getSelectedCottage/" + this.$route.query.id), 
 			 axios.get("cottages/getCottagePhotos/" + this.$route.query.id),
             axios.get("cottageAppointments/getAllQuickAppointments/" + this.$route.query.id),
+			axios.get("pricelist/getInstructorsPricelist/" + this.activeUser.id),
             axios.get('/subscribe/getAllSubscibedCottages')]).then(axios.spread((...responses) => {
            this.cottage = responses[0].data
  		   this.photos = responses[1].data
            this.appointments = responses[2].data
-           this.subscibedCottages = responses[3].data
+			this.pricelist = responses[3].data
+           this.subscibedCottages = responses[4].data
   this.$nextTick(function () {
             this.init();
             this.previewMap = true;
